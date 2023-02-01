@@ -74,7 +74,12 @@ export const request: IRequest = async (url, opts: any = {}) => {
     }
   } catch (error: any) {
     // handle 401
-    if (error.response && error.response.status === 401) {
+    const loc = history.location;
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      loc.pathname !== '/login'
+    ) {
       await refreshMutex.acquire();
       try {
         // 获取到锁之后，检查AccessToken是否已经被刷新
@@ -87,7 +92,6 @@ export const request: IRequest = async (url, opts: any = {}) => {
           console.log('no token, redirecting to login page...');
           message.error('请先登录');
 
-          const loc = history.location;
           history.push('/login?redirect=' + loc.pathname);
           return;
         }

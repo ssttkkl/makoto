@@ -1,128 +1,127 @@
 import { register } from '@/services/users';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import {
-  ProFormText,
-  ProConfigProvider,
-  LoginForm,
-  ProFormInstance,
-} from '@ant-design/pro-components';
+import { ProFormText, LoginForm } from '@ant-design/pro-components';
+import { useSearchParams } from '@umijs/max';
 import { Link, history } from '@umijs/max';
 import { message } from 'antd';
-import { useRef } from 'react';
+import { useCallback } from 'react';
+
+interface RegisterFormRecord {
+  username: string;
+  password: string;
+  nickname: string;
+}
 
 const RegisterPage: React.FC = () => {
-  const formRef = useRef<
-    ProFormInstance<{
-      username: string;
-      nickname: string;
-      password: string;
-      passwordRepeated: string;
-    }>
-  >();
+  const [urlParams] = useSearchParams();
+  const redirect = urlParams.get('redirect') ?? '/';
 
-  async function onFinish(values: any) {
-    await register({
-      username: values.username,
-      password: values.password,
-      nickname: values.nickname,
-    });
+  const onFinish = useCallback(
+    async function (values: RegisterFormRecord) {
+      await register(values);
 
-    message.success('注册成功');
-    history.push('/login', { username: values.username });
-  }
+      message.success('注册成功');
+      history.push(`/login?redirect=${redirect}`, {
+        username: values.username,
+      });
+    },
+    [redirect],
+  );
 
   return (
-    <ProConfigProvider hashed={false}>
-      <div style={{ backgroundColor: 'white' }}>
-        <LoginForm
-          title="注册"
-          subTitle=" "
-          submitter={{
-            // 配置按钮文本
-            searchConfig: {
-              resetText: '重置',
-              submitText: '注册',
-            },
+    <div
+      style={{
+        flex: '1',
+        padding: '32px 0',
+      }}
+    >
+      <LoginForm
+        title="注册"
+        subTitle=" "
+        submitter={{
+          // 配置按钮文本
+          searchConfig: {
+            resetText: '重置',
+            submitText: '注册',
+          },
+        }}
+        onFinish={onFinish}
+      >
+        <ProFormText
+          name="username"
+          fieldProps={{
+            size: 'large',
+            prefix: <UserOutlined className={'prefixIcon'} />,
           }}
-          onFinish={onFinish}
-          formRef={formRef}
+          placeholder={'用户名'}
+          rules={[
+            {
+              required: true,
+              message: '请输入用户名!',
+            },
+          ]}
+        />
+        <ProFormText
+          name="nickname"
+          fieldProps={{
+            size: 'large',
+            prefix: <UserOutlined className={'prefixIcon'} />,
+          }}
+          placeholder={'昵称'}
+          rules={[
+            {
+              required: true,
+              message: '请输入昵称!',
+            },
+          ]}
+        />
+        <ProFormText.Password
+          name="password"
+          fieldProps={{
+            size: 'large',
+            prefix: <LockOutlined className={'prefixIcon'} />,
+          }}
+          placeholder={'密码'}
+          rules={[
+            {
+              required: true,
+              message: '请输入密码！',
+            },
+          ]}
+        />
+        <ProFormText.Password
+          name="passwordRepeated"
+          fieldProps={{
+            size: 'large',
+            prefix: <LockOutlined className={'prefixIcon'} />,
+          }}
+          placeholder={'确认密码'}
+          rules={[
+            {
+              required: true,
+              message: '请确认密码！',
+            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('两次输入的密码不一致!'));
+              },
+            }),
+          ]}
+        />
+        <Link
+          to={`/login?redirect=${redirect}`}
+          style={{
+            float: 'right',
+            marginBlockEnd: 24,
+          }}
         >
-          <ProFormText
-            name="username"
-            fieldProps={{
-              size: 'large',
-              prefix: <UserOutlined className={'prefixIcon'} />,
-            }}
-            placeholder={'用户名'}
-            rules={[
-              {
-                required: true,
-                message: '请输入用户名!',
-              },
-            ]}
-          />
-          <ProFormText
-            name="nickname"
-            fieldProps={{
-              size: 'large',
-              prefix: <UserOutlined className={'prefixIcon'} />,
-            }}
-            placeholder={'昵称'}
-            rules={[
-              {
-                required: true,
-                message: '请输入昵称!',
-              },
-            ]}
-          />
-          <ProFormText.Password
-            name="password"
-            fieldProps={{
-              size: 'large',
-              prefix: <LockOutlined className={'prefixIcon'} />,
-            }}
-            placeholder={'密码'}
-            rules={[
-              {
-                required: true,
-                message: '请输入密码！',
-              },
-            ]}
-          />
-          <ProFormText.Password
-            name="passwordRepeated"
-            fieldProps={{
-              size: 'large',
-              prefix: <LockOutlined className={'prefixIcon'} />,
-            }}
-            placeholder={'确认密码'}
-            rules={[
-              {
-                required: true,
-                message: '请确认密码！',
-              },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('两次输入的密码不一致!'));
-                },
-              }),
-            ]}
-          />
-          <Link
-            to="/login"
-            style={{
-              float: 'right',
-              marginBlockEnd: 24,
-            }}
-          >
-            已有帐号？ 登录
-          </Link>
-        </LoginForm>
-      </div>
-    </ProConfigProvider>
+          已有帐号？ 登录
+        </Link>
+      </LoginForm>
+    </div>
   );
 };
 

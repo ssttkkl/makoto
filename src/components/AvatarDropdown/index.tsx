@@ -4,11 +4,11 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { history, useModel } from '@umijs/max';
+import { history, useLocation, useModel } from '@umijs/max';
 import { Avatar, Spin } from 'antd';
 import { setAlpha } from '@ant-design/pro-components';
 import type { MenuInfo } from 'rc-menu/lib/interface';
-import React from 'react';
+import React, { useCallback } from 'react';
 import HeaderDropdown from '../HeaderDropdown';
 
 const Name = (props: { name?: string }) => {
@@ -55,15 +55,15 @@ const AvatarLogo = (props: { src?: string }) => {
 const AvatarDropdown: React.FC = () => {
   const { currentUser, logout } = useModel('currentUser');
 
+  const loc = useLocation();
+
   /**
    * 退出登录，并且将当前的 url 保存
    */
-  const loginOut = async () => {
+  const loginOut = useCallback(async () => {
     await logout();
-
-    const loc = history.location;
     history.push('/login?redirect=' + loc.pathname);
-  };
+  }, [loc]);
 
   const actionClassName = useEmotionCss(({ token }) => {
     return {
@@ -81,13 +81,16 @@ const AvatarDropdown: React.FC = () => {
     };
   });
 
-  const onMenuClick = (event: MenuInfo) => {
-    const { key } = event;
-    if (key === 'logout') {
-      loginOut();
-      return;
-    }
-  };
+  const onMenuClick = useCallback(
+    (event: MenuInfo) => {
+      const { key } = event;
+      if (key === 'logout') {
+        loginOut();
+        return;
+      }
+    },
+    [loginOut],
+  );
 
   const loading = (
     <span className={actionClassName}>
