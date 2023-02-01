@@ -1,6 +1,6 @@
 import Token from '@/entities/token';
 import User from '@/entities/user';
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 export interface LoginRequestBody {
   username: string;
@@ -16,14 +16,16 @@ export interface AuthResponseBody {
   user: User;
 }
 
-export async function login(body: LoginRequestBody): Promise<AuthResponseBody> {
+export async function callLogin(
+  body: LoginRequestBody,
+): Promise<AuthResponseBody> {
   return await request<AuthResponseBody>('/api/v1/auth/login', {
     method: 'POST',
     data: body,
   });
 }
 
-export async function refresh(
+export async function callRefresh(
   body: RefreshRequestBody,
 ): Promise<AuthResponseBody> {
   return await request<AuthResponseBody>('/api/v1/auth/refresh', {

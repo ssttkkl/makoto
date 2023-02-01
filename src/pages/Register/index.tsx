@@ -6,7 +6,7 @@ import {
   LoginForm,
   ProFormInstance,
 } from '@ant-design/pro-components';
-import { Link } from '@umijs/max';
+import { Link, history } from '@umijs/max';
 import { message } from 'antd';
 import { useRef } from 'react';
 
@@ -21,20 +21,14 @@ const RegisterPage: React.FC = () => {
   >();
 
   async function onFinish(values: any) {
-    try {
-      await register({
-        username: values.username,
-        password: values.password,
-        nickname: values.nickname,
-      });
-      message.success('注册成功');
-    } catch (error: any) {
-      if (error.response) {
-        message.error(error.response.data.message);
-      } else {
-        message.error('发送请求时出了点问题');
-      }
-    }
+    await register({
+      username: values.username,
+      password: values.password,
+      nickname: values.nickname,
+    });
+
+    message.success('注册成功');
+    history.push('/login', { username: values.username });
   }
 
   return (

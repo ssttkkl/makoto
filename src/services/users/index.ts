@@ -1,5 +1,5 @@
 import User from '@/entities/user';
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 export interface RegisterRequestBody {
   username: string;

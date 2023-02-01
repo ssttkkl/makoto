@@ -4,21 +4,53 @@ import {
   ProFormText,
   ProConfigProvider,
   LoginForm,
+  ProFormInstance,
 } from '@ant-design/pro-components';
-import { Link } from '@umijs/max';
+import { useSearchParams } from '@umijs/max';
+import { Link, useLocation, useModel, history } from '@umijs/max';
+import { message } from 'antd';
+import { useRef } from 'react';
 
-async function onFinish(formData: Record<string, any>) {
-  console.log(formData);
-  return true;
+interface LoginFormRecord {
+  username: string;
+  password: string;
+  autoLogin: boolean;
 }
 
 const LoginPage: React.FC = () => {
+  const formRef = useRef<ProFormInstance<LoginFormRecord>>();
+
+  const { login } = useModel('currentUser');
+
+  const [urlParams] = useSearchParams();
+  const redirect = urlParams.get('redirect') ?? '/';
+
+  async function onFinish(values: LoginFormRecord) {
+    await login(values.username, values.password);
+    message.success('登录成功!');
+
+    history.push(redirect);
+  }
+
+  let initialValues: any = {};
+  const location = useLocation();
+  if (location.state) {
+    initialValues = location.state;
+    console.debug('initialValues:', initialValues);
+  }
+
   return (
     <ProConfigProvider hashed={false}>
       <div style={{ backgroundColor: 'white' }}>
-        <LoginForm title="登录" subTitle=" " onFinish={onFinish}>
+        <LoginForm
+          title="登录"
+          subTitle=" "
+          onFinish={onFinish}
+          formRef={formRef}
+        >
           <ProFormText
             name="username"
+            initialValue={initialValues.username ?? ''}
             fieldProps={{
               size: 'large',
               prefix: <UserOutlined className={'prefixIcon'} />,

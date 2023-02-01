@@ -29,8 +29,10 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-components": "^2.0.1",
+    "@ant-design/use-emotion-css": "^1.0.4",
     "@umijs/max": "^4.0.47",
-    "antd": "^5.0.0"
+    "antd": "^5.0.0",
+    "async-mutex": "^0.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
