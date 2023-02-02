@@ -1,48 +1,8 @@
 import FileTable from '@/components/FileTable';
-import { ArrowUpOutlined, UserOutlined } from '@ant-design/icons';
 import { useModel, useSearchParams } from '@umijs/max';
-import { Link } from '@umijs/max';
-import { Breadcrumb, Button, Space, Spin } from 'antd';
+import { Button, Space, Spin } from 'antd';
 import { useEffect } from 'react';
-
-const CurrentPath: React.FC<{ path: string }> = (props) => {
-  const path = props.path.split('/').filter((value) => value.length > 0);
-
-  let targetPath = '';
-  let upperPath = '';
-
-  const items = path.map((p, idx) => {
-    upperPath = targetPath;
-
-    targetPath += '/';
-    targetPath += p;
-
-    return (
-      <Breadcrumb.Item key={idx + 1}>
-        <Link to={'/space?path=' + targetPath}>{p}</Link>
-      </Breadcrumb.Item>
-    );
-  });
-
-  return (
-    <Space>
-      <Link to={'/space?path=' + upperPath}>
-        <Button disabled={items.length === 0}>
-          <ArrowUpOutlined />
-        </Button>
-      </Link>
-      <Breadcrumb>
-        <Breadcrumb.Item key={0}>
-          <Link to="/space">
-            <UserOutlined />
-            <span>我的空间</span>
-          </Link>
-        </Breadcrumb.Item>
-        {items}
-      </Breadcrumb>
-    </Space>
-  );
-};
+import PathBreadcrumb from '@/components/PathBreadcrumb';
 
 const SpacePage: React.FC = () => {
   const { setPath, data, error, loading } = useModel('Space.model');
@@ -61,7 +21,10 @@ const SpacePage: React.FC = () => {
     <Spin spinning={loading}>
       <div>
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-          <CurrentPath path={path} />
+          <PathBreadcrumb
+            path={path}
+            itemLink={(path) => `/space?path=${path}`}
+          />
 
           <Space wrap>
             <Button type="primary">新建文档</Button>
