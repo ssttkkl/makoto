@@ -1,6 +1,7 @@
 export type FileType = 'document' | 'folder';
 
 export interface FileInfo {
+  [x: string]: any | undefined;
   fid: number;
   filename: string;
   ctime: Date;

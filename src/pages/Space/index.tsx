@@ -1,11 +1,70 @@
 import FileTable from '@/components/FileTable';
 import { useModel, useSearchParams } from '@umijs/max';
-import { Button, Space, Spin } from 'antd';
+import { Button, ButtonProps, Space, Spin } from 'antd';
 import { useEffect } from 'react';
 import PathBreadcrumb from '@/components/PathBreadcrumb';
+import { ModalForm, ProFormText } from '@ant-design/pro-components';
+import { createFile } from '@/services/space';
+
+const CreateFile: React.FC<{
+  title: string;
+  placeholder: string;
+  onFinish: (filename: string) => Promise<boolean>;
+  btnProps?: ButtonProps;
+}> = (props) => {
+  return (
+    <ModalForm<{ filename: string }>
+      title={props.title}
+      trigger={<Button {...props.btnProps}>{props.title}</Button>}
+      autoFocusFirstInput
+      modalProps={{ destroyOnClose: true }}
+      onFinish={(values) => props.onFinish(values.filename)}
+    >
+      <ProFormText name="filename" placeholder={props.placeholder} />
+    </ModalForm>
+  );
+};
+
+const CreateFolder: React.FC<{
+  path: string;
+  onFinish?: () => void;
+  btnProps?: ButtonProps;
+}> = (props) => {
+  return (
+    <CreateFile
+      title="新建目录"
+      placeholder="目录名"
+      btnProps={props.btnProps}
+      onFinish={async (filename) => {
+        await createFile({ type: 'folder', path: props.path, filename });
+        if (props?.onFinish) props.onFinish();
+        return true;
+      }}
+    />
+  );
+};
+
+const CreateDocument: React.FC<{
+  path: string;
+  onFinish?: () => void;
+  btnProps?: ButtonProps;
+}> = (props) => {
+  return (
+    <CreateFile
+      title="新建文档"
+      placeholder="文档名"
+      btnProps={props.btnProps}
+      onFinish={async (filename) => {
+        await createFile({ type: 'document', path: props.path, filename });
+        if (props?.onFinish) props.onFinish();
+        return true;
+      }}
+    />
+  );
+};
 
 const SpacePage: React.FC = () => {
-  const { setPath, data, error, loading } = useModel('Space.model');
+  const { setPath, data, error, loading, refresh } = useModel('Space.model');
 
   // 让参数的path单向同步到model里
   const [searchParams] = useSearchParams();
@@ -27,8 +86,12 @@ const SpacePage: React.FC = () => {
           />
 
           <Space wrap>
-            <Button type="primary">新建文档</Button>
-            <Button>新建目录</Button>
+            <CreateDocument
+              path={path}
+              btnProps={{ type: 'primary' }}
+              onFinish={refresh}
+            />
+            <CreateFolder path={path} onFinish={refresh} />
           </Space>
 
           <FileTable

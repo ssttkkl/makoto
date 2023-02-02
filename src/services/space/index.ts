@@ -20,6 +20,6 @@ export async function createFile(params: {
 }) {
   return await request('/api/v1/space', {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }

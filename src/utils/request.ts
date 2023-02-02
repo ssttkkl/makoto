@@ -63,10 +63,13 @@ export const request: IRequest = async (url, opts: any = {}) => {
     };
   }
 
+  console.debug('request: ', url, opts);
+
   const { getResponse } = opts;
 
   try {
     const resp = await originRequest(url, { ...opts, getResponse: true });
+    console.debug('response: ', resp, 'of request', url, opts);
     if (getResponse) {
       return resp;
     } else {
@@ -99,6 +102,8 @@ export const request: IRequest = async (url, opts: any = {}) => {
         refreshMutex.release();
       }
     }
+
+    console.error('error: ', error, 'of request', url, opts);
 
     // show error message
     if (error.response) {
