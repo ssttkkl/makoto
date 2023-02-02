@@ -1,4 +1,4 @@
-import User from '@/entities/user';
+import { User } from '../users/entities';
 import { request } from '@/utils/request';
 
 export async function getMyProfile(): Promise<User> {

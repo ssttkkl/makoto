@@ -1,35 +1,27 @@
-import Token from '@/entities/token';
-import User from '@/entities/user';
 import { request } from '@/utils/request';
+import { User } from '../users/entities';
+import Token from './entities';
 
-export interface LoginRequestBody {
-  username: string;
-  password: string;
-}
-
-export interface RefreshRequestBody {
-  refreshToken: string;
-}
-
-export interface AuthResponseBody {
+interface AuthResponseBody {
   token: Token;
   user: User;
 }
 
-export async function callLogin(
-  body: LoginRequestBody,
-): Promise<AuthResponseBody> {
-  return await request<AuthResponseBody>('/api/v1/auth/login', {
+export async function callLogin(params: {
+  username: string;
+  password: string;
+}): Promise<AuthResponseBody> {
+  return await request('/api/v1/auth/login', {
     method: 'POST',
-    data: body,
+    data: params,
   });
 }
 
-export async function callRefresh(
-  body: RefreshRequestBody,
-): Promise<AuthResponseBody> {
+export async function callRefresh(params: {
+  refreshToken: string;
+}): Promise<AuthResponseBody> {
   return await request<AuthResponseBody>('/api/v1/auth/refresh', {
     method: 'POST',
-    data: body,
+    data: params,
   });
 }

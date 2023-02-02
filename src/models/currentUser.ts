@@ -1,4 +1,4 @@
-import User from '@/entities/user';
+import { User } from '@/services/users/entities';
 import { getMyProfile } from '@/services/profiles';
 import { useEffect, useState } from 'react';
 import * as AuthService from '@/services/auth';

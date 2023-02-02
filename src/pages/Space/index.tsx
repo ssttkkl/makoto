@@ -1,57 +1,41 @@
-import FileList, { FileData } from '@/components/FileList';
+import FileTable from '@/components/FileTable';
 import { ArrowUpOutlined, UserOutlined } from '@ant-design/icons';
-import { useSearchParams } from '@umijs/max';
+import { useModel, useSearchParams } from '@umijs/max';
 import { Link } from '@umijs/max';
-import { Breadcrumb, Button, Space } from 'antd';
+import { Breadcrumb, Button, Space, Spin } from 'antd';
+import { useEffect } from 'react';
 
-const data: FileData[] = [
-  {
-    key: '1',
-    filename: 'A',
-    type: 'folder',
-    last_modified: '2023/1/30 16:18',
-  },
-  {
-    key: '2',
-    filename: 'B',
-    type: 'document',
-    last_modified: '2023/1/30 16:18',
-  },
-];
+const CurrentPath: React.FC<{ path: string }> = (props) => {
+  const path = props.path.split('/').filter((value) => value.length > 0);
 
-const CurrentPath: React.FC<{ pathname: string }> = (props) => {
-  const path = props.pathname.split('/').filter((value) => value.length > 0);
+  let targetPath = '';
+  let upperPath = '';
 
-  const items = [];
+  const items = path.map((p, idx) => {
+    upperPath = targetPath;
 
-  let targetPathname = '';
-  let upperPathname = '';
+    targetPath += '/';
+    targetPath += p;
 
-  for (let p of path) {
-    upperPathname = targetPathname;
-
-    targetPathname += '/';
-    targetPathname += p;
-
-    items.push(
-      <Breadcrumb.Item>
-        <Link to={'/space?pathname=' + targetPathname}>{p}</Link>
-      </Breadcrumb.Item>,
+    return (
+      <Breadcrumb.Item key={idx + 1}>
+        <Link to={'/space?path=' + targetPath}>{p}</Link>
+      </Breadcrumb.Item>
     );
-  }
+  });
 
   return (
     <Space>
-      <Link to={'/space?pathname=' + upperPathname}>
+      <Link to={'/space?path=' + upperPath}>
         <Button disabled={items.length === 0}>
           <ArrowUpOutlined />
         </Button>
       </Link>
       <Breadcrumb>
-        <Breadcrumb.Item>
+        <Breadcrumb.Item key={0}>
           <Link to="/space">
             <UserOutlined />
-            <span>My Space</span>
+            <span>我的空间</span>
           </Link>
         </Breadcrumb.Item>
         {items}
@@ -61,21 +45,37 @@ const CurrentPath: React.FC<{ pathname: string }> = (props) => {
 };
 
 const SpacePage: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const { setPath, data, error, loading } = useModel('Space.model');
 
-  let pathname = searchParams.get('pathname');
-  if (pathname === null || pathname === '/') {
-    pathname = '';
+  // 让参数的path单向同步到model里
+  const [searchParams] = useSearchParams();
+  let path = searchParams.get('path') ?? '';
+  path = path === '/' ? '' : path;
+  useEffect(() => setPath(path), [path]);
+
+  if (error) {
+    return <div>{error.message}</div>;
   }
 
   return (
-    <div>
-      <div style={{ margin: '0 0 16px 0' }}>
-        <CurrentPath pathname={pathname} />
-      </div>
+    <Spin spinning={loading}>
+      <div>
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          <CurrentPath path={path} />
 
-      <FileList pathname={pathname} data={data} />
-    </div>
+          <Space wrap>
+            <Button type="primary">新建文档</Button>
+            <Button>新建目录</Button>
+          </Space>
+
+          <FileTable
+            dataSource={data?.children}
+            pagination={false}
+            recordLink={(record) => `/space?path=${path}/${record.filename}`}
+          />
+        </Space>
+      </div>
+    </Spin>
   );
 };
 

@@ -1,19 +1,13 @@
-import User from '@/entities/user';
 import { request } from '@/utils/request';
+import { User } from './entities';
 
-export interface RegisterRequestBody {
+export async function register(params: {
   username: string;
   password: string;
   nickname: string;
-}
-
-export type RegisterResponseBody = User;
-
-export async function register(
-  body: RegisterRequestBody,
-): Promise<RegisterResponseBody> {
-  return await request<RegisterResponseBody>('/api/v1/users', {
+}): Promise<User> {
+  return await request('/api/v1/users', {
     method: 'POST',
-    data: body,
+    data: params,
   });
 }

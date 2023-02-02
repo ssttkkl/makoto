@@ -1,4 +1,4 @@
-import User from '@/entities/user';
+import { User } from '../users/entities';
 import { callLogin, callRefresh } from './api';
 import { getRefreshToken, setAccessToken, setRefreshToken } from './token';
 

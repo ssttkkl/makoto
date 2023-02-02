@@ -27,10 +27,12 @@
     ]
   },
   "dependencies": {
+    "@ahooksjs/use-request": "^2.8.15",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-components": "^2.0.1",
     "@ant-design/use-emotion-css": "^1.0.4",
     "@umijs/max": "^4.0.47",
+    "@umijs/plugin-model": "^2.6.2",
     "antd": "^5.0.0",
     "async-mutex": "^0.4.0"
   },
