@@ -4,7 +4,7 @@ import { Space, Table } from 'antd';
 import { ColumnsType, TableProps } from 'antd/es/table';
 import { FileOutlined, FolderOutlined } from '@ant-design/icons';
 import { Link } from '@umijs/max';
-import { FileInfo } from '@/services/space/entities';
+import { FileInfo } from '@/services/files/entities';
 
 export interface FileListProps extends TableProps<FileInfo> {
   recordLink: (record: FileInfo) => string;

@@ -31,26 +31,27 @@ export default defineConfig({
       name: '登录',
       path: '/login',
       component: './Login',
-      // 不展示顶栏
       headerRender: false,
-      // 不展示页脚
       footerRender: false,
-      // 不展示菜单
       menuRender: false,
-      // 隐藏自己和子菜单
       hideInMenu: true,
     },
     {
       name: '注册',
       path: '/register',
       component: './Register',
-      // 不展示顶栏
       headerRender: false,
-      // 不展示页脚
       footerRender: false,
-      // 不展示菜单
       menuRender: false,
-      // 隐藏自己和子菜单
+      hideInMenu: true,
+    },
+    {
+      name: '编辑文档',
+      path: '/doc',
+      component: './Doc',
+      headerRender: false,
+      footerRender: false,
+      menuRender: false,
       hideInMenu: true,
     },
   ],

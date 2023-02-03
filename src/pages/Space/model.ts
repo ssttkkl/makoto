@@ -1,5 +1,5 @@
 import { getFileInfo } from '@/services/space';
-import { FileInfo } from '@/services/space/entities';
+import { FileInfo } from '@/services/files/entities';
 import useRequest from '@ahooksjs/use-request';
 import { useState } from 'react';
 

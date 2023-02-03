@@ -1,7 +1,9 @@
 import { User } from '@/services/users/entities';
 import { getMyProfile } from '@/services/profiles';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import * as AuthService from '@/services/auth';
+import useRequest from '@ahooksjs/use-request';
+import { getRefreshToken } from '@/services/auth/token';
 
 export default () => {
   let [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -12,13 +14,23 @@ export default () => {
     originSetter(value);
   };
 
-  useEffect(() => {
-    getMyProfile().then(setCurrentUser).catch(console.error);
-  }, []);
+  useRequest(
+    async () => {
+      try {
+        const profile = await getMyProfile();
+        setCurrentUser(profile);
+      } catch (error) {
+        setCurrentUser(null);
+        throw error;
+      }
+    },
+    {
+      refreshDeps: [getRefreshToken()],
+    },
+  );
 
   const login = async (username: string, password: string) => {
-    const user = await AuthService.login(username, password);
-    setCurrentUser(user);
+    await AuthService.login(username, password);
   };
 
   const logout = async () => {

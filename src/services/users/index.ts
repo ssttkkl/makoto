@@ -9,5 +9,6 @@ export async function register(params: {
   return await request('/api/v1/users', {
     method: 'POST',
     data: params,
+    requireToken: false,
   });
 }
