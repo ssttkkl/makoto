@@ -1,46 +1,31 @@
-import { User } from '@/services/users/entities';
 import { getMyProfile } from '@/services/profiles';
-import { useState } from 'react';
 import * as AuthService from '@/services/auth';
-import useRequest from '@ahooksjs/use-request';
-import { getRefreshToken } from '@/services/auth/token';
+import { useRequest } from '@/utils/request';
+import { getRefreshToken } from '@/utils/token';
 
 export default () => {
-  let [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  const originSetter = setCurrentUser;
-  setCurrentUser = (value) => {
-    console.log('current profile', value);
-    originSetter(value);
-  };
-
-  useRequest(
-    async () => {
-      try {
-        const profile = await getMyProfile();
-        setCurrentUser(profile);
-      } catch (error) {
-        setCurrentUser(null);
-        throw error;
-      }
-    },
-    {
-      refreshDeps: [getRefreshToken()],
-    },
-  );
+  const { data, loading, refresh } = useRequest(async () => {
+    const refToken = getRefreshToken();
+    if (refToken) {
+      return await getMyProfile();
+    } else {
+      return null;
+    }
+  });
 
   const login = async (username: string, password: string) => {
     await AuthService.login(username, password);
+    refresh();
   };
 
   const logout = async () => {
     await AuthService.logout();
-    setCurrentUser(null);
+    refresh();
   };
 
   return {
-    currentUser,
-    setCurrentUser,
+    currentUser: data,
+    loading,
     login,
     logout,
   };

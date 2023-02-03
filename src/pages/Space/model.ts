@@ -1,7 +1,7 @@
 import { getFileInfo } from '@/services/space';
 import { FileInfo } from '@/services/files/entities';
-import useRequest from '@ahooksjs/use-request';
 import { useState } from 'react';
+import { useRequest } from '@/utils/request';
 
 export default () => {
   const [path, setPath] = useState('');

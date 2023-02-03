@@ -1,58 +1,13 @@
 import { refresh } from '@/services/auth';
-import { getAccessToken, getRefreshToken } from '@/services/auth/token';
-import { AxiosRequestConfig } from '@umijs/max';
-import { AxiosResponse } from '@umijs/max';
-import { history, request as originRequest } from '@umijs/max';
+import { getAccessToken, getRefreshToken } from '@/utils/token/holder';
+import {
+  history,
+  request as originRequest,
+  useRequest as originUseRequest,
+} from '@umijs/max';
 import { message } from 'antd';
 import { Mutex } from 'async-mutex';
-
-// copied from @umijs/max
-
-// request 方法 opts 参数的接口
-interface IRequestOptions extends AxiosRequestConfig {
-  requireToken?: boolean;
-  skipErrorHandler?: boolean;
-  requestInterceptors?: IRequestInterceptorTuple[];
-  responseInterceptors?: IResponseInterceptorTuple[];
-  [key: string]: any;
-}
-
-interface IRequestOptionsWithResponse extends IRequestOptions {
-  getResponse: true;
-}
-
-interface IRequestOptionsWithoutResponse extends IRequestOptions {
-  getResponse: false;
-}
-interface IRequest {
-  <T = any>(url: string, opts: IRequestOptionsWithResponse): Promise<
-    AxiosResponse<T>
-  >;
-  <T = any>(url: string, opts: IRequestOptionsWithoutResponse): Promise<T>;
-  <T = any>(url: string, opts: IRequestOptions): Promise<T>; // getResponse 默认是 false， 因此不提供该参数时，只返回 data
-  <T = any>(url: string): Promise<T>; // 不提供 opts 时，默认使用 'GET' method，并且默认返回 data
-}
-
-type IRequestInterceptorAxios = (config: IRequestOptions) => IRequestOptions;
-type IRequestInterceptorUmiRequest = (
-  url: string,
-  config: IRequestOptions,
-) => { url: string; options: IRequestOptions };
-type IRequestInterceptor =
-  | IRequestInterceptorAxios
-  | IRequestInterceptorUmiRequest;
-type IErrorInterceptor = (error: Error) => Promise<Error>;
-type IResponseInterceptor = <T = any>(
-  response: AxiosResponse<T>,
-) => AxiosResponse<T>;
-type IRequestInterceptorTuple =
-  | [IRequestInterceptor, IErrorInterceptor]
-  | [IRequestInterceptor]
-  | IRequestInterceptor;
-type IResponseInterceptorTuple =
-  | [IResponseInterceptor, IErrorInterceptor]
-  | [IResponseInterceptor]
-  | IResponseInterceptor;
+import { useRefreshToken } from './token';
 
 // 异常
 export class NoAccessTokenException extends Error {
@@ -123,7 +78,7 @@ async function on401<T>(action: () => Promise<T>): Promise<Awaited<T>> {
 }
 
 // request
-export const request: IRequest = async (url, opts: any = {}) => {
+export const request: typeof originRequest = async (url, opts: any = {}) => {
   if (opts?.requireToken ?? true) {
     if (getRefreshToken() === null) {
       return await on401(() => {
@@ -149,5 +104,18 @@ export const request: IRequest = async (url, opts: any = {}) => {
       console.debug('response: ', resp, 'of request', url, opts);
       return Promise.resolve(getResponse ? resp : resp.data);
     });
+  });
+};
+
+// useRequest
+export const useRequest: typeof originUseRequest = (
+  service: any,
+  options: any = {},
+) => {
+  const refToken = useRefreshToken();
+  return originUseRequest(service, {
+    ...options,
+    formatResult: (data) => data,
+    refreshDeps: [...(options?.refreshDeps ?? []), refToken],
   });
 };

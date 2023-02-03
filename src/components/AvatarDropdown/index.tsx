@@ -1,8 +1,4 @@
-import {
-  LogoutOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { history, useLocation, useModel } from '@umijs/max';
 import { Avatar, Spin } from 'antd';
@@ -52,8 +48,24 @@ const AvatarLogo = (props: { src?: string }) => {
   );
 };
 
+const menuItems = [
+  {
+    key: 'settings',
+    icon: <SettingOutlined />,
+    label: '个人设置',
+  },
+  {
+    type: 'divider' as const,
+  },
+  {
+    key: 'logout',
+    icon: <LogoutOutlined />,
+    label: '退出登录',
+  },
+];
+
 const AvatarDropdown: React.FC = () => {
-  const { currentUser, logout } = useModel('currentUser');
+  const { currentUser, loading, logout } = useModel('currentUser');
 
   const loc = useLocation();
 
@@ -92,57 +104,34 @@ const AvatarDropdown: React.FC = () => {
     [loginOut],
   );
 
-  const loading = (
-    <span className={actionClassName}>
-      <Spin
-        size="small"
-        style={{
-          marginLeft: 8,
-          marginRight: 8,
-        }}
-      />
-    </span>
-  );
-
-  if (!currentUser || !currentUser.nickname) {
-    return loading;
-  }
-
-  const menuItems = [
-    {
-      key: 'center',
-      icon: <UserOutlined />,
-      label: '个人中心',
-    },
-    {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: '个人设置',
-    },
-    {
-      type: 'divider' as const,
-    },
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: '退出登录',
-    },
-  ];
-
-  return (
-    <HeaderDropdown
-      menu={{
-        selectedKeys: [],
-        onClick: onMenuClick,
-        items: menuItems,
-      }}
-    >
+  if (loading) {
+    return (
       <span className={actionClassName}>
-        <AvatarLogo src={currentUser?.avatar} />
-        <Name name={currentUser?.nickname} />
+        <Spin
+          size="small"
+          style={{
+            marginLeft: 8,
+            marginRight: 8,
+          }}
+        />
       </span>
-    </HeaderDropdown>
-  );
+    );
+  } else {
+    return (
+      <HeaderDropdown
+        menu={{
+          selectedKeys: [],
+          onClick: onMenuClick,
+          items: menuItems,
+        }}
+      >
+        <span className={actionClassName}>
+          <AvatarLogo src={currentUser?.avatar} />
+          <Name name={currentUser?.nickname} />
+        </span>
+      </HeaderDropdown>
+    );
+  }
 };
 
 export default AvatarDropdown;

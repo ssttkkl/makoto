@@ -1,3 +1,7 @@
+import { EventEmitter } from 'events';
+
+export const tokenEventEmitter = new EventEmitter();
+
 let accessToken: string | null = null;
 
 export function getAccessToken(): string | null {
@@ -11,6 +15,7 @@ export function getRefreshToken(): string | null {
 export function setAccessToken(newToken: string | null) {
   accessToken = newToken;
   console.debug('new accessToken set');
+  tokenEventEmitter.emit('accessToken', newToken);
 }
 
 export function setRefreshToken(newToken: string | null) {
@@ -21,4 +26,5 @@ export function setRefreshToken(newToken: string | null) {
     localStorage.removeItem('refreshToken');
     console.debug('refreshToken was removed');
   }
+  tokenEventEmitter.emit('refreshToken', newToken);
 }
