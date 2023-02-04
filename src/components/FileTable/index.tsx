@@ -43,7 +43,7 @@ const FileTable: React.FC<FileListProps> = (props) => {
     },
   ];
 
-  return <Table columns={columns} rowKey="fid" {...props} />;
+  return <Table<FileInfo> columns={columns} rowKey="fid" {...props} />;
 };
 
 export default FileTable;

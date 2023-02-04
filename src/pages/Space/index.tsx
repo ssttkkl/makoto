@@ -1,91 +1,43 @@
 import FileTable from '@/components/FileTable';
 import { useModel, useSearchParams } from '@umijs/max';
-import { Button, ButtonProps, Space, Spin } from 'antd';
+import { Space, Spin } from 'antd';
 import { useEffect } from 'react';
 import PathBreadcrumb from '@/components/PathBreadcrumb';
-import { ModalForm, ProFormText } from '@ant-design/pro-components';
 import { UserOutlined } from '@ant-design/icons';
-import { mergePath } from '@/utils/path';
-import { createSpaceFile } from '@/services/space';
-
-const CreateFile: React.FC<{
-  title: string;
-  placeholder: string;
-  onFinish: (filename: string) => Promise<boolean>;
-  btnProps?: ButtonProps;
-}> = (props) => {
-  return (
-    <ModalForm<{ filename: string }>
-      title={props.title}
-      trigger={<Button {...props.btnProps}>{props.title}</Button>}
-      autoFocusFirstInput
-      modalProps={{ destroyOnClose: true }}
-      onFinish={(values) => props.onFinish(values.filename)}
-    >
-      <ProFormText name="filename" placeholder={props.placeholder} />
-    </ModalForm>
-  );
-};
-
-const CreateFolder: React.FC<{
-  basePath: string[];
-  onFinish?: () => void;
-  btnProps?: ButtonProps;
-}> = (props) => {
-  return (
-    <CreateFile
-      title="新建目录"
-      placeholder="目录名"
-      btnProps={props.btnProps}
-      onFinish={async (filename) => {
-        await createSpaceFile({
-          type: 'folder',
-          basePath: mergePath(props.basePath),
-          filename,
-        });
-        if (props?.onFinish) props.onFinish();
-        return true;
-      }}
-    />
-  );
-};
-
-const CreateDocument: React.FC<{
-  basePath: string[];
-  onFinish?: () => void;
-  btnProps?: ButtonProps;
-}> = (props) => {
-  return (
-    <CreateFile
-      title="新建文档"
-      placeholder="文档名"
-      btnProps={props.btnProps}
-      onFinish={async (filename) => {
-        await createSpaceFile({
-          type: 'document',
-          basePath: mergePath(props.basePath),
-          filename,
-        });
-        if (props?.onFinish) props.onFinish();
-        return true;
-      }}
-    />
-  );
-};
+import { mergePath, splitPath } from '@/utils/path';
+import { FileInfo } from '@/services/files/entities';
+import { TableRowSelection } from 'antd/es/table/interface';
+import OperationBar from './components/OperationBar';
 
 const SpacePage: React.FC = () => {
-  const { params, setParams, data, error, loading, refresh } =
-    useModel('Space.model');
+  const {
+    params,
+    setParams,
+    data,
+    error,
+    loading,
+    refresh,
+    selectedFiles,
+    setSelectedFiles,
+  } = useModel('Space.model');
 
   // 将参数单向同步到model里
   const [searchParams] = useSearchParams();
   useEffect(() => {
-    setParams(searchParams);
+    let path = splitPath(searchParams.get('path') ?? '');
+    setParams({ path });
   }, [searchParams]);
 
   if (error) {
     return <div>{error.message}</div>;
   }
+
+  const rowSelection: TableRowSelection<FileInfo> = {
+    selectedRowKeys: selectedFiles.map((value) => value.fid),
+    onChange: (_: React.Key[], selectedRows: FileInfo[]) => {
+      setSelectedFiles(selectedRows);
+    },
+  };
 
   return (
     <Spin spinning={loading}>
@@ -101,14 +53,13 @@ const SpacePage: React.FC = () => {
           itemLink={(path) => `/space?path=${mergePath(path)}`}
         />
 
-        <Space wrap>
-          <CreateDocument
-            basePath={params?.path}
-            btnProps={{ type: 'primary' }}
-            onFinish={refresh}
-          />
-          <CreateFolder basePath={params?.path} onFinish={refresh} />
-        </Space>
+        <OperationBar
+          path={params.path}
+          selectedFiles={selectedFiles}
+          refresh={async () => {
+            await refresh();
+          }}
+        />
 
         <FileTable
           dataSource={data?.children}
@@ -116,6 +67,7 @@ const SpacePage: React.FC = () => {
           recordLink={(record) =>
             `/space?path=${mergePath([...params.path, record.filename])}`
           }
+          rowSelection={rowSelection}
         />
       </Space>
     </Spin>
