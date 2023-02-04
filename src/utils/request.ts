@@ -61,15 +61,17 @@ async function refreshExclusive(): Promise<boolean> {
 async function on401<T>(action: () => Promise<T>): Promise<Awaited<T>> {
   try {
     return await action();
-  } catch (error) {
-    const loc = history.location;
-    if (loc.pathname !== '/login') {
-      if (await refreshExclusive()) {
-        console.log('re-sending request...');
-        return await action();
-      } else {
-        console.log('no token, redirecting to login page...');
-        history.push('/login?redirect=' + loc.pathname);
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const loc = history.location;
+      if (loc.pathname !== '/login') {
+        if (await refreshExclusive()) {
+          console.log('re-sending request...');
+          return await action();
+        } else {
+          console.log('no token, redirecting to login page...');
+          history.push('/login?redirect=' + loc.pathname);
+        }
       }
     }
 

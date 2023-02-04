@@ -51,6 +51,12 @@ export default defineConfig({
       component: './Doc',
       hideInMenu: true,
     },
+    {
+      name: '查看分享',
+      path: '/share',
+      component: './Share',
+      hideInMenu: true,
+    },
   ],
   npmClient: 'yarn',
 });

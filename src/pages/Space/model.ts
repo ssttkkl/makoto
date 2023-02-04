@@ -1,29 +1,44 @@
-import { getFileInfo } from '@/services/space';
-import { FileInfo } from '@/services/files/entities';
-import { useState } from 'react';
+import { FolderInfo } from '@/services/files/entities';
+import { getSpaceFileInfo } from '@/services/space';
+import { mergePath, splitPath } from '@/utils/path';
 import { useRequest } from '@/utils/request';
+import { sortFiles } from '@/utils/sortFiles';
+import { useState } from 'react';
+
+export interface SpacePageSearchParams {
+  path: string[];
+}
 
 export default () => {
-  const [path, setPath] = useState('');
+  const [params, originSetParams] = useState<SpacePageSearchParams>({
+    path: [],
+  });
 
-  const { data, error, loading, refresh } = useRequest(
+  const { data, loading, error, refresh } = useRequest(
     async () => {
-      const file = await getFileInfo({ path, depth: 1 });
+      const path = mergePath(params.path);
+      const file = (await getSpaceFileInfo({ path, depth: 1 })) as FolderInfo;
       if (file.children) {
-        file.children.sort((a: FileInfo, b: FileInfo) => {
-          if (a.type !== b.type) {
-            return a.type === 'folder' ? -1 : 1;
-          } else {
-            return a.filename.localeCompare(b.filename);
-          }
-        });
+        sortFiles(file.children);
       }
       return file;
     },
     {
-      refreshDeps: [path],
+      refreshDeps: [params],
     },
   );
 
-  return { path, setPath, data, error, loading, refresh };
+  function setParams(value: URLSearchParams) {
+    let path = splitPath(value.get('path') ?? '');
+    originSetParams({ path });
+  }
+
+  return {
+    params,
+    setParams,
+    data: data as FolderInfo,
+    loading,
+    error,
+    refresh,
+  };
 };

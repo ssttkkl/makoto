@@ -1,30 +1,29 @@
-import { ArrowUpOutlined, UserOutlined } from '@ant-design/icons';
+import { ArrowUpOutlined } from '@ant-design/icons';
 import { Link } from '@umijs/max';
 import { Breadcrumb, Button, Space } from 'antd';
 
 export interface PathBreadcrumbProps {
-  path: string;
-  itemLink: (path: string) => string;
+  home: React.ReactNode;
+  path: string[];
+  itemLink: (path: string[]) => string;
 }
 
 const PathBreadcrumb: React.FC<PathBreadcrumbProps> = (props) => {
-  const path = props.path.split('/').filter((value) => value.length > 0);
+  let targetPath: string[] = [];
+  let upperPath: string[] = [];
+  const items: React.ReactNode[] = [];
 
-  let targetPath = '';
-  let upperPath = '';
-
-  const items = path.map((p, idx) => {
-    upperPath = targetPath;
-
-    targetPath += '/';
-    targetPath += p;
-
-    return (
-      <Breadcrumb.Item key={`${idx + 1}-${p}`}>
-        <Link to={props.itemLink(targetPath)}>{p}</Link>
-      </Breadcrumb.Item>
+  for (let i = 0; i < props.path.length; i++) {
+    if (i > 0) {
+      upperPath.push(props.path[i - 1]);
+    }
+    targetPath.push(props.path[i]);
+    items.push(
+      <Breadcrumb.Item key={`${i + 1}-${props.path[i]}`}>
+        <Link to={props.itemLink(targetPath)}>{props.path[i]}</Link>
+      </Breadcrumb.Item>,
     );
-  });
+  }
 
   return (
     <Space>
@@ -35,10 +34,7 @@ const PathBreadcrumb: React.FC<PathBreadcrumbProps> = (props) => {
       </Link>
       <Breadcrumb>
         <Breadcrumb.Item key={0}>
-          <Link to={props.itemLink('/')}>
-            <UserOutlined />
-            <span>我的空间</span>
-          </Link>
+          <Link to={props.itemLink([])}>{props.home}</Link>
         </Breadcrumb.Item>
         {items}
       </Breadcrumb>
