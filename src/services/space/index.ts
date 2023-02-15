@@ -1,5 +1,11 @@
 import { request } from '@/utils/request';
-import { FileInfo, FileType } from '../files/entities';
+import {
+  DocumentInfo,
+  FileInfo,
+  FileType,
+  FolderInfo,
+  LinkInfo,
+} from '../files/entities';
 
 export async function getSpaceFileInfo(params: {
   depth?: number;
@@ -15,8 +21,19 @@ export async function createSpaceFile(params: {
   basePath?: string;
   filename: string;
   type: FileType;
-}) {
+}): Promise<DocumentInfo | FolderInfo> {
   return await request('/api/v1/space', {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function createSpaceLink(params: {
+  basePath: string;
+  shareId: number;
+  links: { filename: string; refPath: string }[];
+}): Promise<LinkInfo[]> {
+  return await request('/api/v1/space/link', {
     method: 'POST',
     data: params,
   });

@@ -1,6 +1,7 @@
 import { FileInfo, FolderInfo } from '@/services/files/entities';
 import { getShareFileInfo, getShareInfo } from '@/services/share';
 import { Share } from '@/services/share/entities';
+import { createSpaceLink } from '@/services/space';
 import { mergePath } from '@/utils/path';
 import { useRequest } from '@/utils/request';
 import { sortFiles } from '@/utils/sortFiles';
@@ -56,6 +57,20 @@ export default () => {
   const loading = share.loading || files.loading;
   const error = share.error ?? files.error;
 
+  async function createLink(files: FileInfo[]) {
+    if (params.shareId === undefined) {
+      return;
+    }
+
+    await createSpaceLink({
+      basePath: '/',
+      shareId: params.shareId,
+      links: files.map((x) => {
+        return { filename: x.filename, refPath: mergePath(params.path) };
+      }),
+    });
+  }
+
   return {
     params,
     setParams,
@@ -63,5 +78,6 @@ export default () => {
     files: files.data as FileInfo[] | undefined,
     loading,
     error,
+    createLink,
   };
 };

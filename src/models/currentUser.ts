@@ -2,6 +2,7 @@ import { getMyProfile } from '@/services/profiles';
 import * as AuthService from '@/services/auth';
 import { useRequest } from '@/utils/request';
 import { getRefreshToken } from '@/utils/token';
+import { User } from '@/services/users/entities';
 
 export default () => {
   const { data, loading, refresh } = useRequest(async () => {
@@ -9,7 +10,7 @@ export default () => {
     if (refToken) {
       return await getMyProfile();
     } else {
-      return null;
+      return undefined;
     }
   });
 
@@ -24,7 +25,7 @@ export default () => {
   };
 
   return {
-    currentUser: data,
+    currentUser: data as User,
     loading,
     login,
     logout,

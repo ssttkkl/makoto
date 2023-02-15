@@ -5,11 +5,13 @@ import { StarOutlined, UserOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { useSearchParams } from '@umijs/max';
-import { Button, Space, Spin } from 'antd';
+import { Button, message, Space, Spin } from 'antd';
 import { useEffect } from 'react';
 
 const SharePage: React.FC = () => {
-  const { error, params, setParams, share, files } = useModel('Share.model');
+  const { currentUser } = useModel('currentUser');
+  const { params, setParams, loading, error, share, files, createLink } =
+    useModel('Share.model');
 
   // 将参数单向同步到model里
   const [searchParams] = useSearchParams();
@@ -25,12 +27,19 @@ const SharePage: React.FC = () => {
     setParams({ shareId, path });
   }, [searchParams]);
 
+  async function onClickAllLink() {
+    if (files !== undefined) {
+      await createLink(files);
+      message.success('成功');
+    }
+  }
+
   if (error) {
     return <div>{error.message}</div>;
   }
 
   return (
-    <Spin spinning={false}>
+    <Spin spinning={loading}>
       <PageContainer
         title={share?.name}
         extra={
@@ -38,7 +47,9 @@ const SharePage: React.FC = () => {
             <Button type="primary" icon={<StarOutlined />}>
               收藏
             </Button>
-            <Button>全部链接到我的空间</Button>
+            {share?.ownerUid !== currentUser?.uid ? (
+              <Button onClick={onClickAllLink}>全部链接到我的空间</Button>
+            ) : null}
           </Space>
         }
       >
