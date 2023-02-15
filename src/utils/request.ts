@@ -10,7 +10,7 @@ import { Mutex } from 'async-mutex';
 import { useRefreshToken } from './token';
 
 // 异常
-export class NoAccessTokenException extends Error {
+export class NoRefreshTokenException extends Error {
   constructor() {
     super('No access token!');
   }
@@ -62,7 +62,10 @@ async function on401<T>(action: () => Promise<T>): Promise<Awaited<T>> {
   try {
     return await action();
   } catch (error: any) {
-    if (error.response && error.response.status === 401) {
+    if (
+      error instanceof NoRefreshTokenException ||
+      (error.response && error.response.status === 401)
+    ) {
       const loc = history.location;
       if (loc.pathname !== '/login') {
         if (await refreshExclusive()) {
@@ -81,10 +84,10 @@ async function on401<T>(action: () => Promise<T>): Promise<Awaited<T>> {
 
 // request
 export const request: typeof originRequest = async (url, opts: any = {}) => {
-  if (opts?.requireToken ?? true) {
+  if (opts?.requireToken !== false) {
     if (getRefreshToken() === null) {
       return await on401(() => {
-        throw new NoAccessTokenException();
+        throw new NoRefreshTokenException();
       });
     } else if (getAccessToken() === null) {
       await refreshExclusive();
