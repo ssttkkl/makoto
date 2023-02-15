@@ -64,9 +64,16 @@ const SpacePage: React.FC = () => {
         <FileTable
           dataSource={data?.children}
           pagination={false}
-          recordLink={(record) =>
-            `/space?path=${mergePath([...params.path, record.filename])}`
-          }
+          recordLink={(record) => {
+            if (record.type === 'folder') {
+              return `/space?path=${mergePath([
+                ...params.path,
+                record.filename,
+              ])}`;
+            } else {
+              return `/doc?fid=${record.fid}`;
+            }
+          }}
           rowSelection={rowSelection}
         />
       </Space>

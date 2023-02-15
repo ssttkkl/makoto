@@ -59,12 +59,16 @@ const SharePage: React.FC = () => {
           <FileTable
             dataSource={files}
             pagination={false}
-            recordLink={(record) =>
-              `/share?shareId=${params.shareId}&path=${mergePath([
-                ...params.path,
-                record.filename,
-              ])}`
-            }
+            recordLink={(record) => {
+              if (record.type === 'folder') {
+                return `/share?shareId=${params.shareId}&path=${mergePath([
+                  ...params.path,
+                  record.filename,
+                ])}`;
+              } else {
+                return `/doc?shareId=${params.shareId}&fid=${record.fid}`;
+              }
+            }}
           />
         </Space>
       </PageContainer>
