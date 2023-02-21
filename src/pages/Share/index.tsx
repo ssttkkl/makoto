@@ -41,7 +41,7 @@ const SharePage: React.FC = () => {
   return (
     <Spin spinning={loading}>
       <PageContainer
-        title={share?.name}
+        title={share?.title}
         extra={
           <Space>
             <Button type="primary" icon={<StarOutlined />}>

@@ -23,7 +23,7 @@ export async function getShareFileInfo(params: {
 }
 
 export async function createShare(params: {
-  name: string;
+  title: string;
   filePath: string[];
   permission: FilePermissionEnum;
   expiresIn: number;

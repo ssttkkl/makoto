@@ -14,7 +14,7 @@ import {
 } from 'antd';
 
 interface CreateShareFormData {
-  name: string;
+  title: string;
   expiresIn: string;
   permission: FilePermissionEnum;
   allowLink: boolean;
@@ -45,7 +45,7 @@ const CreateShareFormButton: React.FC<{
     }
 
     const share = await createShare({
-      name: values.name,
+      title: values.title,
       filePath: props.files.map((value) =>
         mergePath([...props.path, value.filename]),
       ),
@@ -78,8 +78,8 @@ const CreateShareFormButton: React.FC<{
       onFinish={onFinish}
     >
       <Form.Item
-        name="name"
-        label="分享名"
+        name="title"
+        label="分享标题"
         initialValue={props.files[0].filename}
       >
         <Input />

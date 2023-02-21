@@ -2,7 +2,7 @@ import { FileInfo } from '../files/entities';
 
 export interface Share {
   shareId: number;
-  name: string;
+  title: string;
   ownerUid: number;
   files: FileInfo[];
   permission: number;
