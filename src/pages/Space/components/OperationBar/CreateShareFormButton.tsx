@@ -1,17 +1,8 @@
 import { FileInfo, FilePermissionEnum } from '@/services/files/entities';
 import { createShare } from '@/services/share';
 import { mergePath } from '@/utils/path';
-import { ShareAltOutlined } from '@ant-design/icons';
-import { ModalForm } from '@ant-design/pro-components';
-import {
-  Button,
-  ButtonProps,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Radio,
-} from 'antd';
+import { ModalForm, ModalFormProps } from '@ant-design/pro-components';
+import { Form, Input, InputNumber, Modal, Radio } from 'antd';
 
 interface CreateShareFormData {
   title: string;
@@ -21,19 +12,14 @@ interface CreateShareFormData {
   customExpirationDays: number;
 }
 
-const CreateShareFormButton: React.FC<{
-  path: string[];
-  files: FileInfo[];
-  onFinish?: () => Promise<void>;
-  btnProps?: ButtonProps;
-}> = (props) => {
+const CreateShareForm: React.FC<
+  ModalFormProps<CreateShareFormData> & {
+    path: string[];
+    files: FileInfo[];
+    onFinish?: () => Promise<void>;
+  }
+> = ({ path, files, onFinish: _onFinish, ...modalFormProps }) => {
   const [form] = Form.useForm<CreateShareFormData>();
-
-  const triggerBtn = (
-    <Button icon={<ShareAltOutlined />} {...props.btnProps}>
-      分享
-    </Button>
-  );
 
   const onFinish = async (values: CreateShareFormData) => {
     // 转换为毫秒
@@ -46,9 +32,7 @@ const CreateShareFormButton: React.FC<{
 
     const share = await createShare({
       title: values.title,
-      filePath: props.files.map((value) =>
-        mergePath([...props.path, value.filename]),
-      ),
+      filePath: files.map((value) => mergePath([...path, value.filename])),
       permission: values.permission,
       expiresIn,
       allowLink: values.allowLink,
@@ -62,8 +46,8 @@ const CreateShareFormButton: React.FC<{
       content: <a href={shareLink}>{shareLink}</a>,
     });
 
-    if (props.onFinish) {
-      await props.onFinish();
+    if (_onFinish) {
+      await _onFinish();
     }
     return true;
   };
@@ -72,16 +56,12 @@ const CreateShareFormButton: React.FC<{
     <ModalForm<CreateShareFormData>
       title="创建分享"
       form={form}
-      trigger={triggerBtn}
       autoFocusFirstInput
       modalProps={{ destroyOnClose: true }}
       onFinish={onFinish}
+      {...modalFormProps}
     >
-      <Form.Item
-        name="title"
-        label="分享标题"
-        initialValue={props.files[0].filename}
-      >
+      <Form.Item name="title" label="分享标题" initialValue={files[0].filename}>
         <Input />
       </Form.Item>
 
@@ -90,7 +70,7 @@ const CreateShareFormButton: React.FC<{
           <Radio value="1d">1天</Radio>
           <Radio value="7d">7天</Radio>
           <Radio value="30d">30天</Radio>
-          <Radio value="custom" {...props}>
+          <Radio value="custom">
             <Form.Item name="customExpirationDays" noStyle>
               <InputNumber
                 size="small"
@@ -133,4 +113,4 @@ const CreateShareFormButton: React.FC<{
   );
 };
 
-export default CreateShareFormButton;
+export default CreateShareForm;

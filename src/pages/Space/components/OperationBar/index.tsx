@@ -1,48 +1,143 @@
+import TooltipButton from '@/components/TooltipButton';
 import { FileInfo } from '@/services/files/entities';
-import { Button, Space } from 'antd';
+import {
+  CopyOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  FileOutlined,
+  FolderOutlined,
+  ScissorOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons';
+import { useModel } from '@umijs/max';
+import { ButtonProps, Space } from 'antd';
+import { ReactElement } from 'react';
 import {
   CreateDocumentFormButton,
   CreateFolderFormButton,
 } from './CreateFileFormButton';
-import CreateShareFormButton from './CreateShareFormButton';
+import CreateShareForm from './CreateShareFormButton';
 
-const OperationBar: React.FC<{
-  path: string[];
-  selectedFiles: FileInfo[];
-  refresh: () => Promise<void>;
-}> = (props) => {
+const SpaceOperationBar: React.FC<{
+  files?: FileInfo[];
+  mini?: boolean;
+  onClickItem?: (item: ReactElement) => Promise<void>;
+}> = ({ files: _files, mini: _mini }) => {
+  const model = useModel('Space.model');
+
+  const files = _files === undefined ? model.selectedFiles : _files;
+  const mini = _mini === true;
+
+  const extraBtnProps: ButtonProps = {};
+  if (mini) {
+    extraBtnProps.size = 'small';
+    extraBtnProps.children = null;
+    extraBtnProps.type = 'text';
+  }
+
   const btn: React.ReactNode[] = [];
-  if (props.selectedFiles.length !== 0) {
+  if (files.length !== 0) {
+    if (!mini) {
+      btn.push(
+        <CreateShareForm
+          key="share"
+          path={model.params.path}
+          files={files}
+          trigger={
+            <TooltipButton
+              icon={<ShareAltOutlined />}
+              type="primary"
+              children="分享"
+              title="分享"
+              hideTootip={!mini}
+              {...extraBtnProps}
+            />
+          }
+        />,
+      );
+    }
+
     btn.push(
-      <CreateShareFormButton
-        key="share"
-        path={props.path}
-        files={props.selectedFiles}
-        btnProps={{ type: 'primary' }}
+      <TooltipButton
+        icon={<CopyOutlined />}
+        children="复制"
+        title="复制"
+        hideTootip={!mini}
+        {...extraBtnProps}
       />,
     );
-    btn.push(<Button>复制</Button>);
-    btn.push(<Button>移动</Button>);
-    btn.push(<Button danger>删除</Button>);
 
-    if (props.selectedFiles.length === 1) {
-      btn.push(<Button>重命名</Button>);
+    btn.push(
+      <TooltipButton
+        icon={<ScissorOutlined />}
+        children="移动"
+        title="移动"
+        hideTootip={!mini}
+        {...extraBtnProps}
+      />,
+    );
+
+    btn.push(
+      <TooltipButton
+        icon={<DeleteOutlined />}
+        children="删除"
+        title="删除"
+        hideTootip={!mini}
+        danger
+        {...extraBtnProps}
+      />,
+    );
+
+    if (files.length === 1) {
+      btn.push(
+        <TooltipButton
+          icon={<EditOutlined />}
+          children="重命名"
+          title="重命名"
+          hideTootip={!mini}
+          {...extraBtnProps}
+        />,
+      );
     }
   } else {
     btn.push(
       <CreateDocumentFormButton
         key="create-document"
-        basePath={props.path}
-        btnProps={{ type: 'primary' }}
-        onFinish={props.refresh}
+        basePath={model.params.path}
+        onFinish={async () => {
+          await model.refresh();
+          return true;
+        }}
+        trigger={
+          <TooltipButton
+            icon={<FileOutlined />}
+            type="primary"
+            children="新建文档"
+            title="新建文档"
+            hideTootip={!mini}
+            {...extraBtnProps}
+          />
+        }
       />,
     );
 
     btn.push(
       <CreateFolderFormButton
         key="create-folder"
-        basePath={props.path}
-        onFinish={props.refresh}
+        basePath={model.params.path}
+        trigger={
+          <TooltipButton
+            icon={<FolderOutlined />}
+            children="新建目录"
+            title="新建目录"
+            hideTootip={!mini}
+            {...extraBtnProps}
+          />
+        }
+        onFinish={async () => {
+          await model.refresh();
+          return true;
+        }}
       />,
     );
   }
@@ -50,4 +145,4 @@ const OperationBar: React.FC<{
   return <Space wrap>{btn}</Space>;
 };
 
-export default OperationBar;
+export default SpaceOperationBar;

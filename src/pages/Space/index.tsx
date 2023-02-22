@@ -7,7 +7,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { mergePath, splitPath } from '@/utils/path';
 import { FileInfo } from '@/services/files/entities';
 import { TableRowSelection } from 'antd/es/table/interface';
-import OperationBar from './components/OperationBar';
+import SpaceOperationBar from './components/OperationBar';
 
 const SpacePage: React.FC = () => {
   const {
@@ -16,7 +16,6 @@ const SpacePage: React.FC = () => {
     data,
     error,
     loading,
-    refresh,
     selectedFiles,
     setSelectedFiles,
   } = useModel('Space.model');
@@ -28,16 +27,16 @@ const SpacePage: React.FC = () => {
     setParams({ path });
   }, [searchParams]);
 
-  if (error) {
-    return <div>{error.message}</div>;
-  }
-
   const rowSelection: TableRowSelection<FileInfo> = {
     selectedRowKeys: selectedFiles.map((value) => value.fid),
     onChange: (_: React.Key[], selectedRows: FileInfo[]) => {
       setSelectedFiles(selectedRows);
     },
   };
+
+  if (error) {
+    return <div>{error.message}</div>;
+  }
 
   return (
     <Spin spinning={loading}>
@@ -53,13 +52,7 @@ const SpacePage: React.FC = () => {
           itemLink={(path) => `/space?path=${mergePath(path)}`}
         />
 
-        <OperationBar
-          path={params.path}
-          selectedFiles={selectedFiles}
-          refresh={async () => {
-            await refresh();
-          }}
-        />
+        <SpaceOperationBar />
 
         <FileTable
           dataSource={data?.children}
@@ -75,6 +68,9 @@ const SpacePage: React.FC = () => {
             }
           }}
           rowSelection={rowSelection}
+          renderFileOperation={(record) => (
+            <SpaceOperationBar mini files={[record]} />
+          )}
         />
       </Space>
     </Spin>
