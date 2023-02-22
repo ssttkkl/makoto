@@ -9,4 +9,5 @@ export interface Share {
   allowLink: boolean;
   ctime: Date;
   etime: Date;
+  fav?: boolean;
 }

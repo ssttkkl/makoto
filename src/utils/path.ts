@@ -1,12 +1,14 @@
-export function mergePath(pathArray: string[]): string {
-  let path = '';
-  for (const p of pathArray) {
-    path += '/';
-    path += p;
+export type FilePath = string[];
+
+export function mergePath(path: FilePath): string {
+  let rawPath = '';
+  for (const p of path) {
+    rawPath += '/';
+    rawPath += p;
   }
-  return path;
+  return rawPath;
 }
 
-export function splitPath(path: string): string[] {
-  return path.split('/').filter((v) => v.length > 0);
+export function splitPath(rawPath: string): FilePath {
+  return rawPath.split('/').filter((v) => v.length > 0);
 }

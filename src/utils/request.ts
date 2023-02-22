@@ -17,19 +17,7 @@ export class NoRefreshTokenException extends Error {
 }
 
 // 异常时显示消息
-function onErrorShowMessage<T>(
-  action: () => Promise<T>,
-  rethrow?: true,
-): Promise<T>;
-function onErrorShowMessage<T>(
-  action: () => Promise<T>,
-  rethrow?: false,
-): Promise<T | undefined>;
-
-async function onErrorShowMessage<T>(
-  action: () => Promise<T>,
-  rethrow?: boolean,
-): Promise<T | undefined> {
+async function onErrorShowMessage<T>(action: () => Promise<T>): Promise<T> {
   try {
     return await action();
   } catch (error: any) {
@@ -40,9 +28,7 @@ async function onErrorShowMessage<T>(
       message.error('发送请求时出了一点问题');
     }
 
-    if (rethrow === true) {
-      throw error;
-    }
+    throw error;
   }
 }
 

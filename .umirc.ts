@@ -55,6 +55,7 @@ export default defineConfig({
       name: '查看分享',
       path: '/share',
       component: './Share',
+      target: '_blank',
       hideInMenu: true,
     },
   ],

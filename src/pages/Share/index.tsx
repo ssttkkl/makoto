@@ -1,17 +1,18 @@
 import FileTable from '@/components/FileTable';
 import PathBreadcrumb from '@/components/PathBreadcrumb';
+import { FileInfo } from '@/services/files/entities';
 import { mergePath, splitPath } from '@/utils/path';
-import { StarOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { useSearchParams } from '@umijs/max';
-import { Button, message, Space, Spin } from 'antd';
+import { Space, Spin } from 'antd';
+import { TableRowSelection } from 'antd/es/table/interface';
 import { useEffect } from 'react';
+import { ShareOperationBar } from './components/OperationBar';
 
 const SharePage: React.FC = () => {
-  const { currentUser } = useModel('currentUser');
-  const { params, setParams, loading, error, share, files, createLink } =
-    useModel('Share.model');
+  const model = useModel('Share.model');
 
   // 将参数单向同步到model里
   const [searchParams] = useSearchParams();
@@ -24,35 +25,23 @@ const SharePage: React.FC = () => {
       shareId = Number.parseInt(rawShareId);
     }
 
-    setParams({ shareId, path });
+    model.setParams({ shareId, path });
   }, [searchParams]);
 
-  async function onClickAllLink() {
-    if (files !== undefined) {
-      await createLink(files);
-      message.success('成功');
-    }
+  if (model.error) {
+    return <div>{model.error.message}</div>;
   }
 
-  if (error) {
-    return <div>{error.message}</div>;
-  }
+  const rowSelection: TableRowSelection<FileInfo> = {
+    selectedRowKeys: model.selectedFiles.map((value) => value.fid),
+    onChange: (_: React.Key[], selectedRows: FileInfo[]) => {
+      model.setSelectedFiles(selectedRows);
+    },
+  };
 
   return (
-    <Spin spinning={loading}>
-      <PageContainer
-        title={share?.title}
-        extra={
-          <Space>
-            <Button type="primary" icon={<StarOutlined />}>
-              收藏
-            </Button>
-            {share?.ownerUid !== currentUser?.uid ? (
-              <Button onClick={onClickAllLink}>全部链接到我的空间</Button>
-            ) : null}
-          </Space>
-        }
-      >
+    <Spin spinning={model.loading}>
+      <PageContainer title={model.share?.title} extra={<ShareOperationBar />}>
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
           <PathBreadcrumb
             home={
@@ -61,25 +50,25 @@ const SharePage: React.FC = () => {
                 <span>分享</span>
               </>
             }
-            path={params.path}
+            path={model.params.path}
             itemLink={(path) =>
-              `/share?shareId=${params.shareId}&path=${mergePath(path)}`
+              `/share?shareId=${model.params.shareId}&path=${mergePath(path)}`
             }
           />
 
           <FileTable
-            dataSource={files}
+            dataSource={model.files}
             pagination={false}
             recordLink={(record) => {
               if (record.type === 'folder') {
-                return `/share?shareId=${params.shareId}&path=${mergePath([
-                  ...params.path,
-                  record.filename,
-                ])}`;
+                return `/share?shareId=${model.params.shareId}&path=${mergePath(
+                  [...model.params.path, record.filename],
+                )}`;
               } else {
-                return `/doc?shareId=${params.shareId}&fid=${record.fid}`;
+                return `/doc?shareId=${model.params.shareId}&fid=${record.fid}`;
               }
             }}
+            rowSelection={rowSelection}
           />
         </Space>
       </PageContainer>

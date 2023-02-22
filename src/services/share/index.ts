@@ -34,3 +34,23 @@ export async function createShare(params: {
     data: params,
   });
 }
+
+export async function favShare(params: { shareId: number }): Promise<void> {
+  return await request('/api/v1/share/fav', {
+    method: 'PUT',
+    params,
+  });
+}
+export async function unfavShare(params: { shareId: number }): Promise<void> {
+  return await request('/api/v1/share/fav', {
+    method: 'DELETE',
+    params,
+  });
+}
+
+export async function expireShare(params: { shareId: number }): Promise<void> {
+  return await request('/api/v1/share/expired', {
+    method: 'PUT',
+    params,
+  });
+}
