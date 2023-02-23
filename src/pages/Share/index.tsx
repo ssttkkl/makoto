@@ -25,7 +25,7 @@ const SharePage: React.FC = () => {
       shareId = Number.parseInt(rawShareId);
     }
 
-    model.setParams({ shareId, path });
+    model.updateParams({ shareId, path });
   }, [searchParams]);
 
   if (model.error) {

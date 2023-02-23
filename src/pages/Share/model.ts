@@ -1,6 +1,11 @@
 import { FileInfo, FolderInfo } from '@/services/files/entities';
-import { getShareFileInfo, getShareInfo } from '@/services/share';
+import {
+  getShareFileInfo,
+  getShareInfo,
+  putShareAccessRecord,
+} from '@/services/share';
 import { Share } from '@/services/share/entities';
+import { useUpdater } from '@/utils/hooks';
 import { mergePath } from '@/utils/path';
 import { useRequest } from '@/utils/request';
 import { sortFiles } from '@/utils/sortFiles';
@@ -12,7 +17,7 @@ export interface SharePageSearchParams {
 }
 
 export default () => {
-  const [params, setParams] = useState<SharePageSearchParams>({
+  const [params, updateParams] = useUpdater<SharePageSearchParams>({
     path: [],
   });
 
@@ -22,7 +27,9 @@ export default () => {
         return undefined;
       }
 
-      return await getShareInfo({ shareId: params.shareId });
+      const result = await getShareInfo({ shareId: params.shareId });
+      await putShareAccessRecord({ shareId: params.shareId });
+      return result;
     },
     {
       refreshDeps: [params.shareId],
@@ -60,7 +67,7 @@ export default () => {
 
   return {
     params,
-    setParams,
+    updateParams,
     share: share.data as Share | undefined,
     files: files.data as FileInfo[] | undefined,
     refresh: share.refresh,

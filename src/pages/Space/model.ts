@@ -1,16 +1,17 @@
 import { FileInfo, FolderInfo } from '@/services/files/entities';
 import { getSpaceFileInfo } from '@/services/space';
-import { mergePath } from '@/utils/path';
+import { FilePath, mergePath } from '@/utils/path';
 import { useRequest } from '@/utils/request';
 import { sortFiles } from '@/utils/sortFiles';
 import { useState } from 'react';
+import { useUpdater } from '@/utils/hooks';
 
 export interface SpacePageSearchParams {
-  path: string[];
+  path: FilePath;
 }
 
 export default () => {
-  const [params, setParams] = useState<SpacePageSearchParams>({
+  const [params, updateParams] = useUpdater<SpacePageSearchParams>({
     path: [],
   });
 
@@ -24,7 +25,7 @@ export default () => {
       return file;
     },
     {
-      refreshDeps: [params],
+      refreshDeps: [params.path],
     },
   );
 
@@ -32,7 +33,7 @@ export default () => {
 
   return {
     params,
-    setParams,
+    updateParams,
     data: data as FolderInfo,
     loading,
     error,

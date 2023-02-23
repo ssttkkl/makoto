@@ -10,36 +10,33 @@ import { TableRowSelection } from 'antd/es/table/interface';
 import SpaceOperationBar from './SpaceOperationBar';
 
 const SpacePage: React.FC = () => {
-  const {
-    params,
-    setParams,
-    data,
-    error,
-    loading,
-    selectedFiles,
-    setSelectedFiles,
-  } = useModel('Space.model');
+  const model = useModel('Space.model');
+
+  // 在从别的页面切换回来时刷新数据
+  useEffect(() => {
+    model.refresh();
+  }, []);
 
   // 将参数单向同步到model里
   const [searchParams] = useSearchParams();
   useEffect(() => {
     let path = splitPath(searchParams.get('path') ?? '');
-    setParams({ path });
+    model.updateParams({ path });
   }, [searchParams]);
 
   const rowSelection: TableRowSelection<FileInfo> = {
-    selectedRowKeys: selectedFiles.map((value) => value.fid),
+    selectedRowKeys: model.selectedFiles.map((value) => value.fid),
     onChange: (_: React.Key[], selectedRows: FileInfo[]) => {
-      setSelectedFiles(selectedRows);
+      model.setSelectedFiles(selectedRows);
     },
   };
 
-  if (error) {
-    return <div>{error.message}</div>;
+  if (model.error) {
+    return <div>{model.error.message}</div>;
   }
 
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={model.loading}>
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
         <PathBreadcrumb
           home={
@@ -48,19 +45,19 @@ const SpacePage: React.FC = () => {
               <span>我的空间</span>
             </>
           }
-          path={params.path}
+          path={model.params.path}
           itemLink={(path) => `/space?path=${mergePath(path)}`}
         />
 
         <SpaceOperationBar />
 
         <FileTable
-          dataSource={data?.children}
+          dataSource={model.data?.children}
           pagination={false}
           recordLink={(record) => {
             if (record instanceof FolderInfo) {
               return `/space?path=${mergePath([
-                ...params.path,
+                ...model.params.path,
                 record.filename,
               ])}`;
             } else {

@@ -5,9 +5,15 @@ import { TableRowSelection } from 'antd/es/table/interface';
 import { Share } from '@/services/share/entities';
 import { FavSharesOperationBar } from './FavShareOperationBar';
 import { PageContainer } from '@ant-design/pro-components';
+import { useEffect } from 'react';
 
 const FavSharesPage: React.FC = () => {
   const model = useModel('FavShares.model');
+
+  // 在从别的页面切换回来时刷新数据
+  useEffect(() => {
+    model.refresh();
+  }, []);
 
   if (model.error) {
     return <div>{model.error.message}</div>;

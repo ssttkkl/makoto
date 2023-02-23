@@ -4,9 +4,15 @@ import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
+import { useEffect } from 'react';
 
 const OwnSharesPage: React.FC = () => {
   const model = useModel('OwnShares.model');
+
+  // 在从别的页面切换回来时刷新数据
+  useEffect(() => {
+    model.refresh();
+  }, []);
 
   if (model.error) {
     return <div>{model.error.message}</div>;
