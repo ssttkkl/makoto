@@ -53,11 +53,14 @@ export async function getOwnShares(): Promise<Share[]> {
   );
 }
 
-export async function getFavShares(): Promise<ShareFav[]> {
+export async function getFavShares(
+  params: { excludeExpired?: boolean } = {},
+): Promise<ShareFav[]> {
   return plainToInstance(
     ShareFav,
     (await request('/api/v1/share/fav', {
       method: 'GET',
+      params,
     })) as any[],
   );
 }

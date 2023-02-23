@@ -14,8 +14,8 @@ export default () => {
     shares: data as Share[] | undefined,
     loading,
     error,
+    refresh,
     selectedShares,
     setSelectedShares,
-    refresh,
   };
 };

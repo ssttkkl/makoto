@@ -1,6 +1,6 @@
 import FileTable from '@/components/FileTable';
 import PathBreadcrumb from '@/components/PathBreadcrumb';
-import { FileInfo } from '@/services/files/entities';
+import { FileInfo, FolderInfo } from '@/services/files/entities';
 import { mergePath, splitPath } from '@/utils/path';
 import { UserOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
@@ -64,7 +64,7 @@ const SharePage: React.FC = () => {
             dataSource={model.files}
             pagination={false}
             recordLink={(record) => {
-              if (record.type === 'folder') {
+              if (record instanceof FolderInfo) {
                 return `/share?shareId=${model.params.shareId}&path=${mergePath(
                   [...model.params.path, record.filename],
                 )}`;

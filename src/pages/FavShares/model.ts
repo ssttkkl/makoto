@@ -4,9 +4,16 @@ import { useRequest } from '@/utils/request';
 import { useState } from 'react';
 
 export default () => {
-  const { data, loading, error, refresh } = useRequest(async () => {
-    return await getFavShares();
-  });
+  const [excludeExpired, setExcludeExpired] = useState<boolean>(false);
+
+  const { data, loading, error, refresh } = useRequest(
+    async () => {
+      return await getFavShares({ excludeExpired });
+    },
+    {
+      refreshDeps: [excludeExpired],
+    },
+  );
 
   const [selectedShares, setSelectedShares] = useState<Share[]>([]);
 
@@ -14,8 +21,10 @@ export default () => {
     shares: (data as ShareFav[] | undefined)?.map((x: ShareFav) => x.share),
     loading,
     error,
+    refresh,
     selectedShares,
     setSelectedShares,
-    refresh,
+    excludeExpired,
+    setExcludeExpired,
   };
 };

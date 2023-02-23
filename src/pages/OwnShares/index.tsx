@@ -1,5 +1,6 @@
 import ShareTable from '@/components/ShareTable';
 import { Share } from '@/services/share/entities';
+import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
@@ -20,12 +21,14 @@ const OwnSharesPage: React.FC = () => {
 
   return (
     <Spin spinning={false}>
-      <ShareTable
-        dataSource={model.shares}
-        pagination={false}
-        rowSelection={rowSelection}
-        selectColumns={['title', 'permission', 'ctime', 'etime']}
-      />
+      <PageContainer breadcrumb={undefined}>
+        <ShareTable
+          dataSource={model.shares}
+          pagination={false}
+          rowSelection={rowSelection}
+          selectColumns={['title', 'permission', 'ctime', 'etime']}
+        />
+      </PageContainer>
     </Spin>
   );
 };

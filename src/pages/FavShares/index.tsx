@@ -1,9 +1,10 @@
-import { Space, Spin } from 'antd';
+import { Button, Checkbox, Space, Spin } from 'antd';
 import { useModel } from '@umijs/max';
 import ShareTable from '@/components/ShareTable';
 import { TableRowSelection } from 'antd/es/table/interface';
 import { Share } from '@/services/share/entities';
 import { FavSharesOperationBar } from './FavShareOperationBar';
+import { PageContainer } from '@ant-design/pro-components';
 
 const FavSharesPage: React.FC = () => {
   const model = useModel('FavShares.model');
@@ -21,19 +22,30 @@ const FavSharesPage: React.FC = () => {
 
   return (
     <Spin spinning={model.loading}>
-      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-        <FavSharesOperationBar />
+      <PageContainer
+        breadcrumb={undefined}
+        extra={
+          <Button
+            onClick={() => model.setExcludeExpired(!model.excludeExpired)}
+          >
+            <Checkbox checked={model.excludeExpired}>只显示未失效分享</Checkbox>
+          </Button>
+        }
+      >
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          <FavSharesOperationBar />
 
-        <ShareTable
-          dataSource={model.shares}
-          pagination={false}
-          rowSelection={rowSelection}
-          renderOperations={(share) => (
-            <FavSharesOperationBar mini shares={[share]} />
-          )}
-          selectColumns={['title', 'owner', 'etime']}
-        />
-      </Space>
+          <ShareTable
+            dataSource={model.shares}
+            pagination={false}
+            rowSelection={rowSelection}
+            renderOperations={(share) => (
+              <FavSharesOperationBar mini shares={[share]} />
+            )}
+            selectColumns={['title', 'owner', 'etime']}
+          />
+        </Space>
+      </PageContainer>
     </Spin>
   );
 };
