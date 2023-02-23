@@ -7,7 +7,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { mergePath, splitPath } from '@/utils/path';
 import { FileInfo } from '@/services/files/entities';
 import { TableRowSelection } from 'antd/es/table/interface';
-import SpaceOperationBar from './components/OperationBar';
+import SpaceOperationBar from './SpaceOperationBar';
 
 const SpacePage: React.FC = () => {
   const {
@@ -68,9 +68,10 @@ const SpacePage: React.FC = () => {
             }
           }}
           rowSelection={rowSelection}
-          renderFileOperation={(record) => (
+          renderOperations={(record) => (
             <SpaceOperationBar mini files={[record]} />
           )}
+          collapseOperations={true}
         />
       </Space>
     </Spin>

@@ -58,6 +58,11 @@ export default defineConfig({
       target: '_blank',
       hideInMenu: true,
     },
+    {
+      name: '我收藏的分享',
+      path: '/share/fav',
+      component: './FavShares',
+    },
   ],
   npmClient: 'yarn',
 });

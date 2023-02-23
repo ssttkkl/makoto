@@ -25,7 +25,7 @@ export default () => {
   };
 
   return {
-    currentUser: data as User,
+    currentUser: data as User | undefined,
     loading,
     login,
     logout,

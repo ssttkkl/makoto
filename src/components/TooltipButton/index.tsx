@@ -1,11 +1,12 @@
 import { Button, ButtonProps, Tooltip } from 'antd';
 
-const TooltipButton: React.FC<ButtonProps & { hideTootip?: boolean }> = (
-  props,
-) => {
+const TooltipButton: React.FC<ButtonProps & { hideTooltip?: boolean }> = ({
+  hideTooltip: hideTootip,
+  ...props
+}) => {
   const title = props.title;
 
-  if (props.hideTootip === true) {
+  if (hideTootip === true) {
     return <Button {...props} />;
   } else {
     return (

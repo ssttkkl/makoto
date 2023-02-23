@@ -1,6 +1,6 @@
 import { request } from '@/utils/request';
 import { FileInfo, FilePermissionEnum } from '../files/entities';
-import { Share } from './entities';
+import { Share, ShareFav } from './entities';
 
 export async function getShareInfo(params: {
   shareId: number;
@@ -32,6 +32,12 @@ export async function createShare(params: {
   return await request('/api/v1/share', {
     method: 'POST',
     data: params,
+  });
+}
+
+export async function getFavShares(): Promise<ShareFav[]> {
+  return await request('/api/v1/share/fav', {
+    method: 'GET',
   });
 }
 

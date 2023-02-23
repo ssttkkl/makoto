@@ -1,15 +1,16 @@
-import React, { ReactElement, useState } from 'react';
-import { Button, Popover, Table } from 'antd';
+import React, { ReactElement, ReactNode, useState } from 'react';
+import { Table } from 'antd';
 
 import { ColumnsType, TableProps } from 'antd/es/table';
-import { FileOutlined, FolderOutlined, MoreOutlined } from '@ant-design/icons';
-import { Link } from '@umijs/max';
+import { FileOutlined, FolderOutlined } from '@ant-design/icons';
 import { FileInfo, FileType, LinkInfo } from '@/services/files/entities';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
+import TableMainColumnCell from '../TableMainColumnCell';
 
-export interface FileListProps extends TableProps<FileInfo> {
+export interface FileTableProps extends TableProps<FileInfo> {
   recordLink: (record: FileInfo) => string;
-  renderFileOperation?: (record: FileInfo) => ReactElement;
+  renderOperations?: (record: FileInfo) => ReactNode;
+  collapseOperations?: boolean;
 }
 
 function getFileRealType(file: FileInfo) {
@@ -20,16 +21,7 @@ function getFileRealType(file: FileInfo) {
   return type;
 }
 
-const FileTable: React.FC<FileListProps> = (props) => {
-  const addonClassname = useEmotionCss(() => ({
-    display: 'inline',
-    float: 'right',
-  }));
-
-  const hiddenClassname = useEmotionCss(() => ({
-    visibility: 'hidden',
-  }));
-
+const FileTable: React.FC<FileTableProps> = (props) => {
   const filenameClassname = useEmotionCss(() => ({
     paddingInlineStart: '8px',
   }));
@@ -56,25 +48,17 @@ const FileTable: React.FC<FileListProps> = (props) => {
         }
 
         return (
-          <>
-            <Link to={props.recordLink(record)}>
-              {icon}
-              <span className={filenameClassname}>{value}</span>
-            </Link>
-            {props.renderFileOperation ? (
-              <div
-                className={
-                  addonClassname +
-                  ' ' +
-                  (hoveredRowIndex !== index ? hiddenClassname : '')
-                }
-              >
-                <Popover content={props.renderFileOperation(record)}>
-                  <Button type="text" size="small" icon={<MoreOutlined />} />
-                </Popover>
-              </div>
-            ) : null}
-          </>
+          <TableMainColumnCell
+            href={props.recordLink(record)}
+            addon={
+              props.renderOperations ? props.renderOperations(record) : null
+            }
+            collapseAddon={props.collapseOperations}
+            hideAddon={hoveredRowIndex !== index}
+          >
+            {icon}
+            <span className={filenameClassname}>{value}</span>
+          </TableMainColumnCell>
         );
       },
     },

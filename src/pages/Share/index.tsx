@@ -6,10 +6,10 @@ import { UserOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { useSearchParams } from '@umijs/max';
-import { Space, Spin } from 'antd';
+import { Alert, Space, Spin } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
 import { useEffect } from 'react';
-import { ShareOperationBar } from './components/OperationBar';
+import { ShareOperationBar } from './ShareOperationBar';
 
 const SharePage: React.FC = () => {
   const model = useModel('Share.model');
@@ -43,6 +43,10 @@ const SharePage: React.FC = () => {
     <Spin spinning={model.loading}>
       <PageContainer title={model.share?.title} extra={<ShareOperationBar />}>
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          {model.share?.expired === true ? (
+            <Alert message="分享已失效" type="error" />
+          ) : null}
+
           <PathBreadcrumb
             home={
               <>
