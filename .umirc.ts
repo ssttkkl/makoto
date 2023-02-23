@@ -68,6 +68,11 @@ export default defineConfig({
       path: '/share/fav',
       component: './FavShares',
     },
+    {
+      name: '最近访问的分享',
+      path: '/share/recent',
+      component: './RecentShares',
+    },
   ],
   npmClient: 'yarn',
 });
