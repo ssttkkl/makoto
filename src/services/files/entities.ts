@@ -1,3 +1,5 @@
+import { plainToInstance, Transform, Type } from 'class-transformer';
+
 export type FileType = 'document' | 'folder' | 'link';
 
 export enum FilePermissionEnum {
@@ -9,28 +11,62 @@ export enum FilePermissionEnum {
   RWX = 1 | 2 | 4,
 }
 
-export interface FileInfo {
+export abstract class FileInfo {
   fid: number;
+
   filename: string;
+
+  @Type(() => Date)
   ctime: Date;
+
   ownerUid: number;
-  type: FileType;
+
   parentFid: number | null;
+
+  static plainToInstance(plain: {
+    [key: string]: any;
+    type: FileType;
+  }): FileInfo {
+    switch (plain.type) {
+      case 'document':
+        /* eslint-disable @typescript-eslint/no-use-before-define */
+        return plainToInstance(DocumentInfo, plain);
+      case 'folder':
+        /* eslint-disable @typescript-eslint/no-use-before-define */
+        return plainToInstance(FolderInfo, plain);
+      case 'link':
+        /* eslint-disable @typescript-eslint/no-use-before-define */
+        return plainToInstance(LinkInfo, plain);
+    }
+  }
 }
 
-export interface DocumentInfo extends FileInfo {
-  type: 'document';
+export function TransformFileInfo() {
+  return Transform(({ value }) => FileInfo.plainToInstance(value));
+}
+
+export function TransformFileInfoArray() {
+  return Transform(({ value }) =>
+    value.map((x: any) => FileInfo.plainToInstance(x)),
+  );
+}
+
+export class DocumentInfo extends FileInfo {
+  @Type(() => Date)
   mtime: Date;
+
+  @Type(() => Date)
   atime: Date;
 }
 
-export interface FolderInfo extends FileInfo {
-  type: 'folder';
+export class FolderInfo extends FileInfo {
+  @TransformFileInfoArray()
   children?: FileInfo[];
 }
 
-export interface LinkInfo extends FileInfo {
-  type: 'link';
+export class LinkInfo extends FileInfo {
+  @TransformFileInfo()
   ref: FileInfo;
+
   permission: FilePermissionEnum;
 }

@@ -13,7 +13,7 @@ function useFavOperation(): Operation {
 
   if (model.share?.fav === true) {
     return {
-      key: 'fav',
+      key: 'unfav',
       title: '已收藏',
       icon: <StarFilled />,
       btnProps: {

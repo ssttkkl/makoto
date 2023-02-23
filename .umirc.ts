@@ -59,6 +59,11 @@ export default defineConfig({
       hideInMenu: true,
     },
     {
+      name: '我创建的分享',
+      path: '/share/own',
+      component: './OwnShares',
+    },
+    {
       name: '我收藏的分享',
       path: '/share/fav',
       component: './FavShares',

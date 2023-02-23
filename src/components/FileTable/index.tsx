@@ -3,7 +3,12 @@ import { Table } from 'antd';
 
 import { ColumnsType, TableProps } from 'antd/es/table';
 import { FileOutlined, FolderOutlined } from '@ant-design/icons';
-import { FileInfo, FileType, LinkInfo } from '@/services/files/entities';
+import {
+  FileInfo,
+  FileType,
+  FolderInfo,
+  LinkInfo,
+} from '@/services/files/entities';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import TableMainColumnCell from '../TableMainColumnCell';
 
@@ -13,12 +18,14 @@ export interface FileTableProps extends TableProps<FileInfo> {
   collapseOperations?: boolean;
 }
 
-function getFileRealType(file: FileInfo) {
-  let type = file.type;
-  if (type === 'link') {
-    type = (file as LinkInfo).ref.type;
+function getFileRealType(file: FileInfo): 'folder' | 'document' {
+  if (file instanceof LinkInfo) {
+    return getFileRealType((file as LinkInfo).ref);
+  } else if (file instanceof FolderInfo) {
+    return 'folder';
+  } else {
+    return 'document';
   }
-  return type;
 }
 
 const FileTable: React.FC<FileTableProps> = (props) => {
@@ -41,9 +48,6 @@ const FileTable: React.FC<FileTableProps> = (props) => {
             break;
           case 'folder':
             icon = <FolderOutlined />;
-            break;
-          default:
-            icon = null;
             break;
         }
 

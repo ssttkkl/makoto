@@ -31,6 +31,7 @@ const FavSharesPage: React.FC = () => {
           renderOperations={(share) => (
             <FavSharesOperationBar mini shares={[share]} />
           )}
+          selectColumns={['title', 'owner', 'etime']}
         />
       </Space>
     </Spin>

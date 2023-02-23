@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import PathBreadcrumb from '@/components/PathBreadcrumb';
 import { UserOutlined } from '@ant-design/icons';
 import { mergePath, splitPath } from '@/utils/path';
-import { FileInfo } from '@/services/files/entities';
+import { FileInfo, FolderInfo } from '@/services/files/entities';
 import { TableRowSelection } from 'antd/es/table/interface';
 import SpaceOperationBar from './SpaceOperationBar';
 
@@ -58,7 +58,7 @@ const SpacePage: React.FC = () => {
           dataSource={data?.children}
           pagination={false}
           recordLink={(record) => {
-            if (record.type === 'folder') {
+            if (record instanceof FolderInfo) {
               return `/space?path=${mergePath([
                 ...params.path,
                 record.filename,

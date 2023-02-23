@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { RunTimeLayoutConfig } from '@umijs/max';
 import AvatarDropdown from '@/components/AvatarDropdown';
 

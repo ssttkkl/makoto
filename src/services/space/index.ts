@@ -1,4 +1,5 @@
 import { request } from '@/utils/request';
+import { plainToInstance } from 'class-transformer';
 import {
   DocumentInfo,
   FileInfo,
@@ -11,10 +12,12 @@ export async function getSpaceFileInfo(params: {
   depth?: number;
   path?: string;
 }): Promise<FileInfo> {
-  return await request('/api/v1/space', {
-    method: 'GET',
-    params,
-  });
+  return FileInfo.plainToInstance(
+    await request('/api/v1/space', {
+      method: 'GET',
+      params,
+    }),
+  );
 }
 
 export async function createSpaceFile(params: {
@@ -22,10 +25,12 @@ export async function createSpaceFile(params: {
   filename: string;
   type: FileType;
 }): Promise<DocumentInfo | FolderInfo> {
-  return await request('/api/v1/space', {
-    method: 'POST',
-    data: params,
-  });
+  return FileInfo.plainToInstance(
+    await request('/api/v1/space', {
+      method: 'POST',
+      data: params,
+    }),
+  );
 }
 
 export async function createSpaceLink(params: {
@@ -33,8 +38,9 @@ export async function createSpaceLink(params: {
   shareId: number;
   links: { filename: string; refPath: string }[];
 }): Promise<LinkInfo[]> {
-  return await request('/api/v1/space/link', {
+  const plain: any[] = await request('/api/v1/space/link', {
     method: 'POST',
     data: params,
   });
+  return plainToInstance(LinkInfo, plain);
 }

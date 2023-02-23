@@ -38,6 +38,7 @@ export const OperationBar: React.FC<OperationBarProps> = ({
         } else {
           return (
             <OperationButton
+              key={x.key}
               icon={x.icon}
               title={x.title}
               onClick={x.onClick}
