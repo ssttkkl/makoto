@@ -52,26 +52,32 @@ export default defineConfig({
       hideInMenu: true,
     },
     {
-      name: '查看分享',
+      name: '分享',
       path: '/share',
-      component: './Share',
-      target: '_blank',
-      hideInMenu: true,
-    },
-    {
-      name: '我创建的分享',
-      path: '/share/own',
-      component: './OwnShares',
-    },
-    {
-      name: '我收藏的分享',
-      path: '/share/fav',
-      component: './FavShares',
-    },
-    {
-      name: '最近访问的分享',
-      path: '/share/recent',
-      component: './RecentShares',
+      routes: [
+        {
+          name: '我创建的分享',
+          path: '/share/own',
+          component: './OwnShares',
+        },
+        {
+          name: '我收藏的分享',
+          path: '/share/fav',
+          component: './FavShares',
+        },
+        {
+          name: '最近访问的分享',
+          path: '/share/recent',
+          component: './RecentShares',
+        },
+        {
+          name: '查看分享',
+          path: '/share/:id',
+          component: './Share',
+          target: '_blank',
+          hideInMenu: true,
+        },
+      ],
     },
   ],
   npmClient: 'yarn',

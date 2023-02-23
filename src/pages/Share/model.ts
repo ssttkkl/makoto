@@ -42,12 +42,18 @@ export default () => {
         return undefined;
       }
 
+      const shareData = share.data as Share;
+
       if (params.path.length === 0) {
-        sortFiles(share.data.files);
-        return share.data.files;
+        if (shareData.files !== undefined) {
+          sortFiles(shareData.files);
+          return shareData.files;
+        } else {
+          return [];
+        }
       } else {
         const parent = (await getShareFileInfo({
-          shareId: share.data.shareId,
+          shareId: shareData.shareId,
           path: mergePath(params.path),
           depth: 1,
         })) as FolderInfo;

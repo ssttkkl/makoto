@@ -10,7 +10,7 @@ export class Share {
   owner: User;
 
   @TransformFileInfoArray()
-  files: FileInfo[];
+  files?: FileInfo[];
 
   permission: number;
 

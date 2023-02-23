@@ -8,7 +8,7 @@ import { User } from '@/services/users/entities';
 import { FilePermissionEnum } from '@/services/files/entities';
 
 function shareLink(share: Share): string {
-  return `/share?shareId=${share.shareId}`;
+  return `/share/${share.shareId}`;
 }
 
 type ShareTableColumns = 'title' | 'owner' | 'permission' | 'ctime' | 'etime';

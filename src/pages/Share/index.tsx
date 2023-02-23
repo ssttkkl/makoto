@@ -4,7 +4,7 @@ import { FileInfo, FolderInfo } from '@/services/files/entities';
 import { mergePath, splitPath } from '@/utils/path';
 import { UserOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
-import { useModel } from '@umijs/max';
+import { useModel, useParams } from '@umijs/max';
 import { useSearchParams } from '@umijs/max';
 import { Alert, Space, Spin } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
@@ -16,13 +16,13 @@ const SharePage: React.FC = () => {
 
   // 将参数单向同步到model里
   const [searchParams] = useSearchParams();
+  const routerParams = useParams();
   useEffect(() => {
     let path = splitPath(searchParams.get('path') ?? '');
 
-    let shareId: number | undefined = undefined;
-    let rawShareId = searchParams.get('shareId');
-    if (rawShareId !== null) {
-      shareId = Number.parseInt(rawShareId);
+    let shareId: number | undefined = Number.parseInt(routerParams.id);
+    if (isNaN(shareId)) {
+      shareId = undefined;
     }
 
     model.updateParams({ shareId, path });
@@ -41,7 +41,11 @@ const SharePage: React.FC = () => {
 
   return (
     <Spin spinning={model.loading}>
-      <PageContainer title={model.share?.title} extra={<ShareOperationBar />}>
+      <PageContainer
+        breadcrumb={undefined}
+        title={model.share?.title}
+        extra={<ShareOperationBar />}
+      >
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
           {model.share?.expired === true ? (
             <Alert message="分享已失效" type="error" />

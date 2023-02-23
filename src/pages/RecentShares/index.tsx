@@ -41,7 +41,7 @@ const RecentSharesPage: React.FC = () => {
           dataSource={model.shares}
           pagination={false}
           rowSelection={rowSelection}
-          selectColumns={['title', 'permission', 'ctime', 'etime']}
+          selectColumns={['title', 'owner', 'etime']}
         />
       </PageContainer>
     </Spin>
