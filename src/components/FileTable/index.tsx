@@ -12,8 +12,13 @@ import {
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import TableMainColumnCell from '../TableMainColumnCell';
 
-export interface FileTableProps extends TableProps<FileInfo> {
-  recordLink: (record: FileInfo) => string;
+type FileTableColumns = 'filename' | 'type' | 'mtime';
+
+export interface FileTableProps<T extends object = any> extends TableProps<T> {
+  dataSourcePath?: string[];
+  selectColumns?: FileTableColumns[];
+  extraColumns?: ColumnsType<T>;
+  recordLink?: (record: FileInfo) => string;
   renderOperations?: (record: FileInfo) => ReactNode;
   collapseOperations?: boolean;
 }
@@ -28,21 +33,39 @@ function getFileRealType(file: FileInfo): 'folder' | 'document' {
   }
 }
 
-const FileTable: React.FC<FileTableProps> = (props) => {
+function getData<T, U>(record: T, path: string[]): U {
+  let x = record;
+  for (const p of path) {
+    // @ts-ignore
+    x = x[p];
+  }
+  // @ts-ignore
+  return x;
+}
+
+type FileTableType<T extends object = any> = React.FC<FileTableProps<T>>;
+
+function FileTable<T extends object = any>(
+  props: FileTableProps<T>,
+): ReactNode {
   const filenameClassname = useEmotionCss(() => ({
     paddingInlineStart: '8px',
   }));
 
+  const dataSourcePath =
+    props.dataSourcePath !== undefined ? props.dataSourcePath : [];
+
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number>();
 
-  const columns: ColumnsType<FileInfo> = [
+  let columns: ColumnsType<T> = [
     {
       title: '文件名',
-      dataIndex: 'filename',
+      dataIndex: [...dataSourcePath, 'filename'],
       key: 'filename',
-      render: (value: string, record: FileInfo, index: number) => {
+      render: (value: string, record: T, index: number) => {
+        const data: FileInfo = getData(record, dataSourcePath);
         let icon: ReactElement | null;
-        switch (getFileRealType(record)) {
+        switch (getFileRealType(data)) {
           case 'document':
             icon = <FileOutlined />;
             break;
@@ -53,10 +76,8 @@ const FileTable: React.FC<FileTableProps> = (props) => {
 
         return (
           <TableMainColumnCell
-            href={props.recordLink(record)}
-            addon={
-              props.renderOperations ? props.renderOperations(record) : null
-            }
+            href={props.recordLink ? props.recordLink(data) : undefined}
+            addon={props.renderOperations ? props.renderOperations(data) : null}
             collapseAddon={props.collapseOperations}
             hideAddon={hoveredRowIndex !== index}
           >
@@ -68,10 +89,11 @@ const FileTable: React.FC<FileTableProps> = (props) => {
     },
     {
       title: '类型',
-      dataIndex: 'type',
+      dataIndex: [...dataSourcePath, 'type'],
       key: 'type',
-      render: (_: FileType, record: FileInfo) => {
-        switch (getFileRealType(record)) {
+      render: (_: FileType, record: T) => {
+        const data: FileInfo = getData(record, dataSourcePath);
+        switch (getFileRealType(data)) {
           case 'document':
             return '文档';
           case 'folder':
@@ -83,14 +105,29 @@ const FileTable: React.FC<FileTableProps> = (props) => {
     },
     {
       title: '修改时间',
-      dataIndex: 'mtime',
+      dataIndex: [...dataSourcePath, 'mtime'],
       key: 'mtime',
       render: (value: Date) => value?.toLocaleString() ?? '-',
     },
   ];
 
+  if (props.selectColumns !== undefined) {
+    const selectedColumns: ColumnsType<T> = [];
+    props.selectColumns.forEach((x) => {
+      const col = columns.find((y) => y.key === x);
+      if (col !== undefined) {
+        selectedColumns.push(col);
+      }
+    });
+    columns = selectedColumns;
+  }
+
+  if (props.extraColumns !== undefined) {
+    columns = [...columns, ...props.extraColumns];
+  }
+
   return (
-    <Table<FileInfo>
+    <Table<T>
       columns={columns}
       rowKey="fid"
       onRow={(_, index) => ({
@@ -100,6 +137,6 @@ const FileTable: React.FC<FileTableProps> = (props) => {
       {...props}
     />
   );
-};
+}
 
-export default FileTable;
+export default FileTable as FileTableType;

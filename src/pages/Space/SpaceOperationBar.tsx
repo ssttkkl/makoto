@@ -1,6 +1,8 @@
 import { Operation, OperationBar } from '@/components/OperationBar';
 import { OperationButton } from '@/components/OperationButton';
 import { FileInfo } from '@/services/files/entities';
+import { moveIntoRecycleBin } from '@/services/recycle-bin';
+import { mergePath } from '@/utils/path';
 import {
   CopyOutlined,
   DeleteOutlined,
@@ -11,6 +13,7 @@ import {
   ShareAltOutlined,
 } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
+import { message } from 'antd';
 import { useCallback } from 'react';
 import {
   CreateDocumentFormButton,
@@ -106,7 +109,7 @@ const SpaceOperationBar: React.FC<{
     });
 
     op.push({
-      key: 'copy',
+      key: 'move',
       title: '移动',
       icon: <ScissorOutlined />,
     });
@@ -117,6 +120,14 @@ const SpaceOperationBar: React.FC<{
       icon: <DeleteOutlined />,
       btnProps: {
         danger: true,
+      },
+      onClick: async () => {
+        await moveIntoRecycleBin({
+          path: files.map((x) => mergePath([...model.params.path, x.filename])),
+        });
+        message.success('成功将文件移到回收站');
+        model.setSelectedFiles([]);
+        await model.refresh();
       },
     });
 

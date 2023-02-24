@@ -79,6 +79,11 @@ export default defineConfig({
         },
       ],
     },
+    {
+      name: '回收站',
+      path: '/recycle-bin',
+      component: './RecycleBin',
+    },
   ],
   npmClient: 'yarn',
 });

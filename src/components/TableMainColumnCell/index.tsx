@@ -22,8 +22,8 @@ const TableMainColumnCell: React.FC<{
 
   return (
     <>
-      {href !== undefined ? <Link to={href}>{children}</Link> : null}
-      {addon !== undefined ? (
+      {href ? <Link to={href}>{children}</Link> : children}
+      {addon ? (
         <div
           className={
             addonClassname + ' ' + (hideAddon === true ? hiddenClassname : '')
