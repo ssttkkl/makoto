@@ -2,7 +2,7 @@ import FileTable from '@/components/FileTable';
 import PathBreadcrumb from '@/components/PathBreadcrumb';
 import { FileInfo, FolderInfo } from '@/services/files/entities';
 import { mergePath, splitPath } from '@/utils/path';
-import { UserOutlined } from '@ant-design/icons';
+import { ShareAltOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel, useParams } from '@umijs/max';
 import { useSearchParams } from '@umijs/max';
@@ -54,7 +54,7 @@ const SharePage: React.FC = () => {
           <PathBreadcrumb
             home={
               <>
-                <UserOutlined />
+                <ShareAltOutlined />
                 <span>分享</span>
               </>
             }

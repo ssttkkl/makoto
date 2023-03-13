@@ -38,6 +38,7 @@ export interface EditorProps {
   editor: ReactEditor;
   value: Descendant[];
   onChange?: (value: Descendant[]) => void;
+  writeable?: boolean;
 }
 
 const Element: React.FC<RenderElementProps> = (props) => {
@@ -84,6 +85,7 @@ const Editor: React.FC<EditorProps> = ({
   editor,
   value,
   onChange: _onChange,
+  writeable,
 }) => {
   const renderElement = useCallback(
     (props: RenderElementProps) => <Element {...props} />,
@@ -103,11 +105,14 @@ const Editor: React.FC<EditorProps> = ({
 
   return (
     <Slate editor={editor} value={value} onChange={onChange}>
-      <Toolbar plugins={plugins} className="editor-toolbar" />
+      {writeable ? (
+        <Toolbar plugins={plugins} className="editor-toolbar" />
+      ) : null}
       <Editable
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         autoFocus
+        readOnly={writeable !== true}
       />
     </Slate>
   );

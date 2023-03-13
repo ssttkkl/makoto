@@ -13,7 +13,7 @@ export async function getSpaceFileInfo(params: {
   path?: string;
 }): Promise<FileInfo> {
   return FileInfo.plainToInstance(
-    await request('/api/v1/space', {
+    await request('/api/v1/space/file', {
       method: 'GET',
       params,
     }),
@@ -26,7 +26,7 @@ export async function createSpaceFile(params: {
   type: FileType;
 }): Promise<DocumentInfo | FolderInfo> {
   return FileInfo.plainToInstance(
-    await request('/api/v1/space', {
+    await request('/api/v1/space/file', {
       method: 'POST',
       data: params,
     }),
@@ -38,7 +38,7 @@ export async function createSpaceLink(params: {
   shareId: number;
   links: { filename: string; refPath: string }[];
 }): Promise<LinkInfo[]> {
-  const plain: any[] = await request('/api/v1/space/link', {
+  const plain: any[] = await request('/api/v1/space/file/links', {
     method: 'POST',
     data: params,
   });

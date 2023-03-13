@@ -2,7 +2,7 @@ import React, { ReactElement, ReactNode, useState } from 'react';
 import { Table } from 'antd';
 
 import { ColumnsType, TableProps } from 'antd/es/table';
-import { FileOutlined, FolderOutlined } from '@ant-design/icons';
+import { FileOutlined, FolderFilled } from '@ant-design/icons';
 import {
   FileInfo,
   FileType,
@@ -70,7 +70,7 @@ function FileTable<T extends object = any>(
             icon = <FileOutlined />;
             break;
           case 'folder':
-            icon = <FolderOutlined />;
+            icon = <FolderFilled />;
             break;
         }
 

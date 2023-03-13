@@ -13,10 +13,11 @@ import { splitPath } from '@/utils/path';
 import { Spin } from 'antd';
 import { useAccessToken } from '@/utils/token';
 
-const Doc: React.FC<{ name: string; params: URLSearchParams }> = ({
-  name,
-  params,
-}) => {
+const Doc: React.FC<{
+  name: string;
+  params: URLSearchParams;
+  writeable?: boolean;
+}> = ({ name, params, writeable }) => {
   const [value, setValue] = useState<Descendant[]>([]);
   const [, /*connected*/ setConnected] = useState(false);
   const token = useAccessToken();
@@ -26,7 +27,10 @@ const Doc: React.FC<{ name: string; params: URLSearchParams }> = ({
       new HocuspocusProvider({
         url: HOCUSPOCUS_ENDPOINT_URL,
         name: name,
-        parameters: Object.fromEntries(params),
+        parameters: {
+          ...Object.fromEntries(params),
+          writeable: writeable,
+        },
         token: token,
         onConnect: () => setConnected(true),
         onDisconnect: () => setConnected(false),
@@ -54,7 +58,14 @@ const Doc: React.FC<{ name: string; params: URLSearchParams }> = ({
     return () => YjsEditor.disconnect(editor);
   }, [editor]);
 
-  return <Editor value={value} onChange={setValue} editor={editor} />;
+  return (
+    <Editor
+      value={value}
+      onChange={setValue}
+      editor={editor}
+      writeable={writeable}
+    />
+  );
 };
 
 const DocPage: React.FC = () => {
@@ -85,7 +96,11 @@ const DocPage: React.FC = () => {
   return (
     <Spin spinning={model.loading}>
       {model.unrefFile?.fid ? (
-        <Doc name={model.unrefFile.fid.toString()} params={searchParams} />
+        <Doc
+          name={model.unrefFile.fid.toString()}
+          params={searchParams}
+          writeable={model.writeable}
+        />
       ) : null}
     </Spin>
   );
