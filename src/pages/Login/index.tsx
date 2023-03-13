@@ -1,12 +1,8 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import {
-  ProFormCheckbox,
-  ProFormText,
-  LoginForm,
-} from '@ant-design/pro-components';
+import { ProFormText, LoginForm } from '@ant-design/pro-components';
 import { useLocation, useSearchParams } from '@umijs/max';
 import { Link, useModel, history } from '@umijs/max';
-import { message } from 'antd';
+import { Form, message } from 'antd';
 import { useCallback } from 'react';
 
 interface LoginFormRecord {
@@ -84,14 +80,7 @@ const LoginPage: React.FC = () => {
           ]}
         />
 
-        <div
-          style={{
-            marginBlockEnd: 24,
-          }}
-        >
-          <ProFormCheckbox noStyle name="autoLogin">
-            自动登录
-          </ProFormCheckbox>
+        <Form.Item>
           <Link
             to={`/register?redirect=${redirect}`}
             style={{
@@ -100,7 +89,7 @@ const LoginPage: React.FC = () => {
           >
             注册
           </Link>
-        </div>
+        </Form.Item>
       </LoginForm>
     </div>
   );

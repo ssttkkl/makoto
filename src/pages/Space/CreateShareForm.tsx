@@ -39,7 +39,7 @@ const CreateShareForm: React.FC<
     });
 
     // TODO
-    const shareLink = `http://localhost:8000/share?shareId=${share.shareId}`;
+    const shareLink = `http://localhost:8000/share/${share.shareId}`;
 
     Modal.success({
       title: '分享成功',
