@@ -97,9 +97,9 @@ function FileTable<T extends object = any>(
         const data: FileInfo = getData(record, dataSourcePath);
         switch (getFileRealType(data)) {
           case 'document':
-            return '文档';
+            return '文档' + (data instanceof LinkInfo ? '（链接）' : '');
           case 'folder':
-            return '目录';
+            return '目录' + (data instanceof LinkInfo ? '（链接）' : '');
           default:
             return '-';
         }

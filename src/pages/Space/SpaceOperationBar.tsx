@@ -151,54 +151,59 @@ const SpaceOperationBar: React.FC<{
     op.push(basic);
 
     if (files.length === 1) {
-      op.push([
-        {
-          key: 'info',
-          title: '文件信息',
-          icon: <InfoCircleOutlined />,
-          onClick: async () => {
-            const originFile = files[0];
-            const file =
-              originFile instanceof LinkInfo ? originFile.ref : originFile;
-            const owner = await getProfile({ uid: file.ownerUid });
+      const meta = [];
 
-            if (file instanceof DocumentInfo) {
-              Modal.info({
-                title: '分享信息',
-                content: (
-                  <Descriptions column={1}>
-                    <Descriptions.Item label="文件名">
-                      {file.filename}
+      meta.push({
+        key: 'info',
+        title: '文件信息',
+        icon: <InfoCircleOutlined />,
+        onClick: async () => {
+          const originFile = files[0];
+          const file =
+            originFile instanceof LinkInfo ? originFile.ref : originFile;
+          const owner = await getProfile({ uid: file.ownerUid });
+
+          if (file instanceof DocumentInfo) {
+            Modal.info({
+              title: '分享信息',
+              content: (
+                <Descriptions column={1}>
+                  <Descriptions.Item label="文件名">
+                    {file.filename}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="文件类型">
+                    {originFile instanceof LinkInfo ? '文档（链接）' : '文档'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="所有者">
+                    {owner.nickname}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="创建时间">
+                    {file.ctime.toLocaleString()}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="修改时间">
+                    {file.mtime.toLocaleString()}
+                  </Descriptions.Item>
+                  {originFile instanceof LinkInfo ? (
+                    <Descriptions.Item label="权限">
+                      {mapPermission(originFile.permission)}
                     </Descriptions.Item>
-                    <Descriptions.Item label="文件类型">
-                      {originFile instanceof LinkInfo ? '文档（链接）' : '文档'}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="所有者">
-                      {owner.nickname}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="创建时间">
-                      {file.ctime.toLocaleString()}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="修改时间">
-                      {file.mtime.toLocaleString()}
-                    </Descriptions.Item>
-                    {originFile instanceof LinkInfo ? (
-                      <Descriptions.Item label="权限">
-                        {mapPermission(originFile.permission)}
-                      </Descriptions.Item>
-                    ) : null}
-                  </Descriptions>
-                ),
-              });
-            }
-          },
+                  ) : null}
+                </Descriptions>
+              ),
+            });
+          }
         },
-        {
+      });
+
+      if (!(files[0] instanceof LinkInfo)) {
+        meta.push({
           key: 'share-manage',
           title: '管理分享与链接',
           icon: <DeploymentUnitOutlined />,
-        },
-      ]);
+        });
+      }
+
+      op.push(meta);
     }
   } else {
     op.push([
