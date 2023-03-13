@@ -1,9 +1,14 @@
 import { useModel } from '@umijs/max';
-import { message } from 'antd';
+import { Descriptions, message, Modal } from 'antd';
 import { Operation, OperationBar } from '@/components/OperationBar';
 import { favShare, unfavShare } from '@/services/share';
-import { StarFilled, StarOutlined } from '@ant-design/icons';
-import { FileInfo } from '@/services/files/entities';
+import {
+  InfoCircleOutlined,
+  LinkOutlined,
+  StarFilled,
+  StarOutlined,
+} from '@ant-design/icons';
+import { FileInfo, FilePermissionEnum } from '@/services/files/entities';
 import { createSpaceLink } from '@/services/space';
 import { mergePath } from '@/utils/path';
 
@@ -62,6 +67,7 @@ export const ShareOperationBar: React.FC<{
   const fav = useFavOperation();
   const link: Operation = {
     key: 'link',
+    icon: <LinkOutlined />,
     title: files.length === 0 ? '链接所有文件' : '链接选中文件',
     onClick: async () => {
       if (model.share === undefined) {
@@ -82,10 +88,59 @@ export const ShareOperationBar: React.FC<{
     },
   };
 
-  const op = [fav];
+  const basic = [fav];
   if (!isOwner && model.share?.allowLink === true) {
-    op.push(link);
+    basic.push(link);
   }
 
-  return <OperationBar operations={[op]} mini={mini} />;
+  const info = [
+    {
+      key: 'info',
+      title: '分享信息',
+      icon: <InfoCircleOutlined />,
+      onClick: async () => {
+        Modal.info({
+          title: '分享信息',
+          content: (
+            <Descriptions column={1}>
+              <Descriptions.Item label="分享名">
+                {model.share?.title}
+              </Descriptions.Item>
+              <Descriptions.Item label="创建者">
+                {model.share?.owner.nickname}
+              </Descriptions.Item>
+              <Descriptions.Item label="权限">
+                {(function () {
+                  switch (model.share?.permission) {
+                    case FilePermissionEnum.R:
+                      return '只读';
+                    case FilePermissionEnum.RW:
+                      return '可读写';
+                    case FilePermissionEnum.RWX:
+                      return '可读写、可再次分享';
+                  }
+                })()}
+              </Descriptions.Item>
+              <Descriptions.Item label="允许链接">
+                {model.share?.allowLink ? '是' : '否'}
+              </Descriptions.Item>
+              <Descriptions.Item label="创建时间">
+                {model.share?.ctime.toLocaleString()}
+              </Descriptions.Item>
+              <Descriptions.Item label="失效时间">
+                {model.share?.etime.toLocaleString()}
+              </Descriptions.Item>
+              <Descriptions.Item label="已失效">
+                {model.share?.expired ? '是' : '否'}
+              </Descriptions.Item>
+            </Descriptions>
+          ),
+        });
+      },
+    },
+  ];
+
+  const op = [basic, info];
+
+  return <OperationBar operations={op} mini={mini} />;
 };

@@ -1,5 +1,9 @@
 import { Type } from 'class-transformer';
-import { FileInfo, TransformFileInfoArray } from '../files/entities';
+import {
+  FileInfo,
+  FilePermissionEnum,
+  TransformFileInfoArray,
+} from '../files/entities';
 import { User } from '../users/entities';
 
 export class Share {
@@ -12,7 +16,7 @@ export class Share {
   @TransformFileInfoArray()
   files?: FileInfo[];
 
-  permission: number;
+  permission: FilePermissionEnum;
 
   allowLink: boolean;
 
