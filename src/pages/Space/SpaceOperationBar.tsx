@@ -185,7 +185,10 @@ const SpaceOperationBar: React.FC<{
                   <Descriptions.Item label="创建时间">
                     {file.ctime.toLocaleString()}
                   </Descriptions.Item>
-                  <Descriptions.Item label="修改时间">
+                  <Descriptions.Item label="上次访问时间">
+                    {file.atime.toLocaleString()}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="上次修改时间">
                     {file.mtime.toLocaleString()}
                   </Descriptions.Item>
                   {originFile instanceof LinkInfo ? (

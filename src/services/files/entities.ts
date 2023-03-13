@@ -53,6 +53,9 @@ export function TransformFileInfoArray() {
 
 export class DocumentInfo extends FileInfo {
   @Type(() => Date)
+  atime: Date;
+
+  @Type(() => Date)
   mtime: Date;
 }
 

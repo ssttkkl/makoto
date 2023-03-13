@@ -12,7 +12,7 @@ import {
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import TableMainColumnCell from '../TableMainColumnCell';
 
-type FileTableColumns = 'filename' | 'type' | 'mtime';
+type FileTableColumns = 'filename' | 'type' | 'ctime' | 'mtime' | 'atime';
 
 export interface FileTableProps<T extends object = any> extends TableProps<T> {
   dataSourcePath?: string[];
@@ -106,9 +106,21 @@ function FileTable<T extends object = any>(
       },
     },
     {
-      title: '修改时间',
+      title: '创建时间',
+      dataIndex: [...dataSourcePath, 'ctime'],
+      key: 'ctime',
+      render: (value: Date) => value?.toLocaleString() ?? '-',
+    },
+    {
+      title: '上次修改时间',
       dataIndex: [...dataSourcePath, 'mtime'],
       key: 'mtime',
+      render: (value: Date) => value?.toLocaleString() ?? '-',
+    },
+    {
+      title: '上次访问时间',
+      dataIndex: [...dataSourcePath, 'atime'],
+      key: 'atime',
       render: (value: Date) => value?.toLocaleString() ?? '-',
     },
   ];
