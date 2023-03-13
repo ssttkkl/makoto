@@ -29,7 +29,12 @@ const SpaceOperationBar: React.FC<{
   files?: FileInfo[];
   mini?: boolean;
 }> = ({ files: _files, mini: _mini }) => {
-  const model = useModel('Space.model');
+  const model = useModel('Space.model', (model) => ({
+    params: model.params,
+    refresh: model.refresh,
+    selectedFiles: model.selectedFiles,
+    setSelectedFiles: model.setSelectedFiles,
+  }));
 
   const files = _files === undefined ? model.selectedFiles : _files;
   const mini = _mini === true;

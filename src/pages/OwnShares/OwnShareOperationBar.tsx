@@ -9,7 +9,11 @@ export const OwnSharesOperationBar: React.FC<{
   shares?: Share[];
   mini?: boolean;
 }> = ({ shares: _shares, mini: _mini }) => {
-  const model = useModel('OwnShares.model');
+  const model = useModel('OwnShares.model', (model) => ({
+    selectedShares: model.selectedShares,
+    setSelectedShares: model.setSelectedShares,
+    refresh: model.refresh,
+  }));
 
   const shares = _shares === undefined ? model.selectedShares : _shares;
   const mini = _mini === true;

@@ -9,10 +9,15 @@ export const RecycleBinOperationBar: React.FC<{
   entities?: RecycleBinEntity[];
   mini?: boolean;
 }> = ({ entities: _entities, mini: _mini }) => {
-  const model = useModel('RecycleBin.model');
+  const model = useModel('RecycleBin.model', (model) => ({
+    entities: model.entities,
+    selectedEntities: model.selectedEntities,
+    setSelectedEntities: model.setSelectedEntities,
+    refresh: model.refresh,
+  }));
 
   const entities = _entities === undefined ? model.selectedEntities : _entities;
-  const allEntities = model.entities;
+  const allEntities = model.entities ?? [];
   const mini = _mini === true;
 
   const op: OperationGroup[] = [

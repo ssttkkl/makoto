@@ -14,7 +14,10 @@ import { mergePath } from '@/utils/path';
 import { mapPermission } from '@/utils/permission';
 
 function useFavOperation(): Operation {
-  const model = useModel('Share.model');
+  const model = useModel('Share.model', (model) => ({
+    share: model.share,
+    refresh: model.refresh,
+  }));
   const shareId = model.share?.shareId;
 
   if (model.share?.fav === true) {

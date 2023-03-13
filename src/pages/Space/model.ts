@@ -15,7 +15,7 @@ export default () => {
     path: [],
   });
 
-  const { data, loading, error, refresh } = useRequest(
+  const { data, loading, error, run, refresh } = useRequest(
     async () => {
       const path = mergePath(params.path);
       const file = (await getSpaceFileInfo({ path, depth: 1 })) as FolderInfo;
@@ -32,6 +32,7 @@ export default () => {
   const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([]);
 
   return {
+    run,
     params,
     updateParams,
     data: data as FolderInfo,
