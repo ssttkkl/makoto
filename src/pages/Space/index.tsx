@@ -66,6 +66,9 @@ const SpacePage: React.FC = () => {
           }}
           rowSelection={rowSelection}
           collapseOperations={true}
+          renderOperations={(record) => (
+            <SpaceOperationBar mini files={[record]} />
+          )}
         />
       </Space>
     </Spin>

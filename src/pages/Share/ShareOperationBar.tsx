@@ -87,5 +87,5 @@ export const ShareOperationBar: React.FC<{
     op.push(link);
   }
 
-  return <OperationBar operations={op} mini={mini} />;
+  return <OperationBar operations={[op]} mini={mini} />;
 };

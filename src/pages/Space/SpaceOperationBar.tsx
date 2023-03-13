@@ -1,4 +1,4 @@
-import { Operation, OperationBar } from '@/components/OperationBar';
+import { OperationBar, OperationGroup } from '@/components/OperationBar';
 import { OperationButton } from '@/components/OperationButton';
 import { FileInfo } from '@/services/files/entities';
 import { moveIntoRecycleBin } from '@/services/recycle-bin';
@@ -6,9 +6,11 @@ import { mergePath } from '@/utils/path';
 import {
   CopyOutlined,
   DeleteOutlined,
+  DeploymentUnitOutlined,
   EditOutlined,
   FileOutlined,
   FolderOutlined,
+  InfoCircleOutlined,
   ScissorOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons';
@@ -92,63 +94,87 @@ const SpaceOperationBar: React.FC<{
     [model.refresh, model.params.path],
   );
 
-  const op: Operation[] = [];
+  const op: OperationGroup[] = [];
+
   if (files.length !== 0) {
     if (!mini) {
-      op.push({
-        key: 'share',
-        title: '分享',
-        render: renderShare,
-      });
+      op.push([
+        {
+          key: 'share',
+          title: '分享',
+          render: renderShare,
+        },
+      ]);
     }
 
-    op.push({
-      key: 'copy',
-      title: '复制',
-      icon: <CopyOutlined />,
-    });
-
-    op.push({
-      key: 'move',
-      title: '移动',
-      icon: <ScissorOutlined />,
-    });
-
-    op.push({
-      key: 'delete',
-      title: '删除',
-      icon: <DeleteOutlined />,
-      btnProps: {
-        danger: true,
+    const basic = [
+      {
+        key: 'copy',
+        title: '复制',
+        icon: <CopyOutlined />,
       },
-      onClick: async () => {
-        await moveIntoRecycleBin({
-          path: files.map((x) => mergePath([...model.params.path, x.filename])),
-        });
-        message.success('成功将文件移到回收站');
-        model.setSelectedFiles([]);
-        await model.refresh();
+      {
+        key: 'move',
+        title: '移动',
+        icon: <ScissorOutlined />,
       },
-    });
+      {
+        key: 'delete',
+        title: '删除',
+        icon: <DeleteOutlined />,
+        btnProps: {
+          danger: true,
+        },
+        onClick: async () => {
+          await moveIntoRecycleBin({
+            path: files.map((x) =>
+              mergePath([...model.params.path, x.filename]),
+            ),
+          });
+          message.success('成功将文件移到回收站');
+          model.setSelectedFiles([]);
+          await model.refresh();
+        },
+      },
+    ];
 
     if (files.length === 1) {
-      op.push({
+      basic.push({
         key: 'rename',
         title: '重命名',
         icon: <EditOutlined />,
       });
     }
+
+    op.push(basic);
+
+    if (files.length === 1) {
+      op.push([
+        {
+          key: 'info',
+          title: '文件信息',
+          icon: <InfoCircleOutlined />,
+        },
+        {
+          key: 'share-manage',
+          title: '管理分享与链接',
+          icon: <DeploymentUnitOutlined />,
+        },
+      ]);
+    }
   } else {
-    op.push({
-      key: 'create-document',
-      title: '新建文档',
-      render: renderCreateDocument,
-    });
-    op.push({
-      key: 'create-folder',
-      title: '新建目录',
-      render: renderCreateFolder,
-    });
+    op.push([
+      {
+        key: 'create-document',
+        title: '新建文档',
+        render: renderCreateDocument,
+      },
+      {
+        key: 'create-folder',
+        title: '新建目录',
+        render: renderCreateFolder,
+      },
+    ]);
   }
 
   return <OperationBar operations={op} mini={mini} />;

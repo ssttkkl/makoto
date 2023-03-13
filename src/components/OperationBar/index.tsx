@@ -1,4 +1,4 @@
-import { ButtonProps, Space } from 'antd';
+import { ButtonProps, Divider, Space } from 'antd';
 import { ReactNode } from 'react';
 import { OperationButton } from '../OperationButton';
 
@@ -19,8 +19,10 @@ export interface ButtonOperation {
 
 export type Operation = CustomOperation | ButtonOperation;
 
+export type OperationGroup = Operation[];
+
 export interface OperationBarProps {
-  operations: Operation[];
+  operations: OperationGroup[];
   mini?: boolean;
 }
 
@@ -32,22 +34,30 @@ export const OperationBar: React.FC<OperationBarProps> = ({
 
   return (
     <Space wrap>
-      {operations.map((x) => {
-        if ('render' in x) {
-          return x.render(x.key, mini);
-        } else {
-          return (
-            <OperationButton
-              key={x.key}
-              icon={x.icon}
-              title={x.title}
-              onClick={x.onClick}
-              mini={mini}
-              showTooltip={x.showTooltip ?? 'mini'}
-              {...x.btnProps}
-            />
-          );
+      {operations.flatMap((group, index) => {
+        const li = group.map((x) => {
+          if ('render' in x) {
+            return x.render(x.key, mini);
+          } else {
+            return (
+              <OperationButton
+                key={x.key}
+                icon={x.icon}
+                title={x.title}
+                onClick={x.onClick}
+                mini={mini}
+                showTooltip={x.showTooltip ?? 'mini'}
+                {...x.btnProps}
+              />
+            );
+          }
+        });
+
+        if (index !== operations.length - 1) {
+          li.push(<Divider key={`divider-${index}`} type="vertical" />);
         }
+
+        return li;
       })}
     </Space>
   );
