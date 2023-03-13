@@ -2,9 +2,10 @@ import ShareTable from '@/components/ShareTable';
 import { Share } from '@/services/share/entities';
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
-import { Spin } from 'antd';
+import { Space, Spin } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
 import { useEffect } from 'react';
+import { OwnSharesOperationBar } from './OwnShareOperationBar';
 
 const OwnSharesPage: React.FC = () => {
   const model = useModel('OwnShares.model');
@@ -28,12 +29,18 @@ const OwnSharesPage: React.FC = () => {
   return (
     <Spin spinning={false}>
       <PageContainer breadcrumb={undefined}>
-        <ShareTable
-          dataSource={model.shares}
-          pagination={false}
-          rowSelection={rowSelection}
-          selectColumns={['title', 'permission', 'ctime', 'etime']}
-        />
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          <OwnSharesOperationBar />
+          <ShareTable
+            dataSource={model.shares}
+            pagination={false}
+            rowSelection={rowSelection}
+            selectColumns={['title', 'permission', 'ctime', 'etime']}
+            renderOperations={(record) => (
+              <OwnSharesOperationBar mini shares={[record]} />
+            )}
+          />
+        </Space>
       </PageContainer>
     </Spin>
   );
