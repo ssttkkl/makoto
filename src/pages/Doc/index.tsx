@@ -35,7 +35,7 @@ const Doc: React.FC<{
         onConnect: () => setConnected(true),
         onDisconnect: () => setConnected(false),
       }),
-    [],
+    [name, params, writeable, token],
   );
 
   const editor = useMemo(() => {
