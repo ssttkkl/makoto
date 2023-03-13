@@ -1,6 +1,10 @@
 export type FilePath = string[];
 
 export function mergePath(path: FilePath): string {
+  if (path.length === 0) {
+    return '/';
+  }
+
   let rawPath = '';
   for (const p of path) {
     rawPath += '/';

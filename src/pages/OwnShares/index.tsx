@@ -35,10 +35,13 @@ const OwnSharesPage: React.FC = () => {
             dataSource={model.shares}
             pagination={false}
             rowSelection={rowSelection}
-            selectColumns={['title', 'permission', 'ctime', 'etime']}
-            renderOperations={(record) => (
-              <OwnSharesOperationBar mini shares={[record]} />
-            )}
+            selectColumns={[
+              'title',
+              'permission',
+              'allowLink',
+              'ctime',
+              'etime',
+            ]}
           />
         </Space>
       </PageContainer>

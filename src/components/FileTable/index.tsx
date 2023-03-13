@@ -19,7 +19,7 @@ export interface FileTableProps<T extends object = any> extends TableProps<T> {
   selectColumns?: FileTableColumns[];
   extraColumns?: ColumnsType<T>;
   recordLink?: (record: FileInfo) => string;
-  renderOperations?: (record: FileInfo) => ReactNode;
+  renderOperations?: (record: T) => ReactNode;
   collapseOperations?: boolean;
 }
 
@@ -77,7 +77,9 @@ function FileTable<T extends object = any>(
         return (
           <TableMainColumnCell
             href={props.recordLink ? props.recordLink(data) : undefined}
-            addon={props.renderOperations ? props.renderOperations(data) : null}
+            addon={
+              props.renderOperations ? props.renderOperations(record) : null
+            }
             collapseAddon={props.collapseOperations}
             hideAddon={hoveredRowIndex !== index}
           >

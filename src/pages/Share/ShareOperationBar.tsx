@@ -8,9 +8,10 @@ import {
   StarFilled,
   StarOutlined,
 } from '@ant-design/icons';
-import { FileInfo, FilePermissionEnum } from '@/services/files/entities';
+import { FileInfo } from '@/services/files/entities';
 import { createSpaceLink } from '@/services/space';
 import { mergePath } from '@/utils/path';
+import { mapPermission } from '@/utils/permission';
 
 function useFavOperation(): Operation {
   const model = useModel('Share.model');
@@ -74,10 +75,12 @@ export const ShareOperationBar: React.FC<{
         return;
       }
 
+      const linkFiles = files.length === 0 ? model.files ?? [] : files;
+
       await createSpaceLink({
         basePath: '/',
         shareId: model.share.shareId,
-        links: files.map((x) => {
+        links: linkFiles.map((x) => {
           return {
             filename: x.filename,
             refPath: mergePath(model.params.path),
@@ -110,16 +113,7 @@ export const ShareOperationBar: React.FC<{
                 {model.share?.owner.nickname}
               </Descriptions.Item>
               <Descriptions.Item label="权限">
-                {(function () {
-                  switch (model.share?.permission) {
-                    case FilePermissionEnum.R:
-                      return '只读';
-                    case FilePermissionEnum.RW:
-                      return '可读写';
-                    case FilePermissionEnum.RWX:
-                      return '可读写、可再次分享';
-                  }
-                })()}
+                {mapPermission(model.share?.permission ?? 0)}
               </Descriptions.Item>
               <Descriptions.Item label="允许链接">
                 {model.share?.allowLink ? '是' : '否'}

@@ -1,5 +1,6 @@
 import FileTable from '@/components/FileTable';
 import { RecycleBinEntity } from '@/services/recycle-bin/entities';
+import { mergePath, splitPath } from '@/utils/path';
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Space, Spin } from 'antd';
@@ -29,9 +30,14 @@ const RecycleBinPage: React.FC = () => {
 
   const extraColumns: ColumnsType<RecycleBinEntity> = [
     {
-      title: '原始路径',
+      title: '原位置',
       dataIndex: 'path',
       key: 'path',
+      render: (value: string) => {
+        const path = splitPath(value);
+        path.pop();
+        return mergePath(path);
+      },
     },
     {
       title: '删除时间',
@@ -54,6 +60,9 @@ const RecycleBinPage: React.FC = () => {
             rowSelection={rowSelection}
             selectColumns={['filename', 'type']}
             extraColumns={extraColumns}
+            renderOperations={(record) => (
+              <RecycleBinOperationBar entities={[record]} mini />
+            )}
           />
         </Space>
       </PageContainer>

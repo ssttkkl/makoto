@@ -10,3 +10,13 @@ export async function getMyProfile(): Promise<User> {
     }),
   );
 }
+
+export async function getProfile(params: { uid: number }): Promise<User> {
+  return plainToInstance(
+    User,
+    await request('/api/v1/profiles', {
+      method: 'GET',
+      params,
+    }),
+  );
+}

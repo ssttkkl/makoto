@@ -11,11 +11,11 @@ export const OperationButton: React.FC<OperationButtonProps> = ({
   showTooltip: _showTooltip,
   ...props
 }) => {
-  const extraBtnProps: ButtonProps = {};
+  const btnProps: ButtonProps = props;
   if (mini === true) {
-    extraBtnProps.size = 'small';
-    extraBtnProps.type = 'text';
-    extraBtnProps.danger = false;
+    btnProps.size = 'small';
+    btnProps.type = 'text';
+    btnProps.danger = false;
   }
 
   const showTooltipCondition = _showTooltip ?? 'mini';
@@ -27,16 +27,10 @@ export const OperationButton: React.FC<OperationButtonProps> = ({
   if (showTooltip) {
     return (
       <Tooltip title={title}>
-        <Button {...extraBtnProps} {...props}>
-          {text}
-        </Button>
+        <Button {...btnProps}>{text}</Button>
       </Tooltip>
     );
   } else {
-    return (
-      <Button {...extraBtnProps} {...props}>
-        {text}
-      </Button>
-    );
+    return <Button {...btnProps}>{text}</Button>;
   }
 };

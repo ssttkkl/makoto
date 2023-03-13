@@ -6,12 +6,19 @@ import { Share } from '@/services/share/entities';
 import TableMainColumnCell from '../TableMainColumnCell';
 import { User } from '@/services/users/entities';
 import { FilePermissionEnum } from '@/services/files/entities';
+import { mapPermission } from '@/utils/permission';
 
 function shareLink(share: Share): string {
   return `/share/${share.shareId}`;
 }
 
-type ShareTableColumns = 'title' | 'owner' | 'permission' | 'ctime' | 'etime';
+type ShareTableColumns =
+  | 'title'
+  | 'owner'
+  | 'permission'
+  | 'allowLink'
+  | 'ctime'
+  | 'etime';
 
 export interface ShareTableProps extends TableProps<Share> {
   selectColumns?: ShareTableColumns[];
@@ -52,22 +59,13 @@ const ShareTable: React.FC<ShareTableProps> = (props) => {
       title: '权限',
       dataIndex: 'permission',
       key: 'permission',
-      render: (value: FilePermissionEnum, record: Share) => {
-        let perm = [];
-        if (value & FilePermissionEnum.R) {
-          perm.push('可读');
-        }
-        if (value & FilePermissionEnum.W) {
-          perm.push('可写');
-        }
-        if (value & FilePermissionEnum.X) {
-          perm.push('可再次分享');
-        }
-        if (record.allowLink) {
-          perm.push('可链接');
-        }
-        return perm.join('、');
-      },
+      render: (value: FilePermissionEnum) => mapPermission(value),
+    },
+    {
+      title: '允许链接',
+      dataIndex: 'allowLink',
+      key: 'allowLink',
+      render: (value: boolean) => (value ? '是' : '否'),
     },
     {
       title: '创建时间',
