@@ -1,5 +1,5 @@
 import { refresh } from '@/services/auth';
-import { getAccessToken, getRefreshToken } from '@/utils/token/holder';
+import { getAccessToken, getRefreshToken } from '@/services/auth/token/holder';
 import {
   history,
   request as originRequest,
@@ -7,7 +7,7 @@ import {
 } from '@umijs/max';
 import { message } from 'antd';
 import { Mutex } from 'async-mutex';
-import { useRefreshToken } from './token';
+import { useRefreshToken } from '../services/auth/token';
 
 // 异常
 export class NoRefreshTokenException extends Error {

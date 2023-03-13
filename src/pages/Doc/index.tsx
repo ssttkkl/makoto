@@ -11,7 +11,7 @@ import Editor from '@/components/Editor';
 import { useModel } from '@umijs/max';
 import { splitPath } from '@/utils/path';
 import { Spin } from 'antd';
-import { useAccessToken } from '@/utils/token';
+import { useAccessToken } from '@/services/auth/token';
 
 const Doc: React.FC<{
   name: string;

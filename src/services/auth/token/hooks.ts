@@ -2,7 +2,7 @@ import {
   getAccessToken,
   getRefreshToken,
   tokenEventEmitter,
-} from '@/utils/token/holder';
+} from '@/services/auth/token/holder';
 import { useEffect, useState } from 'react';
 
 export function useAccessToken() {

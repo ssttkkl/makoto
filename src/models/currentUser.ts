@@ -1,7 +1,7 @@
 import { getMyProfile } from '@/services/profiles';
 import * as AuthService from '@/services/auth';
 import { useRequest } from '@/utils/request';
-import { getRefreshToken } from '@/utils/token';
+import { getRefreshToken } from '@/services/auth/token';
 import { User } from '@/services/users/entities';
 
 export default () => {

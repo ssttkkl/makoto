@@ -1,9 +1,5 @@
 import { callLogin, callRefresh } from './api';
-import {
-  getRefreshToken,
-  setAccessToken,
-  setRefreshToken,
-} from '../../utils/token';
+import { getRefreshToken, setAccessToken, setRefreshToken } from './token';
 
 export async function login(username: string, password: string): Promise<void> {
   const result = await callLogin({ username, password });
