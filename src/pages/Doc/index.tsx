@@ -8,16 +8,26 @@ import { withReact } from 'slate-react';
 import * as Y from 'yjs';
 import { HOCUSPOCUS_ENDPOINT_URL } from '../../config';
 import Editor from '@/components/Editor';
+import { useModel } from '@umijs/max';
+import { splitPath } from '@/utils/path';
+import { Spin } from 'antd';
+import { useAccessToken } from '@/utils/token';
 
-const Doc: React.FC<{ fid: number }> = ({ fid }) => {
+const Doc: React.FC<{ name: string; params: URLSearchParams }> = ({
+  name,
+  params,
+}) => {
   const [value, setValue] = useState<Descendant[]>([]);
   const [, /*connected*/ setConnected] = useState(false);
+  const token = useAccessToken();
 
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
         url: HOCUSPOCUS_ENDPOINT_URL,
-        name: fid.toString(),
+        name: name,
+        parameters: Object.fromEntries(params),
+        token: token,
         onConnect: () => setConnected(true),
         onDisconnect: () => setConnected(false),
       }),
@@ -48,12 +58,37 @@ const Doc: React.FC<{ fid: number }> = ({ fid }) => {
 };
 
 const DocPage: React.FC = () => {
+  const model = useModel('Doc.model');
+
+  // 在从别的页面切换回来时刷新数据
+  useEffect(() => {
+    model.refresh();
+  }, []);
+
+  // 将参数单向同步到model里
   const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const rawFrom = searchParams.get('from');
+    const rawPath = searchParams.get('path');
+    const rawShareId = searchParams.get('shareId');
+    model.updateParams({
+      from: rawFrom === 'share' ? 'share' : 'space',
+      path: splitPath(rawPath ?? ''),
+      shareId: rawShareId !== null ? Number.parseInt(rawShareId) : undefined,
+    });
+  }, [searchParams]);
 
-  const rawFid = searchParams.get('fid');
-  const fid = rawFid !== null ? Number.parseInt(rawFid) : undefined;
+  if (model.error) {
+    return <div>{model.error.message}</div>;
+  }
 
-  return fid !== undefined ? <Doc fid={fid} /> : null;
+  return (
+    <Spin spinning={model.loading}>
+      {model.unrefFile?.fid ? (
+        <Doc name={model.unrefFile.fid.toString()} params={searchParams} />
+      ) : null}
+    </Spin>
+  );
 };
 
 export default DocPage;

@@ -61,7 +61,10 @@ const SpacePage: React.FC = () => {
                 record.filename,
               ])}`;
             } else {
-              return `/doc?fid=${record.fid}`;
+              return `/doc?path=${mergePath([
+                ...model.params.path,
+                record.filename,
+              ])}`;
             }
           }}
           rowSelection={rowSelection}

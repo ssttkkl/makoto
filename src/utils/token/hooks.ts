@@ -1,12 +1,16 @@
-import { getRefreshToken, tokenEventEmitter } from '@/utils/token/holder';
+import {
+  getAccessToken,
+  getRefreshToken,
+  tokenEventEmitter,
+} from '@/utils/token/holder';
 import { useEffect, useState } from 'react';
 
 export function useAccessToken() {
-  const [accToken, setAccToken] = useState(getRefreshToken());
+  const [accToken, setAccToken] = useState(getAccessToken());
   useEffect(() => {
     tokenEventEmitter.on('accessToken', setAccToken);
     return () => {
-      tokenEventEmitter.off('refreshToken', setAccToken);
+      tokenEventEmitter.off('accessToken', setAccToken);
     };
   }, []);
 

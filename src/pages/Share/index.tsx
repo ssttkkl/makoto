@@ -73,7 +73,9 @@ const SharePage: React.FC = () => {
                   [...model.params.path, record.filename],
                 )}`;
               } else {
-                return `/doc?shareId=${model.params.shareId}&fid=${record.fid}`;
+                return `/doc?from=share&shareId=${
+                  model.params.shareId
+                }&path=${mergePath([...model.params.path, record.filename])}`;
               }
             }}
             rowSelection={rowSelection}
