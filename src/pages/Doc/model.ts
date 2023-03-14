@@ -43,7 +43,7 @@ export default () => {
   const file = useRequest(
     async () => {
       if (params.path.length === 0) {
-        throw new Error('file cannot be folder');
+        return;
       }
 
       let file: FileInfo;

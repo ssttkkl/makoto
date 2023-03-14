@@ -101,7 +101,7 @@ const Leaf: React.FC<RenderLeafProps> = (props) => {
 const Editor: React.FC<EditorProps> = ({
   editor,
   value,
-  onChange: _onChange,
+  onChange,
   writeable,
 }) => {
   const renderElement = useCallback(
@@ -112,13 +112,6 @@ const Editor: React.FC<EditorProps> = ({
     (props: RenderLeafProps) => <Leaf {...props} />,
     [],
   );
-
-  const onChange = (v: Descendant[]) => {
-    console.log('value: ', v);
-    if (_onChange) {
-      _onChange(v);
-    }
-  };
 
   return (
     <Slate editor={editor} value={value} onChange={onChange}>
