@@ -1,4 +1,4 @@
-import { BaseEditor } from 'slate';
+import { BaseEditor, Transforms } from 'slate';
 import { useSlate } from 'slate-react';
 import { EditorIcon } from '../../components/EditorIcon';
 import ToolbarButton from '../../components/ToolbarButton';
@@ -19,10 +19,13 @@ const FORMAT_MARKS = [
   'letterSpacing',
 ];
 
+const FORMAT_NODE_PROPS = ['align'];
+
 function clearMark(editor: BaseEditor) {
   let selection = editor.selection;
   if (selection) {
     FORMAT_MARKS.forEach((x) => editor.removeMark(x));
+    Transforms.unsetNodes(editor, FORMAT_NODE_PROPS);
     editor.onChange();
   }
 }
