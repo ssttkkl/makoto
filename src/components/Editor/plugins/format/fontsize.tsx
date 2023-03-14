@@ -4,6 +4,7 @@ import { Editor } from 'slate';
 import { RenderLeafProps, useSlate } from 'slate-react';
 import { LeafEditorPlugin } from '../base';
 import { ToolbarItem } from '../types';
+import { determineLeaf } from '../../utils';
 
 const FONT_SIZES = [
   12, 14, 16, 18, 20, 24, 28, 30, 32, 36, 40, 48, 56, 64, 72, 96, 120, 144,
@@ -15,25 +16,14 @@ const FONT_SIZE_OPTIONS = FONT_SIZES.map((x) => ({
 const DEFAULT_FONT_SIZE = 14;
 
 const FontSizeSelect = () => {
-  let current: number | null | undefined = undefined;
   const editor = useSlate();
 
   // 判断选中区域是否都是同一字号，并赋值给current
+  let current: number | null = DEFAULT_FONT_SIZE;
   const selection = editor.selection;
   if (selection !== null) {
-    const frag = Editor.fragment(editor, selection);
-    for (const x of frag) {
-      if (x.children) {
-        for (const y of x.children) {
-          const fontSize = y.fontSize ?? DEFAULT_FONT_SIZE;
-          if (current === undefined) {
-            current = fontSize;
-          } else if (current !== fontSize) {
-            current = null;
-          }
-        }
-      }
-    }
+    const fragment = Editor.fragment(editor, selection);
+    current = determineLeaf(fragment, 'fontSize', DEFAULT_FONT_SIZE);
   }
 
   return (

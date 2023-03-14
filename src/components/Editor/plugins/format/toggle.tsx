@@ -38,7 +38,7 @@ const ToggleButton: React.FC<
   const isActive = isMarkActive(editor, format);
   return (
     <ToolbarButton
-      type={isActive ? 'primary' : 'text'}
+      isActive={isActive}
       onClick={() => {
         toggleMark(editor, format, incompatibleFormat ?? []);
       }}

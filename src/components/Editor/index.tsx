@@ -19,6 +19,12 @@ import SuperscriptPlugin from './plugins/format/superscript';
 import SubscriptPlugin from './plugins/format/subscript';
 import ClearFormatPlugin from './plugins/format/clear-format';
 import { FontSizePlugin } from './plugins/format/fontsize';
+import {
+  AlignStartPlugin,
+  AlignCenterPlugin,
+  AlignEndPlugin,
+  AlignJustifyPlugin,
+} from './plugins/align';
 
 const plugins: EditorPluginGroup[] = [
   {
@@ -32,6 +38,15 @@ const plugins: EditorPluginGroup[] = [
       new SuperscriptPlugin(),
       new SubscriptPlugin(),
       new ClearFormatPlugin(),
+    ],
+  },
+  {
+    key: 'align',
+    plugins: [
+      AlignStartPlugin,
+      AlignCenterPlugin,
+      AlignEndPlugin,
+      AlignJustifyPlugin,
     ],
   },
 ];

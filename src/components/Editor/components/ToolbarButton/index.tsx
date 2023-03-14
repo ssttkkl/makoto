@@ -1,6 +1,11 @@
 import { Button, ButtonProps } from 'antd';
 
-const ToolbarButton: React.FC<ButtonProps> = ({
+export interface ToolbarButtonProps extends ButtonProps {
+  isActive?: boolean;
+}
+
+const ToolbarButton: React.FC<ToolbarButtonProps> = ({
+  isActive,
   onClick: _onClick,
   ...props
 }) => {
@@ -8,7 +13,7 @@ const ToolbarButton: React.FC<ButtonProps> = ({
     <Button
       size="small"
       shape="circle"
-      type="text"
+      type={isActive ? 'primary' : 'text'}
       {...props}
       onClick={(e) => {
         // 避免编辑框失焦
@@ -21,4 +26,5 @@ const ToolbarButton: React.FC<ButtonProps> = ({
     />
   );
 };
+
 export default ToolbarButton;
