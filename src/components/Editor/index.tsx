@@ -18,11 +18,13 @@ import StrikethroughPlugin from './plugins/format/strikethrough';
 import SuperscriptPlugin from './plugins/format/superscript';
 import SubscriptPlugin from './plugins/format/subscript';
 import ClearFormatPlugin from './plugins/format/clear-format';
+import { FontSizePlugin } from './plugins/format/fontsize';
 
 const plugins: EditorPluginGroup[] = [
   {
     key: 'font',
     plugins: [
+      new FontSizePlugin(),
       new BoldPlugin(),
       new ItalicPlugin(),
       new UnderlinePlugin(),
@@ -97,7 +99,7 @@ const Editor: React.FC<EditorProps> = ({
   );
 
   const onChange = (v: Descendant[]) => {
-    console.log(v);
+    console.log('value: ', v);
     if (_onChange) {
       _onChange(v);
     }
