@@ -38,7 +38,7 @@ export const CreateFolderFormButton: React.FC<
       onFinish={async (formData) => {
         await createSpaceFile({
           type: 'folder',
-          basePath: mergePath(basePath),
+          path: mergePath(basePath),
           filename: formData.filename,
         });
         if (onFinish) onFinish(formData);
@@ -61,7 +61,7 @@ export const CreateDocumentFormButton: React.FC<
       onFinish={async (formData) => {
         await createSpaceFile({
           type: 'document',
-          basePath: mergePath(basePath),
+          path: mergePath(basePath),
           filename: formData.filename,
         });
         if (onFinish) onFinish(formData);

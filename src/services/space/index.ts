@@ -21,7 +21,7 @@ export async function getSpaceFileInfo(params: {
 }
 
 export async function createSpaceFile(params: {
-  basePath?: string;
+  path?: string;
   filename: string;
   type: FileType;
 }): Promise<DocumentInfo | FolderInfo> {
@@ -34,7 +34,7 @@ export async function createSpaceFile(params: {
 }
 
 export async function createSpaceLink(params: {
-  basePath: string;
+  path: string;
   shareId: number;
   links: { filename: string; refPath: string }[];
 }): Promise<LinkInfo[]> {

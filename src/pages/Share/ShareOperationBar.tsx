@@ -81,12 +81,12 @@ export const ShareOperationBar: React.FC<{
       const linkFiles = files.length === 0 ? model.files ?? [] : files;
 
       await createSpaceLink({
-        basePath: '/',
+        path: '/',
         shareId: model.share.shareId,
         links: linkFiles.map((x) => {
           return {
             filename: x.filename,
-            refPath: mergePath(model.params.path),
+            refPath: mergePath([...model.params.path, x.filename]),
           };
         }),
       });
