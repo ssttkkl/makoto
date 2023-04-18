@@ -1,7 +1,9 @@
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
-  antd: {},
+  antd: {
+    appConfig: {},
+  },
   access: {},
   model: {},
   initialState: {},
@@ -26,6 +28,12 @@ export default defineConfig({
       name: '我的空间',
       path: '/space',
       component: './Space',
+    },
+    {
+      name: '管理文件',
+      path: '/file-manage',
+      component: './ManageFile',
+      hideInMenu: true,
     },
     {
       name: '登录',

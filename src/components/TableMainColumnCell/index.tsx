@@ -2,6 +2,7 @@ import { MoreOutlined } from '@ant-design/icons';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { Link } from '@umijs/max';
 import { Button, Popover } from 'antd';
+import { LinkProps } from 'antd/es/typography/Link';
 import { ReactNode } from 'react';
 
 const TableMainColumnCell: React.FC<{
@@ -10,7 +11,8 @@ const TableMainColumnCell: React.FC<{
   addon?: ReactNode;
   collapseAddon?: boolean;
   hideAddon?: boolean;
-}> = ({ children, href, addon, collapseAddon, hideAddon }) => {
+  target?: LinkProps['target'];
+}> = ({ children, href, addon, collapseAddon, hideAddon, target }) => {
   const addonClassname = useEmotionCss(() => ({
     display: 'inline',
     float: 'right',
@@ -22,7 +24,13 @@ const TableMainColumnCell: React.FC<{
 
   return (
     <>
-      {href ? <Link to={href}>{children}</Link> : children}
+      {href ? (
+        <Link to={href} target={target}>
+          {children}
+        </Link>
+      ) : (
+        children
+      )}
       {addon ? (
         <div
           className={

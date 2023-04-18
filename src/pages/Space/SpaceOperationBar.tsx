@@ -17,7 +17,7 @@ import {
   ShareAltOutlined,
 } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { Descriptions, message, Modal } from 'antd';
+import { App, Descriptions } from 'antd';
 import { useCallback } from 'react';
 import {
   CreateDocumentFormButton,
@@ -35,6 +35,7 @@ const SpaceOperationBar: React.FC<{
     selectedFiles: model.selectedFiles,
     setSelectedFiles: model.setSelectedFiles,
   }));
+  const { message, modal } = App.useApp();
 
   const files = _files === undefined ? model.selectedFiles : _files;
   const mini = _mini === true;
@@ -169,7 +170,7 @@ const SpaceOperationBar: React.FC<{
           const owner = await getProfile({ uid: file.ownerUid });
 
           if (file instanceof DocumentInfo) {
-            Modal.info({
+            modal.info({
               title: '分享信息',
               content: (
                 <Descriptions column={1}>
@@ -208,6 +209,9 @@ const SpaceOperationBar: React.FC<{
           key: 'share-manage',
           title: '管理分享与链接',
           icon: <DeploymentUnitOutlined />,
+          onClick: () => {
+            window.open(`/file-manage?fid=${files[0].fid}`);
+          },
         });
       }
 

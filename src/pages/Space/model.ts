@@ -2,7 +2,7 @@ import { FileInfo, FolderInfo } from '@/services/files/entities';
 import { getSpaceFileInfo } from '@/services/space';
 import { FilePath, mergePath } from '@/utils/path';
 import { useRequest } from '@/utils/request';
-import { sortFiles } from '@/utils/sortFiles';
+import { sortFiles } from '@/utils/file';
 import { useState } from 'react';
 import { useUpdater } from '@/utils/hooks';
 

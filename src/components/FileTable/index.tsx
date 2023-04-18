@@ -1,18 +1,20 @@
-import React, { ReactElement, ReactNode, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { Table } from 'antd';
 
 import { ColumnsType, TableProps } from 'antd/es/table';
-import { FileOutlined, FolderFilled } from '@ant-design/icons';
-import {
-  FileInfo,
-  FileType,
-  FolderInfo,
-  LinkInfo,
-} from '@/services/files/entities';
+import { FileInfo, FileType, LinkInfo } from '@/services/files/entities';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import TableMainColumnCell from '../TableMainColumnCell';
+import { getFileIcon, getFileRealType } from '@/utils/file';
+import UserNickname from '../Username';
 
-type FileTableColumns = 'filename' | 'type' | 'ctime' | 'mtime' | 'atime';
+type FileTableColumns =
+  | 'filename'
+  | 'type'
+  | 'owner'
+  | 'ctime'
+  | 'mtime'
+  | 'atime';
 
 export interface FileTableProps<T extends object = any> extends TableProps<T> {
   dataSourcePath?: string[];
@@ -21,16 +23,6 @@ export interface FileTableProps<T extends object = any> extends TableProps<T> {
   recordLink?: (record: FileInfo) => string;
   renderOperations?: (record: T) => ReactNode;
   collapseOperations?: boolean;
-}
-
-function getFileRealType(file: FileInfo): 'folder' | 'document' {
-  if (file instanceof LinkInfo) {
-    return getFileRealType((file as LinkInfo).ref);
-  } else if (file instanceof FolderInfo) {
-    return 'folder';
-  } else {
-    return 'document';
-  }
 }
 
 function getData<T, U>(record: T, path: string[]): U {
@@ -64,26 +56,19 @@ function FileTable<T extends object = any>(
       key: 'filename',
       render: (value: string, record: T, index: number) => {
         const data: FileInfo = getData(record, dataSourcePath);
-        let icon: ReactElement | null;
-        switch (getFileRealType(data)) {
-          case 'document':
-            icon = <FileOutlined />;
-            break;
-          case 'folder':
-            icon = <FolderFilled />;
-            break;
-        }
+        const Icon = getFileIcon(data);
 
         return (
           <TableMainColumnCell
             href={props.recordLink ? props.recordLink(data) : undefined}
+            target={getFileRealType(data) === 'document' ? '_blank' : undefined}
             addon={
               props.renderOperations ? props.renderOperations(record) : null
             }
             collapseAddon={props.collapseOperations}
             hideAddon={hoveredRowIndex !== index}
           >
-            {icon}
+            <Icon />
             <span className={filenameClassname}>{value}</span>
           </TableMainColumnCell>
         );
@@ -104,6 +89,12 @@ function FileTable<T extends object = any>(
             return '-';
         }
       },
+    },
+    {
+      title: '所有者',
+      dataIndex: [...dataSourcePath, 'ownerUid'],
+      key: 'owner',
+      render: (value: number) => <UserNickname uid={value} />,
     },
     {
       title: '创建时间',

@@ -8,7 +8,7 @@ import { Share } from '@/services/share/entities';
 import { useUpdater } from '@/utils/hooks';
 import { mergePath } from '@/utils/path';
 import { useRequest } from '@/utils/request';
-import { sortFiles } from '@/utils/sortFiles';
+import { sortFiles } from '@/utils/file';
 import { useState } from 'react';
 
 export interface SharePageSearchParams {
