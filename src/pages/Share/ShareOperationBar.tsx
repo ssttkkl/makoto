@@ -1,8 +1,9 @@
 import { useModel } from '@umijs/max';
 import { Descriptions, message, Modal } from 'antd';
 import { Operation, OperationBar } from '@/components/OperationBar';
-import { favShare, unfavShare } from '@/services/share';
+import { expireShare, favShare, unfavShare } from '@/services/share';
 import {
+  CloseOutlined,
   InfoCircleOutlined,
   LinkOutlined,
   StarFilled,
@@ -69,34 +70,56 @@ export const ShareOperationBar: React.FC<{
     currentUser !== undefined && model.share?.owner.uid === currentUser?.uid;
 
   const fav = useFavOperation();
-  const link: Operation = {
-    key: 'link',
-    icon: <LinkOutlined />,
-    title: files.length === 0 ? '链接所有文件' : '链接选中文件',
-    onClick: async () => {
-      if (model.share === undefined) {
-        return;
-      }
-
-      const linkFiles = files.length === 0 ? model.files ?? [] : files;
-
-      await createSpaceLink({
-        path: '/',
-        shareId: model.share.shareId,
-        links: linkFiles.map((x) => {
-          return {
-            filename: x.filename,
-            refPath: mergePath([...model.params.path, x.filename]),
-          };
-        }),
-      });
-      message.success('成功链接文件到我的空间');
-    },
-  };
 
   const basic = [fav];
+
   if (!isOwner && model.share?.allowLink === true) {
+    const link: Operation = {
+      key: 'link',
+      icon: <LinkOutlined />,
+      title: files.length === 0 ? '链接所有文件' : '链接选中文件',
+      onClick: async () => {
+        if (model.share === undefined) {
+          return;
+        }
+
+        const linkFiles = files.length === 0 ? model.files ?? [] : files;
+
+        await createSpaceLink({
+          path: '/',
+          shareId: model.share.shareId,
+          links: linkFiles.map((x) => {
+            return {
+              filename: x.filename,
+              refPath: mergePath([...model.params.path, x.filename]),
+            };
+          }),
+        });
+        message.success('成功链接文件到我的空间');
+      },
+    };
     basic.push(link);
+  }
+
+  if (isOwner && model.share?.expired === false) {
+    const expire: Operation = {
+      key: 'expire',
+      title: '取消分享',
+      icon: <CloseOutlined />,
+      btnProps: {
+        danger: true,
+      },
+      onClick: async () => {
+        if (model.share === undefined) {
+          return;
+        }
+
+        await expireShare({ shareId: model.share.shareId });
+        message.success('成功取消分享');
+        model.refresh();
+      },
+    };
+    basic.push(expire);
   }
 
   const info = [
