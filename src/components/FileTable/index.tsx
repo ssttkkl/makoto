@@ -20,7 +20,7 @@ export interface FileTableProps<T extends object = any> extends TableProps<T> {
   dataSourcePath?: string[];
   selectColumns?: FileTableColumns[];
   extraColumns?: ColumnsType<T>;
-  recordLink?: (record: FileInfo) => string;
+  recordLink?: (record: FileInfo) => string | undefined;
   renderOperations?: (record: T) => ReactNode;
   collapseOperations?: boolean;
 }
@@ -86,7 +86,7 @@ function FileTable<T extends object = any>(
           case 'folder':
             return '目录' + (data instanceof LinkInfo ? '（链接）' : '');
           default:
-            return '-';
+            return '（原文件已被移除）';
         }
       },
     },

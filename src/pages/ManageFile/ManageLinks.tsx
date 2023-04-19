@@ -19,7 +19,7 @@ const ManageLinksOperationBar: React.FC<{
     [
       {
         key: 'set-null',
-        title: '取消收藏',
+        title: '移除链接',
         icon: <DisconnectOutlined />,
         btnProps: {
           disabled: links.length === 0,
@@ -28,7 +28,7 @@ const ManageLinksOperationBar: React.FC<{
           for (const x of links) {
             await setLinkReferencingToNull({ fid: x.fid });
           }
-          message.success('成功取消收藏分享');
+          message.success('成功移除链接');
           if (refresh) {
             await refresh();
           }

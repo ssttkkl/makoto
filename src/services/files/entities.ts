@@ -23,10 +23,19 @@ export abstract class FileInfo {
 
   parentFid: number | null;
 
-  static plainToInstance(plain: {
-    [key: string]: any;
-    type: FileType;
-  }): FileInfo {
+  static plainToInstance(
+    plain:
+      | {
+          [key: string]: any;
+          type: FileType;
+        }
+      | null
+      | undefined,
+  ): FileInfo | null | undefined {
+    if (!plain) {
+      return plain;
+    }
+
     switch (plain.type) {
       case 'document':
         /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -66,7 +75,7 @@ export class FolderInfo extends FileInfo {
 
 export class LinkInfo extends FileInfo {
   @TransformFileInfo()
-  ref: FileInfo;
+  ref: FileInfo | null;
 
   permission: FilePermissionEnum;
 }

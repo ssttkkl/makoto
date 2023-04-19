@@ -1,9 +1,14 @@
 import { FileInfo, FolderInfo, LinkInfo } from '@/services/files/entities';
 import { FileOutlined, FolderFilled } from '@ant-design/icons';
 
-export function getFileRealType(file: FileInfo): 'folder' | 'document' {
+export function getFileRealType(file: FileInfo): 'folder' | 'document' | '' {
   if (file instanceof LinkInfo) {
-    return getFileRealType((file as LinkInfo).ref);
+    const ref = (file as LinkInfo).ref;
+    if (ref !== null) {
+      return getFileRealType(ref);
+    } else {
+      return '';
+    }
   } else if (file instanceof FolderInfo) {
     return 'folder';
   } else {
