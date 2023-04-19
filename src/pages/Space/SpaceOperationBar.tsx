@@ -1,10 +1,9 @@
+import FileInfoDescription from '@/components/FileInfoDescription';
 import { OperationBar, OperationGroup } from '@/components/OperationBar';
 import { OperationButton } from '@/components/OperationButton';
-import { DocumentInfo, FileInfo, LinkInfo } from '@/services/files/entities';
-import { getProfile } from '@/services/profiles';
+import { FileInfo, LinkInfo } from '@/services/files/entities';
 import { moveIntoRecycleBin } from '@/services/recycle-bin';
 import { mergePath } from '@/utils/path';
-import { mapPermission } from '@/utils/permission';
 import {
   CopyOutlined,
   DeleteOutlined,
@@ -17,7 +16,7 @@ import {
   ShareAltOutlined,
 } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { App, Descriptions } from 'antd';
+import { App } from 'antd';
 import { useCallback } from 'react';
 import {
   CreateDocumentFormButton,
@@ -164,43 +163,10 @@ const SpaceOperationBar: React.FC<{
         title: '文件信息',
         icon: <InfoCircleOutlined />,
         onClick: async () => {
-          const originFile = files[0];
-          const file =
-            originFile instanceof LinkInfo ? originFile.ref : originFile;
-          const owner = await getProfile({ uid: file.ownerUid });
-
-          if (file instanceof DocumentInfo) {
-            modal.info({
-              title: '分享信息',
-              content: (
-                <Descriptions column={1}>
-                  <Descriptions.Item label="文件名">
-                    {file.filename}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="文件类型">
-                    {originFile instanceof LinkInfo ? '文档（链接）' : '文档'}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="所有者">
-                    {owner.nickname}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="创建时间">
-                    {file.ctime.toLocaleString()}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="上次访问时间">
-                    {file.atime.toLocaleString()}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="上次修改时间">
-                    {file.mtime.toLocaleString()}
-                  </Descriptions.Item>
-                  {originFile instanceof LinkInfo ? (
-                    <Descriptions.Item label="权限">
-                      {mapPermission(originFile.permission)}
-                    </Descriptions.Item>
-                  ) : null}
-                </Descriptions>
-              ),
-            });
-          }
+          modal.info({
+            title: '文件信息',
+            content: <FileInfoDescription file={files[0]} />,
+          });
         },
       });
 

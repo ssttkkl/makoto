@@ -30,7 +30,10 @@ const OwnSharesPage: React.FC = () => {
     <Spin spinning={false}>
       <PageContainer breadcrumb={undefined}>
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-          <OwnSharesOperationBar />
+          <OwnSharesOperationBar
+            shares={model.selectedShares}
+            refresh={model.refresh}
+          />
           <ShareTable
             dataSource={model.shares}
             pagination={false}

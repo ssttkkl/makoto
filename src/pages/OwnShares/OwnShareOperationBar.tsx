@@ -2,20 +2,13 @@ import { OperationBar, OperationGroup } from '@/components/OperationBar';
 import { expireShare } from '@/services/share';
 import { Share } from '@/services/share/entities';
 import { CloseOutlined } from '@ant-design/icons';
-import { useModel } from '@umijs/max';
 import { message } from 'antd';
 
 export const OwnSharesOperationBar: React.FC<{
-  shares?: Share[];
+  shares: Share[];
   mini?: boolean;
-}> = ({ shares: _shares, mini: _mini }) => {
-  const model = useModel('OwnShares.model', (model) => ({
-    selectedShares: model.selectedShares,
-    setSelectedShares: model.setSelectedShares,
-    refresh: model.refresh,
-  }));
-
-  const shares = _shares === undefined ? model.selectedShares : _shares;
+  refresh?: () => Promise<any>;
+}> = ({ shares, mini: _mini, refresh }) => {
   const mini = _mini === true;
 
   const op: OperationGroup[] = [
@@ -25,16 +18,17 @@ export const OwnSharesOperationBar: React.FC<{
         title: '取消分享',
         icon: <CloseOutlined />,
         btnProps: {
-          disabled: shares.length === 0 || !shares.every((x) => !x.expired),
+          disabled: shares.length === 0,
           danger: true,
         },
         onClick: async () => {
           for (const x of shares) {
             await expireShare({ shareId: x.shareId });
           }
-          model.setSelectedShares([]);
           message.success('成功取消分享');
-          await model.refresh();
+          if (refresh) {
+            await refresh();
+          }
         },
       },
     ],

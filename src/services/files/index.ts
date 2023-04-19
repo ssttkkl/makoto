@@ -32,3 +32,14 @@ export async function getSharesContainingFile(params: {
     })) as any[],
   );
 }
+
+export async function setLinkReferencingToNull(params: {
+  fid: number;
+}): Promise<LinkInfo> {
+  return plainToInstance(
+    LinkInfo,
+    await request(`/api/v1/files/${params.fid}/ref`, {
+      method: 'DELETE',
+    }),
+  );
+}
