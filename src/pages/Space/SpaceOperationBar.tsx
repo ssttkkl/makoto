@@ -24,6 +24,7 @@ import {
   RenameFileFormButton,
 } from './FilenameForm';
 import CreateShareForm from './CreateShareForm';
+import SpaceTree from '@/components/SpaceTree';
 
 const SpaceOperationBar: React.FC<{
   files?: FileInfo[];
@@ -67,6 +68,12 @@ const SpaceOperationBar: React.FC<{
     key: 'copy',
     title: '复制',
     icon: <CopyOutlined />,
+    onClick: async () => {
+      modal.confirm({
+        title: '复制文件',
+        content: <SpaceTree defaultSelectedPath={model.params.path} />,
+      });
+    },
   };
 
   const moveOp = {

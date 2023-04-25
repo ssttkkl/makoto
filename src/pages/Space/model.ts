@@ -3,7 +3,7 @@ import { getSpaceFileInfo } from '@/services/space';
 import { FilePath, mergePath } from '@/utils/path';
 import { useRequest } from '@/utils/request';
 import { sortFiles } from '@/utils/file';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUpdater } from '@/utils/hooks';
 
 export interface SpacePageSearchParams {
@@ -30,6 +30,7 @@ export default () => {
   );
 
   const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([]);
+  useEffect(() => setSelectedFiles([]), [params.path]);
 
   return {
     run,
