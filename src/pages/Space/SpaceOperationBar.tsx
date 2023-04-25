@@ -21,7 +21,8 @@ import { useCallback } from 'react';
 import {
   CreateDocumentFormButton,
   CreateFolderFormButton,
-} from './CreateFileForm';
+  RenameFileFormButton,
+} from './FilenameForm';
 import CreateShareForm from './CreateShareForm';
 
 const SpaceOperationBar: React.FC<{
@@ -94,7 +95,27 @@ const SpaceOperationBar: React.FC<{
   const renameOp = {
     key: 'rename',
     title: '重命名',
-    icon: <EditOutlined />,
+    render: useCallback(
+      (key: string, mini: boolean) => (
+        <RenameFileFormButton
+          key={key}
+          basePath={model.params.path}
+          oldFilename={files[0].filename}
+          onFinish={async () => {
+            await model.refresh();
+            return true;
+          }}
+          trigger={
+            <OperationButton
+              title="重命名"
+              icon={<EditOutlined />}
+              mini={mini}
+            />
+          }
+        />
+      ),
+      [model.refresh, model.params.path, files],
+    ),
   };
 
   const infoOp = {
@@ -176,7 +197,7 @@ const SpaceOperationBar: React.FC<{
   } else if (files.length !== 0) {
     op.push([shareOp]);
 
-    const basic = [copyOp, moveOp, deleteOp];
+    const basic: OperationGroup = [copyOp, moveOp, deleteOp];
     if (files.length === 1) {
       basic.push(renameOp);
     }

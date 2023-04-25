@@ -17,7 +17,7 @@ export async function getSpaceFileInfo(params: {
       method: 'GET',
       params,
     }),
-  );
+  ) as FileInfo;
 }
 
 export async function createSpaceFile(params: {
@@ -30,7 +30,7 @@ export async function createSpaceFile(params: {
       method: 'POST',
       data: params,
     }),
-  );
+  ) as DocumentInfo | FolderInfo;
 }
 
 export async function createSpaceLink(params: {
@@ -43,4 +43,16 @@ export async function createSpaceLink(params: {
     data: params,
   });
   return plainToInstance(LinkInfo, plain);
+}
+
+export async function renameSpaceFile(params: {
+  path: string;
+  newFilename: string;
+}): Promise<FileInfo> {
+  return FileInfo.plainToInstance(
+    await request('/api/v1/space/file/filename', {
+      method: 'PUT',
+      params,
+    }),
+  ) as FileInfo;
 }
