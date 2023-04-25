@@ -24,7 +24,7 @@ import {
   RenameFileFormButton,
 } from './FilenameForm';
 import CreateShareForm from './CreateShareForm';
-import SpaceTree from '@/components/SpaceTree';
+import { CopyFileFormButton, MoveFileFormButton } from './SpaceTreeForm';
 
 const SpaceOperationBar: React.FC<{
   files?: FileInfo[];
@@ -67,19 +67,51 @@ const SpaceOperationBar: React.FC<{
   const copyOp = {
     key: 'copy',
     title: '复制',
-    icon: <CopyOutlined />,
-    onClick: async () => {
-      modal.confirm({
-        title: '复制文件',
-        content: <SpaceTree defaultSelectedPath={model.params.path} />,
-      });
-    },
+    render: useCallback(
+      (key: string, mini: boolean) => (
+        <CopyFileFormButton
+          key={key}
+          basePath={model.params.path}
+          files={files}
+          onFinish={async () => {
+            message.success('复制文件成功');
+            await model.refresh();
+            return true;
+          }}
+          trigger={
+            <OperationButton title="复制" icon={<CopyOutlined />} mini={mini} />
+          }
+        />
+      ),
+      [model.refresh, model.params.path, files],
+    ),
   };
 
   const moveOp = {
     key: 'move',
     title: '移动',
-    icon: <ScissorOutlined />,
+    render: useCallback(
+      (key: string, mini: boolean) => (
+        <MoveFileFormButton
+          key={key}
+          basePath={model.params.path}
+          files={files}
+          onFinish={async () => {
+            message.success('移动文件成功');
+            await model.refresh();
+            return true;
+          }}
+          trigger={
+            <OperationButton
+              title="移动"
+              icon={<ScissorOutlined />}
+              mini={mini}
+            />
+          }
+        />
+      ),
+      [model.refresh, model.params.path, files],
+    ),
   };
 
   const deleteOp = {
@@ -109,6 +141,7 @@ const SpaceOperationBar: React.FC<{
           basePath={model.params.path}
           oldFilename={files[0].filename}
           onFinish={async () => {
+            message.success('重命名文件成功');
             await model.refresh();
             return true;
           }}
@@ -155,6 +188,7 @@ const SpaceOperationBar: React.FC<{
           key={key}
           basePath={model.params.path}
           onFinish={async () => {
+            message.success('新建文档成功');
             await model.refresh();
             return true;
           }}
@@ -181,6 +215,7 @@ const SpaceOperationBar: React.FC<{
           key={key}
           basePath={model.params.path}
           onFinish={async () => {
+            message.success('新建目录成功');
             await model.refresh();
             return true;
           }}

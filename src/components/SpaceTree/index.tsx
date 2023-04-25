@@ -56,37 +56,32 @@ const updateTreeData = (
   });
 
 export interface SpaceTreeProps {
-  defaultSelectedPath?: FilePath;
-  onSelect?: (folder: FolderInfo, path: FilePath) => void;
+  selectedPath?: FilePath;
+  onSelect?: (path: FilePath, folder: FolderInfo) => void;
 }
 
-const SpaceTree: React.FC<SpaceTreeProps> = ({
-  defaultSelectedPath,
-  onSelect,
-}) => {
+const SpaceTree: React.FC<SpaceTreeProps> = ({ selectedPath, onSelect }) => {
   const [treeData, setTreeData] = useState<Node[]>([]);
+  const [loadedKeys, setLoadedKeys] = useState<React.Key[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>(['/']);
-  const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
 
-  const rootReq = useRequest(
-    async () => {
-      const root = (await getSpaceFileInfo({ depth: 1 })) as FolderInfo;
+  const rootReq = useRequest(async () => {
+    const root = (await getSpaceFileInfo({ depth: 1 })) as FolderInfo;
 
-      setTreeData([
-        {
-          ...folderInfoToNode(root, []),
-          title: '我的空间',
-        },
-      ]);
+    setTreeData([
+      {
+        ...folderInfoToNode(root, []),
+        title: '我的空间',
+      },
+    ]);
 
-      if (defaultSelectedPath) {
-        setSelectedKeys([mergePath(defaultSelectedPath)]);
-        setExpandedKeys(pathToKeys(defaultSelectedPath));
-      }
-      return root;
-    },
-    { refreshDeps: [defaultSelectedPath] },
-  );
+    setLoadedKeys(['/']);
+
+    if (selectedPath) {
+      setExpandedKeys(pathToKeys(selectedPath));
+    }
+    return root;
+  });
 
   return (
     <Spin spinning={rootReq.loading}>
@@ -103,15 +98,16 @@ const SpaceTree: React.FC<SpaceTreeProps> = ({
           );
         }}
         treeData={treeData}
-        selectedKeys={selectedKeys}
-        onSelect={(selectedKeys, { node }) => {
-          setSelectedKeys(selectedKeys);
+        selectedKeys={[mergePath(selectedPath ?? [])]}
+        onSelect={(_, { node }) => {
           if (onSelect) {
-            onSelect(node.folder, node.path);
+            onSelect(node.path, node.folder);
           }
         }}
         expandedKeys={expandedKeys}
         onExpand={(expandedKeys) => setExpandedKeys(expandedKeys)}
+        loadedKeys={loadedKeys}
+        onLoad={(loadedKeys) => setLoadedKeys(loadedKeys)}
       />
     </Spin>
   );

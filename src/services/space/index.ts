@@ -58,3 +58,27 @@ export async function renameSpaceFile(params: {
     }),
   ) as FileInfo;
 }
+
+export async function copySpaceFile(params: {
+  path: string;
+  destPath: string;
+}): Promise<FileInfo> {
+  return FileInfo.plainToInstance(
+    await request('/api/v1/space/file/copy', {
+      method: 'POST',
+      params,
+    }),
+  ) as FileInfo;
+}
+
+export async function moveSpaceFile(params: {
+  path: string;
+  destPath: string;
+}): Promise<FileInfo> {
+  return FileInfo.plainToInstance(
+    await request('/api/v1/space/file/move', {
+      method: 'POST',
+      params,
+    }),
+  ) as FileInfo;
+}
