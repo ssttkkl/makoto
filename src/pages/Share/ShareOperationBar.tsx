@@ -9,10 +9,9 @@ import {
   StarFilled,
   StarOutlined,
 } from '@ant-design/icons';
-import { FileInfo } from '@/services/files/entities';
-import { createSpaceLink } from '@/services/space';
-import { mergePath } from '@/utils/path';
 import { mapPermission } from '@/utils/permission';
+import { LinkFileFormButton } from './LinkFileFormButton';
+import { OperationButton } from '@/components/OperationButton';
 
 function useFavOperation(): Operation {
   const model = useModel('Share.model', (model) => ({
@@ -56,70 +55,73 @@ function useFavOperation(): Operation {
   }
 }
 
-export const ShareOperationBar: React.FC<{
-  files?: FileInfo[];
-  mini?: boolean;
-}> = ({ files: _files, mini: _mini }) => {
+export const ShareOperationBar: React.FC = () => {
   const { currentUser } = useModel('currentUser');
   const model = useModel('Share.model');
 
-  const files = _files === undefined ? model.selectedFiles : _files;
-  const mini = _mini === true;
+  const files = model.selectedFiles;
 
   const isOwner =
     currentUser !== undefined && model.share?.owner.uid === currentUser?.uid;
 
-  const fav = useFavOperation();
+  const favOp = useFavOperation();
 
-  const basic = [fav];
+  const linkTitle = files.length === 0 ? '链接所有文件' : '链接选中文件';
+  const linkFiles = files.length === 0 ? model.files ?? [] : files;
+  const linkOp: Operation = {
+    key: 'link',
+    title: linkTitle,
+    render: (key: string, mini: boolean) => {
+      if (model.share === undefined) {
+        return;
+      }
 
+      return (
+        <LinkFileFormButton
+          key={key}
+          shareId={model.share.shareId}
+          refPath={linkFiles.map((x) => [...model.params.path, x.filename])}
+          onFinish={async () => {
+            message.success('链接文件成功');
+            await model.refresh();
+            return true;
+          }}
+          trigger={
+            <OperationButton
+              title={linkTitle}
+              icon={<LinkOutlined />}
+              mini={mini}
+            />
+          }
+        />
+      );
+    },
+  };
+
+  const expireOp: Operation = {
+    key: 'expire',
+    title: '取消分享',
+    icon: <CloseOutlined />,
+    btnProps: {
+      danger: true,
+    },
+    onClick: async () => {
+      if (model.share === undefined) {
+        return;
+      }
+
+      await expireShare({ shareId: model.share.shareId });
+      message.success('成功取消分享');
+      model.refresh();
+    },
+  };
+
+  const basic = [favOp];
   if (!isOwner && model.share?.allowLink === true) {
-    const link: Operation = {
-      key: 'link',
-      icon: <LinkOutlined />,
-      title: files.length === 0 ? '链接所有文件' : '链接选中文件',
-      onClick: async () => {
-        if (model.share === undefined) {
-          return;
-        }
-
-        const linkFiles = files.length === 0 ? model.files ?? [] : files;
-
-        await createSpaceLink({
-          path: '/',
-          shareId: model.share.shareId,
-          links: linkFiles.map((x) => {
-            return {
-              filename: x.filename,
-              refPath: mergePath([...model.params.path, x.filename]),
-            };
-          }),
-        });
-        message.success('成功链接文件到我的空间');
-      },
-    };
-    basic.push(link);
+    basic.push(linkOp);
   }
-
   if (isOwner && model.share?.expired === false) {
-    const expire: Operation = {
-      key: 'expire',
-      title: '取消分享',
-      icon: <CloseOutlined />,
-      btnProps: {
-        danger: true,
-      },
-      onClick: async () => {
-        if (model.share === undefined) {
-          return;
-        }
-
-        await expireShare({ shareId: model.share.shareId });
-        message.success('成功取消分享');
-        model.refresh();
-      },
-    };
-    basic.push(expire);
+    basic.push(expireOp);
   }
 
   const info = [
@@ -162,5 +164,5 @@ export const ShareOperationBar: React.FC<{
 
   const op = [basic, info];
 
-  return <OperationBar operations={op} mini={mini} />;
+  return <OperationBar operations={op} />;
 };

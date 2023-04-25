@@ -1,8 +1,10 @@
 import FileInfoDescription from '@/components/FileInfoDescription';
+import FilenameForm from '@/components/FilenameForm';
 import { OperationBar, OperationGroup } from '@/components/OperationBar';
 import { OperationButton } from '@/components/OperationButton';
 import { FileInfo, LinkInfo } from '@/services/files/entities';
 import { moveIntoRecycleBin } from '@/services/recycle-bin';
+import { createSpaceFile, renameSpaceFile } from '@/services/space';
 import { mergePath } from '@/utils/path';
 import {
   CopyOutlined,
@@ -18,13 +20,8 @@ import {
 import { useModel } from '@umijs/max';
 import { App } from 'antd';
 import { useCallback } from 'react';
-import {
-  CreateDocumentFormButton,
-  CreateFolderFormButton,
-  RenameFileFormButton,
-} from './FilenameForm';
 import CreateShareForm from './CreateShareForm';
-import { CopyFileFormButton, MoveFileFormButton } from './SpaceTreeForm';
+import { CopyFileFormButton, MoveFileFormButton } from './FileFormButton';
 
 const SpaceOperationBar: React.FC<{
   files?: FileInfo[];
@@ -136,11 +133,15 @@ const SpaceOperationBar: React.FC<{
     title: '重命名',
     render: useCallback(
       (key: string, mini: boolean) => (
-        <RenameFileFormButton
+        <FilenameForm
           key={key}
-          basePath={model.params.path}
-          oldFilename={files[0].filename}
-          onFinish={async () => {
+          title="重命名"
+          placeholder="文件名"
+          onFinish={async (formData) => {
+            await renameSpaceFile({
+              path: mergePath([...model.params.path, files[0].filename]),
+              newFilename: formData.filename,
+            });
             message.success('重命名文件成功');
             await model.refresh();
             return true;
@@ -184,10 +185,16 @@ const SpaceOperationBar: React.FC<{
     title: '新建文档',
     render: useCallback(
       (key: string, mini: boolean) => (
-        <CreateDocumentFormButton
+        <FilenameForm
           key={key}
-          basePath={model.params.path}
-          onFinish={async () => {
+          title="新建文档"
+          placeholder="文档名"
+          onFinish={async (formData) => {
+            await createSpaceFile({
+              type: 'document',
+              path: mergePath(model.params.path),
+              filename: formData.filename,
+            });
             message.success('新建文档成功');
             await model.refresh();
             return true;
@@ -211,10 +218,16 @@ const SpaceOperationBar: React.FC<{
     title: '新建目录',
     render: useCallback(
       (key: string, mini: boolean) => (
-        <CreateFolderFormButton
+        <FilenameForm
           key={key}
-          basePath={model.params.path}
-          onFinish={async () => {
+          title="新建目录"
+          placeholder="目录名"
+          onFinish={async (formData) => {
+            await createSpaceFile({
+              type: 'folder',
+              path: mergePath(model.params.path),
+              filename: formData.filename,
+            });
             message.success('新建目录成功');
             await model.refresh();
             return true;
@@ -235,6 +248,7 @@ const SpaceOperationBar: React.FC<{
   const op: OperationGroup[] = [];
 
   if (files.some((x) => x instanceof LinkInfo && x.ref === null)) {
+    // 断开的链接只允许删除操作
     op.push([deleteOp]);
   } else if (files.length !== 0) {
     op.push([shareOp]);

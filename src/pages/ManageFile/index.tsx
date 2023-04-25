@@ -29,7 +29,7 @@ const ManageFilePage: React.FC = () => {
     }
 
     if (Number.isNaN(fid)) {
-      history.push('/space');
+      history.push('/');
       return;
     }
 

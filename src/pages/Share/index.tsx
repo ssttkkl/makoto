@@ -10,6 +10,7 @@ import { Alert, Space, Spin } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
 import { useEffect } from 'react';
 import { ShareOperationBar } from './ShareOperationBar';
+import { history } from 'umi';
 
 const SharePage: React.FC = () => {
   const model = useModel('Share.model');
@@ -22,7 +23,8 @@ const SharePage: React.FC = () => {
 
     let shareId: number | undefined = Number.parseInt(routerParams.id);
     if (isNaN(shareId)) {
-      shareId = undefined;
+      history.push('/');
+      return;
     }
 
     model.updateParams({ shareId, path });
