@@ -28,6 +28,7 @@
     ]
   },
   "dependencies": {
+    "@ant-design/colors": "^7.0.0",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-components": "^2.0.1",
     "@ant-design/use-emotion-css": "^1.0.4",
@@ -43,6 +44,7 @@
     "clsx": "^1.2.1",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
+    "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "reflect-metadata": "^0.1.13",
     "slate": "^0.82.1",
@@ -52,6 +54,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@types/react": "^18.0.0",
+    "@types/react-color": "^3.0.6",
     "@types/react-dom": "^18.0.0",
     "@types/slate-react": "^0.50.1",
     "husky": "^8.0.1",

@@ -15,6 +15,7 @@ const FORMAT_MARKS = [
   'fontSize',
   'lineHeight',
   'color',
+  'foregroundColor',
   'backgroundColor',
   'letterSpacing',
 ];

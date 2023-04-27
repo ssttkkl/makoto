@@ -25,8 +25,13 @@ import {
   AlignEndPlugin,
   AlignJustifyPlugin,
 } from './plugins/align';
+import { ForegroundPlugin, BackgroundPlugin } from './color';
 
 const plugins: EditorPluginGroup[] = [
+  {
+    key: 'clear',
+    plugins: [new ClearFormatPlugin()],
+  },
   {
     key: 'font',
     plugins: [
@@ -37,8 +42,11 @@ const plugins: EditorPluginGroup[] = [
       new StrikethroughPlugin(),
       new SuperscriptPlugin(),
       new SubscriptPlugin(),
-      new ClearFormatPlugin(),
     ],
+  },
+  {
+    key: 'color',
+    plugins: [new ForegroundPlugin(), new BackgroundPlugin()],
   },
   {
     key: 'align',
