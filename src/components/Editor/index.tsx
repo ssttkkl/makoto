@@ -26,17 +26,20 @@ import {
   AlignJustifyPlugin,
   AlignPlugin,
 } from './plugins/align';
-import { ForegroundPlugin, BackgroundPlugin } from './color';
+import { ForegroundPlugin } from './plugins/color/foreground';
 import {
   DecreaseIndentPlugin,
   IncreaseIndentPlugin,
   IndentPlugin,
 } from './plugins/indent';
+import UndoPlugin from './plugins/history/undo';
+import RedoPlugin from './plugins/history/redo';
+import { BackgroundPlugin } from './plugins/color/background';
 
 const plugins: EditorPluginGroup[] = [
   {
     key: 'clear',
-    plugins: [new ClearFormatPlugin()],
+    plugins: [new UndoPlugin(), new RedoPlugin(), new ClearFormatPlugin()],
   },
   {
     key: 'font',
