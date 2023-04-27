@@ -9,13 +9,13 @@ import * as Y from 'yjs';
 import { HOCUSPOCUS_ENDPOINT_URL } from '../../config';
 import Editor from '@/components/Editor';
 import { useModel } from '@umijs/max';
-import { splitPath } from '@/utils/path';
+import { mergePath, splitPath } from '@/utils/path';
 import { Spin } from 'antd';
 import { useAccessToken } from '@/services/auth/token';
 
 const Doc: React.FC<{
   name: string;
-  params: URLSearchParams;
+  params: any;
   writeable?: boolean;
 }> = ({ name, params, writeable }) => {
   const [value, setValue] = useState<Descendant[]>([]);
@@ -28,7 +28,8 @@ const Doc: React.FC<{
         url: HOCUSPOCUS_ENDPOINT_URL,
         name: name,
         parameters: {
-          ...Object.fromEntries(params),
+          ...params,
+          path: mergePath(params.path),
           writeable: writeable,
         },
         token: token,
@@ -98,7 +99,7 @@ const DocPage: React.FC = () => {
       {model.unrefFile?.fid ? (
         <Doc
           name={model.unrefFile.fid.toString()}
-          params={searchParams}
+          params={model.params}
           writeable={model.writeable}
         />
       ) : null}
