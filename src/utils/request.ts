@@ -1,4 +1,4 @@
-import { refresh } from '@/services/auth';
+import { refreshExclusive } from '@/services/auth';
 import { getAccessToken, getRefreshToken } from '@/services/auth/token/holder';
 import {
   history,
@@ -6,7 +6,6 @@ import {
   useRequest as originUseRequest,
 } from '@umijs/max';
 import { message } from 'antd';
-import { Mutex } from 'async-mutex';
 import { useRefreshToken } from '../services/auth/token';
 
 // 异常
@@ -30,18 +29,6 @@ async function onErrorShowMessage<T>(action: () => Promise<T>): Promise<T> {
 
     throw error;
   }
-}
-
-// handle 401 or no token
-const refreshMutex = new Mutex();
-
-async function refreshExclusive(): Promise<boolean> {
-  const accToken = getAccessToken();
-  return await refreshMutex.runExclusive(async () => {
-    // 获取到锁后，判断token是否已经被之前的请求刷新
-    const curAccToken = getAccessToken();
-    return accToken !== curAccToken || (await refresh());
-  });
 }
 
 async function on401<T>(action: () => Promise<T>): Promise<Awaited<T>> {

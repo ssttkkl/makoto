@@ -32,7 +32,8 @@ const Doc: React.FC<{
           path: mergePath(params.path),
           writeable: writeable,
         },
-        token: token,
+        token,
+        connect: token !== null, // prevent connect without token
         onConnect: () => setConnected(true),
         onDisconnect: () => setConnected(false),
       }),
