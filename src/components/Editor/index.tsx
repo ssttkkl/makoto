@@ -24,8 +24,14 @@ import {
   AlignCenterPlugin,
   AlignEndPlugin,
   AlignJustifyPlugin,
+  AlignPlugin,
 } from './plugins/align';
 import { ForegroundPlugin, BackgroundPlugin } from './color';
+import {
+  DecreaseIndentPlugin,
+  IncreaseIndentPlugin,
+  IndentPlugin,
+} from './plugins/indent';
 
 const plugins: EditorPluginGroup[] = [
   {
@@ -49,8 +55,17 @@ const plugins: EditorPluginGroup[] = [
     plugins: [new ForegroundPlugin(), new BackgroundPlugin()],
   },
   {
+    key: 'indent',
+    plugins: [
+      new IndentPlugin(),
+      new DecreaseIndentPlugin(),
+      new IncreaseIndentPlugin(),
+    ],
+  },
+  {
     key: 'align',
     plugins: [
+      new AlignPlugin(),
       AlignStartPlugin,
       AlignCenterPlugin,
       AlignEndPlugin,

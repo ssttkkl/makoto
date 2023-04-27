@@ -5,7 +5,7 @@ import { ToolbarItem } from './types';
 
 export abstract class EditorPlugin {
   abstract key: string;
-  abstract toolbarItem?: ToolbarItem;
+  toolbarItem?: ToolbarItem;
 
   withEditor(editor: BaseEditor): BaseEditor {
     return editor;

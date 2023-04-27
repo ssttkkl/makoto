@@ -4,14 +4,14 @@ import { RenderElementProps, useSlate } from 'slate-react';
 import { EditorIcon } from '../components/EditorIcon';
 import ToolbarButton from '../components/ToolbarButton';
 import { determineElement } from '../utils';
-import { ElementEditorPlugin } from './base';
+import { EditorPlugin, ElementEditorPlugin } from './base';
 import { ToolbarItem } from './types';
 
 type Align = 'start' | 'center' | 'end' | 'justify';
 
 const DEFAULT_ALIGN = 'start';
 
-const AlignStartButton: React.FC<{
+const AlignToolbarButton: React.FC<{
   align: Align;
   icon: ReactNode;
 }> = ({ align, icon }) => {
@@ -37,18 +37,8 @@ const AlignStartButton: React.FC<{
   );
 };
 
-class AlignPlugin extends ElementEditorPlugin {
-  key: string;
-  toolbarItem: ToolbarItem;
-
-  constructor(key: string, title: string, align: Align, icon: ReactNode) {
-    super();
-    this.key = key;
-    this.toolbarItem = {
-      title,
-      render: () => <AlignStartButton icon={icon} align={align} />,
-    };
-  }
+export class AlignPlugin extends ElementEditorPlugin {
+  key: string = 'align';
 
   processElement(props: RenderElementProps, style: CSSProperties): void {
     if (props.element.align) {
@@ -57,25 +47,39 @@ class AlignPlugin extends ElementEditorPlugin {
   }
 }
 
-export const AlignStartPlugin = new AlignPlugin(
+class SetAlignPlugin extends EditorPlugin {
+  key: string;
+  toolbarItem: ToolbarItem;
+
+  constructor(key: string, title: string, align: Align, icon: ReactNode) {
+    super();
+    this.key = key;
+    this.toolbarItem = {
+      title,
+      render: () => <AlignToolbarButton icon={icon} align={align} />,
+    };
+  }
+}
+
+export const AlignStartPlugin = new SetAlignPlugin(
   'alignStart',
   '左对齐',
   'start',
   <EditorIcon type="icon-align-left" />,
 );
-export const AlignCenterPlugin = new AlignPlugin(
+export const AlignCenterPlugin = new SetAlignPlugin(
   'alignCenter',
   '居中对齐',
   'center',
   <EditorIcon type="icon-align-center" />,
 );
-export const AlignEndPlugin = new AlignPlugin(
+export const AlignEndPlugin = new SetAlignPlugin(
   'alignEnd',
   '右对齐',
   'end',
   <EditorIcon type="icon-align-right" />,
 );
-export const AlignJustifyPlugin = new AlignPlugin(
+export const AlignJustifyPlugin = new SetAlignPlugin(
   'alignJustify',
   '两端对齐',
   'justify',
