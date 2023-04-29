@@ -19,13 +19,17 @@ export interface DocSearchParams {
 }
 
 export default () => {
-  const [params, updateParams] = useUpdater<DocSearchParams>({
+  const [params, updateParams, initialized] = useUpdater<DocSearchParams>({
     from: 'space',
     path: [],
   });
 
   const share = useRequest(
     async () => {
+      if (!initialized) {
+        return undefined;
+      }
+
       if (params.from === 'share') {
         if (!params.shareId) {
           throw new Error('shareId is required');
@@ -36,14 +40,14 @@ export default () => {
       }
     },
     {
-      refreshDeps: [params],
+      refreshDeps: [initialized, params],
     },
   );
 
   const file = useRequest(
     async () => {
-      if (params.path.length === 0) {
-        return;
+      if (!initialized) {
+        return undefined;
       }
 
       let file: FileInfo;
@@ -67,7 +71,7 @@ export default () => {
       return file;
     },
     {
-      refreshDeps: [params],
+      refreshDeps: [initialized, params],
     },
   );
 

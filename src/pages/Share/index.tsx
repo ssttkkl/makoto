@@ -27,7 +27,7 @@ const SharePage: React.FC = () => {
       return;
     }
 
-    model.updateParams({ shareId, path });
+    model.updateParams({ shareId, path, initialized: true });
   }, [searchParams]);
 
   if (model.error) {

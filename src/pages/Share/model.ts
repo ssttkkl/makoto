@@ -12,18 +12,21 @@ import { sortFiles } from '@/utils/file';
 import { useState } from 'react';
 
 export interface SharePageSearchParams {
-  shareId?: number;
+  shareId: number;
   path: string[];
 }
 
 export default () => {
-  const [params, updateParams] = useUpdater<SharePageSearchParams>({
-    path: [],
-  });
+  const [params, updateParams, initialized] = useUpdater<SharePageSearchParams>(
+    {
+      shareId: 0,
+      path: [],
+    },
+  );
 
   const share = useRequest(
     async () => {
-      if (params.shareId === undefined) {
+      if (!initialized) {
         return undefined;
       }
 
@@ -32,7 +35,7 @@ export default () => {
       return result;
     },
     {
-      refreshDeps: [params.shareId],
+      refreshDeps: [initialized, params.shareId],
     },
   );
 
@@ -72,6 +75,7 @@ export default () => {
   const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([]);
 
   return {
+    initialized,
     params,
     updateParams,
     share: share.data as Share | undefined,

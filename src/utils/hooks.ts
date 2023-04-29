@@ -1,9 +1,10 @@
 import lodash from 'lodash';
-import { useReducer } from 'react';
+import { useReducer, useState } from 'react';
 
 export function useUpdater<T extends { [key: string]: any }>(
   initialValue: T,
-): [T, React.Dispatch<Partial<T>>] {
+): [T, React.Dispatch<Partial<T>>, boolean] {
+  const [initialized, setInitialized] = useState(false);
   const [params, updateParams] = useReducer((state: T, action: Partial<T>) => {
     const newState: T = { ...state, ...action };
 
@@ -13,6 +14,8 @@ export function useUpdater<T extends { [key: string]: any }>(
       }
     });
 
+    setInitialized(true);
+
     if (!lodash.isEqual(state, newState)) {
       return newState;
     } else {
@@ -20,5 +23,5 @@ export function useUpdater<T extends { [key: string]: any }>(
     }
   }, initialValue);
 
-  return [params, updateParams];
+  return [params, updateParams, initialized];
 }

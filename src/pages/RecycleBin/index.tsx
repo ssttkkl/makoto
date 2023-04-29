@@ -14,6 +14,7 @@ const RecycleBinPage: React.FC = () => {
 
   // 在从别的页面切换回来时刷新数据
   useEffect(() => {
+    model.updateParams({});
     model.refresh();
   }, []);
 

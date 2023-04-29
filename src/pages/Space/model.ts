@@ -11,12 +11,18 @@ export interface SpacePageSearchParams {
 }
 
 export default () => {
-  const [params, updateParams] = useUpdater<SpacePageSearchParams>({
-    path: [],
-  });
+  const [params, updateParams, initialized] = useUpdater<SpacePageSearchParams>(
+    {
+      path: [],
+    },
+  );
 
-  const { data, loading, error, run, refresh } = useRequest(
+  const { data, loading, error, refresh } = useRequest(
     async () => {
+      if (!initialized) {
+        return undefined;
+      }
+
       const path = mergePath(params.path);
       const file = (await getSpaceFileInfo({ path, depth: 1 })) as FolderInfo;
       if (file.children) {
@@ -25,7 +31,7 @@ export default () => {
       return file;
     },
     {
-      refreshDeps: [params.path],
+      refreshDeps: [initialized, params.path],
     },
   );
 
@@ -33,7 +39,7 @@ export default () => {
   useEffect(() => setSelectedFiles([]), [params.path]);
 
   return {
-    run,
+    initialized,
     params,
     updateParams,
     data: data as FolderInfo,

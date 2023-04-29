@@ -6,7 +6,6 @@ import {
   useRequest as originUseRequest,
 } from '@umijs/max';
 import { message } from 'antd';
-import { useRefreshToken } from '../services/auth/token';
 
 // 异常
 export class NoRefreshTokenException extends Error {
@@ -90,10 +89,8 @@ export const useRequest: typeof originUseRequest = (
   service: any,
   options: any = {},
 ) => {
-  const refToken = useRefreshToken();
   return originUseRequest(service, {
     ...options,
     formatResult: (data) => data,
-    refreshDeps: [...(options?.refreshDeps ?? []), refToken],
   });
 };
