@@ -1,38 +1,25 @@
-import { UserAvatar } from '@/components/UserAvatar';
-import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { CursorEditor } from '@slate-yjs/core';
-import { Space } from 'antd';
+import { YjsEditor } from '@slate-yjs/core';
+import { Badge } from 'antd';
 import { useSlate } from 'slate-react';
-import { CursorData } from '../types';
 import { EditorPlugin } from './base';
 import { ToolbarItem } from './types';
 
-const UserState: React.FC<{ cursor: CursorData }> = ({ cursor }) => {
-  const className = useEmotionCss(() => ({
-    backgroundColor: `${cursor.color} !important`,
-    color: 'white !important',
-  }));
+const OnlineStatus: React.FC = () => {
+  const editor = useSlate() as YjsEditor;
+  const connected = YjsEditor.connected(editor);
 
-  return <UserAvatar uid={cursor.uid} size="small" className={className} />;
-};
-
-const UserStates: React.FC = () => {
-  const editor = useSlate() as CursorEditor<CursorData>;
-  const states = CursorEditor.cursorStates(editor);
-  return (
-    <Space direction="horizontal">
-      {Object.values(states).map((x) =>
-        x.data ? <UserState key={x.data.uid} cursor={x.data} /> : null,
-      )}
-    </Space>
-  );
+  if (connected) {
+    return <Badge status="success" text="在线" />;
+  } else {
+    return <Badge status="error" text="离线" />;
+  }
 };
 
 export class OnlinePlugin extends EditorPlugin {
-  key = 'user-states';
+  key = 'online';
   toolbarItem: ToolbarItem = {
     title: '在线状态',
-    renderReadonly: () => <UserStates />,
-    renderWriteable: () => <UserStates />,
+    renderReadonly: () => <OnlineStatus />,
+    renderWriteable: () => <OnlineStatus />,
   };
 }

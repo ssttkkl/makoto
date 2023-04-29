@@ -37,6 +37,7 @@ import { BackgroundPlugin } from './plugins/color/background';
 import { RemoteCursorOverlay } from './components/Overlay';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { OnlinePlugin } from './plugins/online';
+import { UserStatesPlugin } from './plugins/user-states';
 
 const PLUGINS: EditorPluginGroup[] = [
   {
@@ -78,8 +79,12 @@ const PLUGINS: EditorPluginGroup[] = [
     ],
   },
   {
-    key: 'session',
+    key: 'online',
     plugins: [new OnlinePlugin()],
+  },
+  {
+    key: 'user-states',
+    plugins: [new UserStatesPlugin()],
   },
 ];
 
