@@ -1,6 +1,6 @@
 import { useSearchParams } from '@umijs/max';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import { withYHistory, withYjs, YjsEditor } from '@slate-yjs/core';
+import { withCursors, withYHistory, withYjs, YjsEditor } from '@slate-yjs/core';
 import React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { createEditor, Descendant } from 'slate';
@@ -12,12 +12,27 @@ import { useModel } from '@umijs/max';
 import { mergePath, splitPath } from '@/utils/path';
 import { Spin } from 'antd';
 import { useAccessToken } from '@/services/auth/token';
+import randomColor from 'randomcolor';
+import { CursorData } from '@/components/Editor/types';
+
+function makeCursorData(uid: number): CursorData {
+  return {
+    color: randomColor({
+      luminosity: 'dark',
+      alpha: 1,
+      format: 'hex',
+    }),
+    uid,
+  };
+}
 
 const Doc: React.FC<{
   name: string;
   params: any;
-  writeable?: boolean;
+  writeable: boolean;
 }> = ({ name, params, writeable }) => {
+  const { currentUser } = useModel('currentUser');
+
   const [value, setValue] = useState<Descendant[]>([]);
   const [, /*connected*/ setConnected] = useState(false);
   const token = useAccessToken();
@@ -44,9 +59,18 @@ const Doc: React.FC<{
     const sharedType = provider.document.get('content', Y.XmlText) as Y.XmlText;
 
     return withReact(
-      withYHistory(withYjs(createEditor(), sharedType, { autoConnect: false })),
+      withYHistory(
+        withCursors(
+          withYjs(createEditor(), sharedType, { autoConnect: false }),
+          provider.awareness,
+          {
+            data: currentUser ? makeCursorData(currentUser.uid) : undefined,
+            autoSend: writeable,
+          },
+        ),
+      ),
     );
-  }, [provider.document]);
+  }, [currentUser, provider.awareness, provider.document]);
 
   // Connect editor and provider in useEffect to comply with concurrent mode
   // requirements.

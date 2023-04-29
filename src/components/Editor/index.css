@@ -5,3 +5,31 @@
   z-index: 1;
   background-color: white;
 }
+
+.editor-remote-cursor-overlay {
+  position: relative;
+}
+
+.editor-remote-selection {
+  position: absolute;
+  pointer-events: none;
+}
+
+.editor-cursor-nameplate {
+  position: absolute;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgba(255, 255, 255, var(--tw-text-opacity));
+  white-space: nowrap;
+  top: 0;
+  border-radius: 0.25rem;
+  border-bottom-left-radius: 0;
+  padding: 0.125rem 0.375rem;
+
+  --tw-text-opacity: 1;
+}
+
+.editor-cursor-caret {
+  position: absolute;
+  width: 0.125rem;
+}

@@ -43,6 +43,7 @@
     "class-transformer": "^0.5.1",
     "clsx": "^1.2.1",
     "lodash": "^4.17.21",
+    "randomcolor": "^0.6.2",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
@@ -53,6 +54,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
+    "@types/randomcolor": "^0.5.7",
     "@types/react": "^18.0.0",
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^18.0.0",

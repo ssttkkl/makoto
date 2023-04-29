@@ -35,6 +35,7 @@ import {
 import UndoPlugin from './plugins/history/undo';
 import RedoPlugin from './plugins/history/redo';
 import { BackgroundPlugin } from './plugins/color/background';
+import { RemoteCursorOverlay } from './Overlay';
 
 const plugins: EditorPluginGroup[] = [
   {
@@ -141,15 +142,17 @@ const Editor: React.FC<EditorProps> = ({
 
   return (
     <Slate editor={editor} value={value} onChange={onChange}>
-      {writeable ? (
-        <Toolbar plugins={plugins} className="editor-toolbar" />
-      ) : null}
-      <Editable
-        renderElement={renderElement}
-        renderLeaf={renderLeaf}
-        autoFocus
-        readOnly={writeable !== true}
-      />
+      <RemoteCursorOverlay>
+        {writeable ? (
+          <Toolbar plugins={plugins} className="editor-toolbar" />
+        ) : null}
+        <Editable
+          renderElement={renderElement}
+          renderLeaf={renderLeaf}
+          autoFocus
+          readOnly={writeable !== true}
+        />
+      </RemoteCursorOverlay>
     </Slate>
   );
 };
