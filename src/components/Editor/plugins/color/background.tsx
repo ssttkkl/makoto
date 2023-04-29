@@ -31,7 +31,13 @@ export class BackgroundPlugin extends LeafEditorPlugin {
       <ColorPickerButton
         format="backgroundColor"
         title="背景颜色"
-        renderIcon={() => <HighlightOutlined />}
+        renderIcon={(color) => {
+          if (color !== '#FFFFFFFF') {
+            return <HighlightOutlined style={{ color }} />;
+          } else {
+            return <HighlightOutlined />;
+          }
+        }}
         colors={BACKGROUND_COLORS}
         defaultColor={'#FFFFFFFF'}
       />
