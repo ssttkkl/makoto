@@ -1,8 +1,9 @@
-import { getMyProfile } from '@/services/profiles';
+import { getMyProfile } from '@/services/users';
 import * as AuthService from '@/services/auth';
 import { useRequest } from '@/utils/request';
 import { getRefreshToken } from '@/services/auth/token';
 import { User } from '@/services/users/entities';
+import { history } from '@umijs/max';
 
 export default () => {
   const { data, loading, refresh } = useRequest(async () => {
@@ -20,8 +21,11 @@ export default () => {
   };
 
   const logout = async () => {
+    const username = data?.username;
+
     await AuthService.logout();
     refresh();
+    history.push('/login', { username });
   };
 
   return {
@@ -29,5 +33,6 @@ export default () => {
     loading,
     login,
     logout,
+    refresh,
   };
 };

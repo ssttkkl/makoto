@@ -16,3 +16,44 @@ export async function register(params: {
     }),
   );
 }
+
+export async function getMyProfile(): Promise<User> {
+  return plainToInstance(
+    User,
+    await request('/api/v1/users/me', {
+      method: 'GET',
+    }),
+  );
+}
+
+export async function getProfile(params: { uid: number }): Promise<User> {
+  return plainToInstance(
+    User,
+    await request('/api/v1/users', {
+      method: 'GET',
+      params,
+    }),
+  );
+}
+
+export async function updateMyProfile(params: {
+  nickname: string;
+}): Promise<User> {
+  return plainToInstance(
+    User,
+    await request('/api/v1/users/me', {
+      method: 'PUT',
+      data: params,
+    }),
+  );
+}
+
+export async function updatePassword(params: {
+  oldPassword: string;
+  newPassword: string;
+}): Promise<void> {
+  await request('/api/v1/users/me/password', {
+    method: 'PUT',
+    data: params,
+  });
+}

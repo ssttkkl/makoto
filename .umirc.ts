@@ -92,6 +92,11 @@ export default defineConfig({
       path: '/recycle-bin',
       component: './RecycleBin',
     },
+    {
+      name: '个人信息',
+      path: '/profile',
+      component: './MyProfile',
+    },
   ],
   npmClient: 'yarn',
 });

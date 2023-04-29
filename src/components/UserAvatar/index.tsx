@@ -1,4 +1,4 @@
-import { getProfile } from '@/services/profiles';
+import { getProfile } from '@/services/users';
 import { User } from '@/services/users/entities';
 import { useRequest } from '@/utils/request';
 import { Theme, useEmotionCss } from '@ant-design/use-emotion-css';

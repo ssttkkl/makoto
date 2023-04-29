@@ -1,6 +1,6 @@
-import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
+import { LogoutOutlined } from '@ant-design/icons';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { history, useLocation, useModel } from '@umijs/max';
+import { useLocation, useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
@@ -8,14 +8,6 @@ import HeaderDropdown from '../HeaderDropdown';
 import { UserAvatarWithNickname } from '../UserAvatar';
 
 const menuItems = [
-  {
-    key: 'settings',
-    icon: <SettingOutlined />,
-    label: '个人设置',
-  },
-  {
-    type: 'divider' as const,
-  },
   {
     key: 'logout',
     icon: <LogoutOutlined />,
@@ -33,7 +25,6 @@ const AvatarDropdown: React.FC = () => {
    */
   const loginOut = useCallback(async () => {
     await logout();
-    history.push('/login?redirect=' + loc.pathname);
   }, [loc]);
 
   const actionClassName = useEmotionCss(({ token }) => {
