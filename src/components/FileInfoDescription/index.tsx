@@ -1,7 +1,7 @@
 import { DocumentInfo, FileInfo, LinkInfo } from '@/services/files/entities';
 import { mapPermission } from '@/utils/permission';
 import { Descriptions } from 'antd';
-import UserNickname from '../UserAvatar';
+import { UserAvatarWithNickname } from '../UserAvatar';
 
 export interface FileInfoProps {
   file: FileInfo;
@@ -36,7 +36,7 @@ const FileInfoDescription: React.FC<FileInfoProps> = ({ file: originFile }) => {
         {originFile instanceof LinkInfo ? (
           <>
             <Descriptions.Item label="原文件所有者">
-              <UserNickname uid={file.ownerUid} />
+              <UserAvatarWithNickname uid={file.ownerUid} />
             </Descriptions.Item>
             <Descriptions.Item label="权限">
               {mapPermission(originFile.permission)}

@@ -1,4 +1,5 @@
-import UserNickname from '@/components/UserAvatar';
+import { UserNickname } from '@/components/UserAvatar';
+import { setAlpha } from '@ant-design/pro-components';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import {
   CursorOverlayData,
@@ -7,11 +8,6 @@ import {
 import { CaretPosition } from '@slate-yjs/react/dist/utils/getOverlayPosition';
 import React, { PropsWithChildren, useRef } from 'react';
 import { CursorData } from '../../types';
-
-function addAlpha(hexColor: string, opacity: number): string {
-  const normalized = Math.round(Math.min(Math.max(opacity, 0), 1) * 255);
-  return hexColor + normalized.toString(16).toUpperCase();
-}
 
 type CaretProps = {
   caretPosition: CaretPosition | null;
@@ -57,7 +53,7 @@ function RemoteSelection({
 }: CursorOverlayData<CursorData>) {
   const selectionClassname = useEmotionCss(() => ({
     // Add a opacity to the background color
-    backgroundColor: data?.color ? addAlpha(data.color, 0.5) : undefined,
+    backgroundColor: data?.color ? setAlpha(data.color, 0.5) : undefined,
     position: 'absolute',
     pointerEvents: 'none',
   }));

@@ -1,4 +1,5 @@
 import { UserAvatar } from '@/components/UserAvatar';
+import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { CursorEditor } from '@slate-yjs/core';
 import { Space } from 'antd';
 import { useSlate } from 'slate-react';
@@ -7,19 +8,17 @@ import { EditorPlugin } from './base';
 import { ToolbarItem } from './types';
 
 const UserState: React.FC<{ cursor: CursorData }> = ({ cursor }) => {
-  return (
-    <UserAvatar
-      uid={cursor.uid}
-      size="small"
-      style={{ backgroundColor: cursor.color }}
-    />
-  );
+  const className = useEmotionCss(() => ({
+    backgroundColor: `${cursor.color} !important`,
+    color: 'white !important',
+  }));
+
+  return <UserAvatar uid={cursor.uid} size="small" className={className} />;
 };
 
 const UserStates: React.FC = () => {
   const editor = useSlate() as CursorEditor<CursorData>;
   const states = CursorEditor.cursorStates(editor);
-  console.log('states: ', states);
   return (
     <Space direction="horizontal">
       {Object.values(states).map((x) =>

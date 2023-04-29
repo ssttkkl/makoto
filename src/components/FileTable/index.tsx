@@ -6,7 +6,7 @@ import { FileInfo, FileType, LinkInfo } from '@/services/files/entities';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import TableMainColumnCell from '../TableMainColumnCell';
 import { getFileIcon, getFileRealType } from '@/utils/file';
-import UserNickname from '../UserAvatar';
+import { UserAvatarWithNickname } from '../UserAvatar';
 
 type FileTableColumns =
   | 'filename'
@@ -94,7 +94,7 @@ function FileTable<T extends object = any>(
       title: '所有者',
       dataIndex: [...dataSourcePath, 'ownerUid'],
       key: 'owner',
-      render: (value: number) => <UserNickname uid={value} />,
+      render: (value: number) => <UserAvatarWithNickname uid={value} />,
     },
     {
       title: '创建时间',

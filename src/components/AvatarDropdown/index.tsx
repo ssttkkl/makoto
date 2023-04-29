@@ -1,52 +1,11 @@
 import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { history, useLocation, useModel } from '@umijs/max';
-import { Avatar, Spin } from 'antd';
-import { setAlpha } from '@ant-design/pro-components';
+import { Spin } from 'antd';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
 import HeaderDropdown from '../HeaderDropdown';
-
-const Name = (props: { name?: string }) => {
-  const nameClassName = useEmotionCss(({ token }) => {
-    return {
-      width: '70px',
-      height: '48px',
-      overflow: 'hidden',
-      lineHeight: '48px',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      [`@media only screen and (max-width: ${token.screenMD}px)`]: {
-        display: 'none',
-      },
-    };
-  });
-
-  return <span className={`${nameClassName} anticon`}>{props.name}</span>;
-};
-
-const AvatarLogo = (props: { src?: string }) => {
-  const avatarClassName = useEmotionCss(({ token }) => {
-    return {
-      marginRight: '8px',
-      color: token.colorPrimary,
-      verticalAlign: 'top',
-      background: setAlpha(token.colorBgContainer, 0.85),
-      [`@media only screen and (max-width: ${token.screenMD}px)`]: {
-        margin: 0,
-      },
-    };
-  });
-
-  return (
-    <Avatar
-      size="small"
-      className={avatarClassName}
-      src={props.src}
-      alt="avatar"
-    />
-  );
-};
+import { UserAvatarWithNickname } from '../UserAvatar';
 
 const menuItems = [
   {
@@ -80,6 +39,7 @@ const AvatarDropdown: React.FC = () => {
   const actionClassName = useEmotionCss(({ token }) => {
     return {
       display: 'flex',
+      width: '120px',
       height: '48px',
       marginLeft: 'auto',
       overflow: 'hidden',
@@ -126,8 +86,7 @@ const AvatarDropdown: React.FC = () => {
         }}
       >
         <span className={actionClassName}>
-          <AvatarLogo src={currentUser?.avatar} />
-          <Name name={currentUser?.nickname} />
+          <UserAvatarWithNickname user={currentUser} />
         </span>
       </HeaderDropdown>
     );
