@@ -47,6 +47,9 @@ export const UserNickname: React.FC<{
 }> = ({ uid, user, className, style }) => {
   const { data, loading } = useRequest(async () => {
     if (uid) return await getProfile({ uid });
+    if (user === undefined) {
+      throw new Error('Please set either uid or user');
+    }
     return user;
   });
 

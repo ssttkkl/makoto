@@ -7,6 +7,7 @@ import TableMainColumnCell from '../TableMainColumnCell';
 import { User } from '@/services/users/entities';
 import { FilePermissionEnum } from '@/services/files/entities';
 import { mapPermission } from '@/utils/permission';
+import { UserAvatarWithNickname } from '../UserAvatar';
 
 function shareLink(share: Share): string {
   return `/share/${share.shareId}`;
@@ -53,7 +54,7 @@ const ShareTable: React.FC<ShareTableProps> = (props) => {
       title: '分享人',
       dataIndex: 'owner',
       key: 'owner',
-      render: (value: User) => value.nickname,
+      render: (value: User) => <UserAvatarWithNickname user={value} />,
     },
     {
       title: '权限',
