@@ -49,6 +49,6 @@ export default class ClearFormatPlugin extends EditorPlugin {
   key: string = 'clear-format';
   toolbarItem: ToolbarItem = {
     title: '清除样式',
-    render: () => <ClearFormatButton />,
+    renderWriteable: () => <ClearFormatButton />,
   };
 }

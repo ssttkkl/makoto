@@ -59,7 +59,7 @@ export class DecreaseIndentPlugin extends EditorPlugin {
   key: string = 'decreaseIndent';
   toolbarItem: ToolbarItem = {
     title: '减少缩进',
-    render: () => (
+    renderWriteable: () => (
       <IndentToolbarButton delta={-1}>
         <EditorIcon type="icon-indent-decrease" />
       </IndentToolbarButton>
@@ -71,7 +71,7 @@ export class IncreaseIndentPlugin extends EditorPlugin {
   key: string = 'increaseIndent';
   toolbarItem: ToolbarItem = {
     title: '增加缩进',
-    render: () => (
+    renderWriteable: () => (
       <IndentToolbarButton delta={1}>
         <EditorIcon type="icon-indent-increase" />
       </IndentToolbarButton>

@@ -27,7 +27,7 @@ export class BackgroundPlugin extends LeafEditorPlugin {
   key: string = 'backgroundColor';
   toolbarItem: ToolbarItem = {
     title: '背景颜色',
-    render: () => (
+    renderWriteable: () => (
       <ColorPickerButton
         format="backgroundColor"
         title="背景颜色"

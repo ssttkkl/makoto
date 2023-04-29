@@ -24,6 +24,6 @@ export default class RedoPlugin extends EditorPlugin {
   key: string = 'redo';
   toolbarItem: ToolbarItem = {
     title: '重做',
-    render: () => <RedoButton />,
+    renderWriteable: () => <RedoButton />,
   };
 }

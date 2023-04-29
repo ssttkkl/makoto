@@ -1,13 +1,12 @@
 import { CSSProperties, ReactElement } from 'react';
-import { BaseEditor } from 'slate';
-import { RenderLeafProps, RenderElementProps } from 'slate-react';
+import { RenderLeafProps, RenderElementProps, ReactEditor } from 'slate-react';
 import { ToolbarItem } from './types';
 
 export abstract class EditorPlugin {
   abstract key: string;
   toolbarItem?: ToolbarItem;
 
-  withEditor(editor: BaseEditor): BaseEditor {
+  withEditor(editor: ReactEditor): ReactEditor {
     return editor;
   }
 }

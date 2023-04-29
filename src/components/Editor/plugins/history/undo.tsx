@@ -24,6 +24,6 @@ export default class UndoPlugin extends EditorPlugin {
   key: string = 'undo';
   toolbarItem: ToolbarItem = {
     title: '撤销',
-    render: () => <UndoButton />,
+    renderWriteable: () => <UndoButton />,
   };
 }

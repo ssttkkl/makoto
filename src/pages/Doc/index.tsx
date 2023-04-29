@@ -15,7 +15,7 @@ import { useAccessToken } from '@/services/auth/token';
 import randomColor from 'randomcolor';
 import { CursorData } from '@/components/Editor/types';
 
-function makeCursorData(uid: number): CursorData {
+function makeCursorData(uid: number, writeable: boolean): CursorData {
   return {
     color: randomColor({
       luminosity: 'dark',
@@ -23,6 +23,7 @@ function makeCursorData(uid: number): CursorData {
       format: 'hex',
     }),
     uid,
+    writeable,
   };
 }
 
@@ -64,8 +65,9 @@ const Doc: React.FC<{
           withYjs(createEditor(), sharedType, { autoConnect: false }),
           provider.awareness,
           {
-            data: currentUser ? makeCursorData(currentUser.uid) : undefined,
-            autoSend: writeable,
+            data: currentUser
+              ? makeCursorData(currentUser.uid, writeable)
+              : undefined,
           },
         ),
       ),

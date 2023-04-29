@@ -8,5 +8,6 @@ export interface EditorPluginGroup {
 
 export interface ToolbarItem {
   title: string;
-  render: () => ReactElement;
+  renderWriteable?: () => ReactElement;
+  renderReadonly?: () => ReactElement;
 }

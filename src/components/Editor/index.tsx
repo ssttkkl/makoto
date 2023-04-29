@@ -36,8 +36,9 @@ import RedoPlugin from './plugins/history/redo';
 import { BackgroundPlugin } from './plugins/color/background';
 import { RemoteCursorOverlay } from './components/Overlay';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
+import { OnlinePlugin } from './plugins/online';
 
-const plugins: EditorPluginGroup[] = [
+const PLUGINS: EditorPluginGroup[] = [
   {
     key: 'clear',
     plugins: [new UndoPlugin(), new RedoPlugin(), new ClearFormatPlugin()],
@@ -76,6 +77,10 @@ const plugins: EditorPluginGroup[] = [
       AlignJustifyPlugin,
     ],
   },
+  {
+    key: 'session',
+    plugins: [new OnlinePlugin()],
+  },
 ];
 
 export interface EditorProps {
@@ -88,7 +93,7 @@ export interface EditorProps {
 const Element: React.FC<RenderElementProps> = (props) => {
   const style: CSSProperties = {};
 
-  for (const plugin of plugins.flatMap((group) => group.plugins)) {
+  for (const plugin of PLUGINS.flatMap((group) => group.plugins)) {
     if (plugin instanceof ElementEditorPlugin) {
       const element = plugin.processElement(props, style);
       if (element !== undefined) {
@@ -108,7 +113,7 @@ const Element: React.FC<RenderElementProps> = (props) => {
 const Leaf: React.FC<RenderLeafProps> = (props) => {
   const style: CSSProperties = {};
 
-  for (const plugin of plugins.flatMap((group) => group.plugins)) {
+  for (const plugin of PLUGINS.flatMap((group) => group.plugins)) {
     if (plugin instanceof LeafEditorPlugin) {
       const element = plugin.processLeaf(props, style);
       if (element !== undefined) {
@@ -126,7 +131,7 @@ const Leaf: React.FC<RenderLeafProps> = (props) => {
 };
 
 const Editor: React.FC<EditorProps> = ({
-  editor,
+  editor: originEditor,
   value,
   onChange,
   writeable,
@@ -152,12 +157,20 @@ const Editor: React.FC<EditorProps> = ({
     backgroundColor: 'white',
   }));
 
+  let editor = originEditor;
+
+  PLUGINS.flatMap((x) => x.plugins).forEach((plugin) => {
+    editor = plugin.withEditor(editor);
+  });
+
   return (
     <Slate editor={editor} value={value} onChange={onChange}>
       <RemoteCursorOverlay className={overlayClassname}>
-        {writeable ? (
-          <Toolbar plugins={plugins} className={toolbarClassname} />
-        ) : null}
+        <Toolbar
+          plugins={PLUGINS}
+          writeable={writeable}
+          className={toolbarClassname}
+        />
         <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}

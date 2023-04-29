@@ -6,7 +6,7 @@ import { FileInfo, FileType, LinkInfo } from '@/services/files/entities';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import TableMainColumnCell from '../TableMainColumnCell';
 import { getFileIcon, getFileRealType } from '@/utils/file';
-import UserNickname from '../Username';
+import UserNickname from '../UserAvatar';
 
 type FileTableColumns =
   | 'filename'

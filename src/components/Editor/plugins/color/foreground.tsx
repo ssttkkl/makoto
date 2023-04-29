@@ -29,7 +29,7 @@ export class ForegroundPlugin extends LeafEditorPlugin {
   key: string = 'foregroundColor';
   toolbarItem: ToolbarItem = {
     title: '文字颜色',
-    render: () => (
+    renderWriteable: () => (
       <ColorPickerButton
         format="foregroundColor"
         title="文字颜色"

@@ -57,7 +57,7 @@ export abstract class ToggleToolbarEditorPlugin extends LeafEditorPlugin {
     super();
     this.toolbarItem = {
       title: this.title,
-      render: () => {
+      renderWriteable: () => {
         return (
           <ToggleButton
             key={this.key}

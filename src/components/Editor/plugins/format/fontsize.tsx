@@ -43,7 +43,7 @@ export class FontSizePlugin extends LeafEditorPlugin {
   key: string = 'fontSize';
   toolbarItem: ToolbarItem = {
     title: '字号',
-    render: () => <FontSizeSelect />,
+    renderWriteable: () => <FontSizeSelect />,
   };
 
   processLeaf(props: RenderLeafProps, style: CSSProperties): void {

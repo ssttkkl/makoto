@@ -56,7 +56,7 @@ class SetAlignPlugin extends EditorPlugin {
     this.key = key;
     this.toolbarItem = {
       title,
-      render: () => <AlignToolbarButton icon={icon} align={align} />,
+      renderWriteable: () => <AlignToolbarButton icon={icon} align={align} />,
     };
   }
 }

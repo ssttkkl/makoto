@@ -1,4 +1,4 @@
-import UserNickname from '@/components/Username';
+import UserNickname from '@/components/UserAvatar';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import {
   CursorOverlayData,
@@ -27,6 +27,7 @@ function Caret({ caretPosition, data }: CaretProps) {
   }));
 
   const labelClassname = useEmotionCss(() => ({
+    zIndex: 255,
     position: 'absolute',
     fontSize: ' 0.75rem',
     lineHeight: '1rem',
@@ -96,9 +97,11 @@ export function RemoteCursorOverlay({
   return (
     <div className={className} ref={containerRef}>
       {children}
-      {cursors.map((cursor) => (
-        <RemoteSelection key={cursor.clientId} {...cursor} />
-      ))}
+      {cursors
+        .filter((cursor) => cursor.data?.writeable === true)
+        .map((cursor) => (
+          <RemoteSelection key={cursor.clientId} {...cursor} />
+        ))}
     </div>
   );
 }

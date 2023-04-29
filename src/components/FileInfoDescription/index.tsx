@@ -1,7 +1,7 @@
 import { DocumentInfo, FileInfo, LinkInfo } from '@/services/files/entities';
 import { mapPermission } from '@/utils/permission';
 import { Descriptions } from 'antd';
-import UserNickname from '../Username';
+import UserNickname from '../UserAvatar';
 
 export interface FileInfoProps {
   file: FileInfo;

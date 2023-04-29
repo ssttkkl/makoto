@@ -4,19 +4,34 @@ import { EditorPluginGroup } from '../../plugins/types';
 
 export interface ToolbarProps {
   plugins: EditorPluginGroup[];
+  writeable?: boolean;
   className?: string;
   style?: CSSProperties;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ plugins, className, style }) => {
+const Toolbar: React.FC<ToolbarProps> = ({
+  plugins,
+  writeable,
+  className,
+  style,
+}) => {
   const children: ReactElement[] = [];
 
   plugins.forEach((item, i) => {
     let cnt = 0;
     for (const { key, toolbarItem } of item.plugins) {
       if (toolbarItem) {
-        children.push(<div key={`item-${key}`}>{toolbarItem.render()}</div>);
-        cnt++;
+        let node: React.ReactNode | null = null;
+        if (writeable && toolbarItem.renderWriteable) {
+          node = toolbarItem.renderWriteable();
+        } else if (!writeable && toolbarItem.renderReadonly) {
+          node = toolbarItem.renderReadonly();
+        }
+
+        if (node) {
+          children.push(<div key={`item-${key}`}>{node}</div>);
+          cnt++;
+        }
       }
     }
 
