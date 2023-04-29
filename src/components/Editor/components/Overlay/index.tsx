@@ -1,12 +1,12 @@
+import UserNickname from '@/components/Username';
+import { useEmotionCss } from '@ant-design/use-emotion-css';
 import {
   CursorOverlayData,
   useRemoteCursorOverlayPositions,
 } from '@slate-yjs/react';
 import { CaretPosition } from '@slate-yjs/react/dist/utils/getOverlayPosition';
-import React, { CSSProperties, PropsWithChildren, useRef } from 'react';
-import UserNickname from '../Username';
-import './index.css';
-import { CursorData } from './types';
+import React, { PropsWithChildren, useRef } from 'react';
+import { CursorData } from '../../types';
 
 function addAlpha(hexColor: string, opacity: number): string {
   const normalized = Math.round(Math.min(Math.max(opacity, 0), 1) * 255);
@@ -19,19 +19,30 @@ type CaretProps = {
 };
 
 function Caret({ caretPosition, data }: CaretProps) {
-  const caretStyle: CSSProperties = {
+  const caretClassName = useEmotionCss(() => ({
     ...caretPosition,
     background: data.color,
-  };
+    position: 'absolute',
+    width: '0.125rem',
+  }));
 
-  const labelStyle: CSSProperties = {
+  const labelClassname = useEmotionCss(() => ({
+    position: 'absolute',
+    fontSize: ' 0.75rem',
+    lineHeight: '1rem',
+    color: 'rgba(255, 255, 255, 1)',
+    whiteSpace: 'nowrap',
+    top: 0,
+    borderRadius: '0.25rem',
+    borderBottomLeftRadius: 0,
+    padding: '0.125rem 0.375rem',
     transform: 'translateY(-100%)',
     background: data.color,
-  };
+  }));
 
   return (
-    <div style={caretStyle} className="editor-cursor-caret">
-      <div className="editor-cursor-nameplate" style={labelStyle}>
+    <div className={caretClassName}>
+      <div className={labelClassname}>
         <UserNickname uid={data.uid} />
       </div>
     </div>
@@ -43,21 +54,23 @@ function RemoteSelection({
   selectionRects,
   caretPosition,
 }: CursorOverlayData<CursorData>) {
+  const selectionClassname = useEmotionCss(() => ({
+    // Add a opacity to the background color
+    backgroundColor: data?.color ? addAlpha(data.color, 0.5) : undefined,
+    position: 'absolute',
+    pointerEvents: 'none',
+  }));
+
   if (!data) {
     return null;
   }
-
-  const selectionStyle: CSSProperties = {
-    // Add a opacity to the background color
-    backgroundColor: addAlpha(data.color, 0.5),
-  };
 
   return (
     <React.Fragment>
       {selectionRects.map((position, i) => (
         <div
-          style={{ ...selectionStyle, ...position }}
-          className="editor-remote-selection"
+          style={position}
+          className={selectionClassname}
           // eslint-disable-next-line react/no-array-index-key
           key={i}
         />
@@ -71,14 +84,17 @@ type RemoteCursorsProps = PropsWithChildren<{
   className?: string;
 }>;
 
-export function RemoteCursorOverlay({ children }: RemoteCursorsProps) {
+export function RemoteCursorOverlay({
+  className,
+  children,
+}: RemoteCursorsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [cursors] = useRemoteCursorOverlayPositions<CursorData>({
     containerRef,
   });
 
   return (
-    <div className="editor-remote-cursor-overlay" ref={containerRef}>
+    <div className={className} ref={containerRef}>
       {children}
       {cursors.map((cursor) => (
         <RemoteSelection key={cursor.clientId} {...cursor} />

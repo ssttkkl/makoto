@@ -10,7 +10,6 @@ import {
 import Toolbar from './components/Toolbar';
 import { EditorPluginGroup } from './plugins/types';
 import BoldPlugin from './plugins/format/bold';
-import './index.css';
 import ItalicPlugin from './plugins/format/italic';
 import { ElementEditorPlugin, LeafEditorPlugin } from './plugins/base';
 import UnderlinePlugin from './plugins/format/underline';
@@ -35,7 +34,8 @@ import {
 import UndoPlugin from './plugins/history/undo';
 import RedoPlugin from './plugins/history/redo';
 import { BackgroundPlugin } from './plugins/color/background';
-import { RemoteCursorOverlay } from './Overlay';
+import { RemoteCursorOverlay } from './components/Overlay';
+import { useEmotionCss } from '@ant-design/use-emotion-css';
 
 const plugins: EditorPluginGroup[] = [
   {
@@ -140,11 +140,23 @@ const Editor: React.FC<EditorProps> = ({
     [],
   );
 
+  const overlayClassname = useEmotionCss(() => ({
+    position: 'relative',
+  }));
+
+  const toolbarClassname = useEmotionCss(() => ({
+    padding: '12px 0',
+    position: 'sticky',
+    top: 0,
+    zIndex: 1,
+    backgroundColor: 'white',
+  }));
+
   return (
     <Slate editor={editor} value={value} onChange={onChange}>
-      <RemoteCursorOverlay>
+      <RemoteCursorOverlay className={overlayClassname}>
         {writeable ? (
-          <Toolbar plugins={plugins} className="editor-toolbar" />
+          <Toolbar plugins={plugins} className={toolbarClassname} />
         ) : null}
         <Editable
           renderElement={renderElement}
