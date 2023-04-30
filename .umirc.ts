@@ -28,6 +28,7 @@ export default defineConfig({
       name: '我的空间',
       path: '/space',
       component: './Space',
+      icon: 'icon-home-fill',
     },
     {
       name: '管理文件',
@@ -58,10 +59,12 @@ export default defineConfig({
       path: '/doc',
       component: './Doc',
       hideInMenu: true,
+      target: '_blank',
     },
     {
       name: '分享',
       path: '/share',
+      icon: 'icon-share',
       routes: [
         {
           name: '我创建的分享',
@@ -91,11 +94,13 @@ export default defineConfig({
       name: '回收站',
       path: '/recycle-bin',
       component: './RecycleBin',
+      icon: 'icon-delete-fill',
     },
     {
       name: '个人信息',
       path: '/profile',
       component: './MyProfile',
+      icon: 'icon-user',
     },
   ],
   npmClient: 'yarn',

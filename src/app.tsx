@@ -4,6 +4,7 @@ import AvatarDropdown from '@/components/AvatarDropdown';
 
 export const layout: RunTimeLayoutConfig = () => {
   return {
+    iconfontUrl: '//at.alicdn.com/t/c/font_3898460_hmex1qvybov.js',
     rightContentRender: () => <AvatarDropdown />,
     logo: 'https://img.alicdn.com/tfs/TB1YHEpwUT1gK0jSZFhXXaAtVXa-28-27.svg',
     layoutBgImgList: [
