@@ -1,4 +1,4 @@
-import { CSSProperties, ReactElement } from 'react';
+import { CSSProperties } from 'react';
 import { RenderLeafProps, RenderElementProps, ReactEditor } from 'slate-react';
 import { ToolbarItem } from './types';
 
@@ -23,7 +23,7 @@ export abstract class LeafEditorPlugin extends EditorPlugin {
   abstract processLeaf(
     props: RenderLeafProps,
     style: CSSProperties,
-  ): ReactElement | void;
+  ): React.ReactNode | void;
 }
 
 export abstract class ElementEditorPlugin extends EditorPlugin {
@@ -38,5 +38,5 @@ export abstract class ElementEditorPlugin extends EditorPlugin {
   abstract processElement(
     props: RenderElementProps,
     style: CSSProperties,
-  ): ReactElement | void;
+  ): React.ReactNode | void;
 }

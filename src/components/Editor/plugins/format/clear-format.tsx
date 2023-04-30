@@ -20,7 +20,7 @@ const FORMAT_MARKS = [
   'letterSpacing',
 ];
 
-const FORMAT_NODE_PROPS = ['indent', 'align'];
+const FORMAT_NODE_PROPS = ['heading', 'indent', 'align'];
 
 function clearMark(editor: BaseEditor) {
   let selection = editor.selection;

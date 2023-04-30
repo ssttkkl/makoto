@@ -38,6 +38,7 @@ import { RemoteCursorOverlay } from './components/Overlay';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { OnlinePlugin } from './plugins/online';
 import { UserStatesPlugin } from './plugins/user-states';
+import { HeadingPlugin } from './plugins/heading';
 
 const PLUGINS: EditorPluginGroup[] = [
   {
@@ -61,16 +62,12 @@ const PLUGINS: EditorPluginGroup[] = [
     plugins: [new ForegroundPlugin(), new BackgroundPlugin()],
   },
   {
-    key: 'indent',
+    key: 'paragraph',
     plugins: [
+      new HeadingPlugin(),
       new IndentPlugin(),
-      new DecreaseIndentPlugin(),
       new IncreaseIndentPlugin(),
-    ],
-  },
-  {
-    key: 'align',
-    plugins: [
+      new DecreaseIndentPlugin(),
       new AlignPlugin(),
       AlignStartPlugin,
       AlignCenterPlugin,
@@ -109,9 +106,9 @@ const Element: React.FC<RenderElementProps> = (props) => {
 
   return (
     // @ts-ignore
-    <div key={props.element.key} {...props.attributes} style={style}>
+    <p key={props.element.key} {...props.attributes} style={style}>
       {props.children}
-    </div>
+    </p>
   );
 };
 
