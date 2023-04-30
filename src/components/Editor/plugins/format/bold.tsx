@@ -11,7 +11,7 @@ export default class BoldPlugin extends ToggleToolbarEditorPlugin {
     return <BoldOutlined />;
   }
 
-  override processLeaf(props: RenderLeafProps, style: CSSProperties): void {
+  override applyStyle(props: RenderLeafProps, style: CSSProperties): void {
     // @ts-ignore
     if (props.leaf[this.key]) {
       style.fontWeight = 'bold';

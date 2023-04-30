@@ -74,10 +74,7 @@ export class HeadingPlugin extends ElementEditorPlugin {
     renderWriteable: () => <HeadingSelect />,
   };
 
-  processElement(
-    props: RenderElementProps,
-    style: CSSProperties,
-  ): React.ReactNode {
+  render(props: RenderElementProps, style: CSSProperties): React.ReactNode {
     if (props.element.type !== 'paragraph') {
       return null;
     }
@@ -85,43 +82,43 @@ export class HeadingPlugin extends ElementEditorPlugin {
     switch (props.element.heading) {
       case 'h1':
         return (
-          <h1 key={props.element.key} {...props.attributes}>
+          <h1 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h1>
         );
       case 'h2':
         return (
-          <h2 key={props.element.key} {...props.attributes}>
+          <h2 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h2>
         );
       case 'h3':
         return (
-          <h3 key={props.element.key} {...props.attributes}>
+          <h3 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h3>
         );
       case 'h4':
         return (
-          <h4 key={props.element.key} {...props.attributes}>
+          <h4 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h4>
         );
       case 'h5':
         return (
-          <h5 key={props.element.key} {...props.attributes}>
+          <h5 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h5>
         );
       case 'h6':
         return (
-          <h6 key={props.element.key} {...props.attributes}>
+          <h6 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h6>
         );
       default:
         return (
-          <p key={props.element.key} {...props.attributes}>
+          <p key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </p>
         );

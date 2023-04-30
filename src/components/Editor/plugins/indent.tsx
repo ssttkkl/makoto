@@ -9,7 +9,7 @@ import { ToolbarItem } from './types';
 export class IndentPlugin extends ElementEditorPlugin {
   key: string = 'indent';
 
-  processElement(props: RenderElementProps, style: CSSProperties): void {
+  applyStyle(props: RenderElementProps, style: CSSProperties): void {
     if (props.element.indent) {
       style['paddingLeft'] = props.element.indent * 2 + 'em';
     }

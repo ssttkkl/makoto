@@ -17,13 +17,20 @@ export abstract class LeafEditorPlugin extends EditorPlugin {
    *
    * @param props 透传Slate的渲染参数
    * @param style 样式表，用于增加或修改样式
-   *
-   * @returns 若返回ReactElement，则中止处理并使用该元素用于渲染；否则继续处理
    */
-  abstract processLeaf(
-    props: RenderLeafProps,
-    style: CSSProperties,
-  ): React.ReactNode | void;
+  applyStyle(props: RenderLeafProps, style: CSSProperties): void {}
+
+  /**
+   * 该插件渲染叶子节点时的处理逻辑
+   *
+   * @param props 透传Slate的渲染参数
+   * @param style 样式表
+   *
+   * @returns 若返回ReactNode，中止处理并使用该元素用于渲染；否则继续处理
+   */
+  render(props: RenderLeafProps, style: CSSProperties): React.ReactNode | null {
+    return null;
+  }
 }
 
 export abstract class ElementEditorPlugin extends EditorPlugin {
@@ -32,11 +39,21 @@ export abstract class ElementEditorPlugin extends EditorPlugin {
    *
    * @param props 透传Slate的渲染参数
    * @param style 样式表，用于增加或修改样式
-   *
-   * @returns 若返回ReactElement，则中止处理并使用该元素用于渲染；否则继续处理
    */
-  abstract processElement(
+  applyStyle(props: RenderLeafProps, style: CSSProperties): void {}
+
+  /**
+   * 该插件渲染元素节点时的处理逻辑
+   *
+   * @param props 透传Slate的渲染参数
+   * @param style 样式表
+   *
+   * @returns 若返回ReactNode，中止处理并使用该元素用于渲染；否则继续处理
+   */
+  render(
     props: RenderElementProps,
     style: CSSProperties,
-  ): React.ReactNode | void;
+  ): React.ReactNode | null {
+    return null;
+  }
 }

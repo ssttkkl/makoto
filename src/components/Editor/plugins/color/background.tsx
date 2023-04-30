@@ -44,7 +44,7 @@ export class BackgroundPlugin extends LeafEditorPlugin {
     ),
   };
 
-  processLeaf(props: RenderLeafProps, style: CSSProperties): void {
+  applyStyle(props: RenderLeafProps, style: CSSProperties): void {
     if (props.leaf.backgroundColor) {
       style.backgroundColor = props.leaf.backgroundColor;
     }

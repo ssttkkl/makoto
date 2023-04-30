@@ -40,7 +40,7 @@ const AlignToolbarButton: React.FC<{
 export class AlignPlugin extends ElementEditorPlugin {
   key: string = 'align';
 
-  processElement(props: RenderElementProps, style: CSSProperties): void {
+  applyStyle(props: RenderElementProps, style: CSSProperties): void {
     if (props.element.align) {
       style['textAlign'] = props.element.align;
     }

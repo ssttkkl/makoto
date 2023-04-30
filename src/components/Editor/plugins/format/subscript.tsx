@@ -12,7 +12,7 @@ export default class SubscriptPlugin extends ToggleToolbarEditorPlugin {
     return <EditorIcon type="icon-subscript-" />;
   }
 
-  override processLeaf(props: RenderLeafProps, style: CSSProperties) {
+  override applyStyle(props: RenderLeafProps, style: CSSProperties) {
     style.textDecoration = style.textDecoration || '';
     // @ts-ignore
     if (props.leaf[this.key]) {

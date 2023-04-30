@@ -11,7 +11,7 @@ export default class ItalicPlugin extends ToggleToolbarEditorPlugin {
     return <ItalicOutlined />;
   }
 
-  override processLeaf(props: RenderLeafProps, style: CSSProperties) {
+  override applyStyle(props: RenderLeafProps, style: CSSProperties) {
     // @ts-ignore
     if (props.leaf[this.key]) {
       style.fontStyle = 'italic';

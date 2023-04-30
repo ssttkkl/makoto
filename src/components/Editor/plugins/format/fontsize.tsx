@@ -46,7 +46,7 @@ export class FontSizePlugin extends LeafEditorPlugin {
     renderWriteable: () => <FontSizeSelect />,
   };
 
-  processLeaf(props: RenderLeafProps, style: CSSProperties): void {
+  applyStyle(props: RenderLeafProps, style: CSSProperties): void {
     if (props.leaf.fontSize) {
       style.fontSize = props.leaf.fontSize;
     }

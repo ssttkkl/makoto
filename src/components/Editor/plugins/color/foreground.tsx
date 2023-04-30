@@ -40,7 +40,7 @@ export class ForegroundPlugin extends LeafEditorPlugin {
     ),
   };
 
-  processLeaf(props: RenderLeafProps, style: CSSProperties): void {
+  applyStyle(props: RenderLeafProps, style: CSSProperties): void {
     if (props.leaf.foregroundColor) {
       style.color = props.leaf.foregroundColor;
     } else {
