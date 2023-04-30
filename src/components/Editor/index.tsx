@@ -52,6 +52,7 @@ import { useModel } from '@umijs/max';
 import randomColor from 'randomcolor';
 import { CursorData } from './types';
 import * as Y from 'yjs';
+import { SaveDocxPlugin } from './plugins/save/docx';
 
 function makeCursorData(uid: number, writeable: boolean): CursorData {
   return {
@@ -101,6 +102,10 @@ const PLUGINS: EditorPluginGroup[] = [
     ],
   },
   {
+    key: 'file',
+    plugins: [new SaveDocxPlugin()],
+  },
+  {
     key: 'online',
     plugins: [new OnlinePlugin()],
   },
@@ -112,32 +117,34 @@ const PLUGINS: EditorPluginGroup[] = [
 
 const Element: React.FC<RenderElementProps> = (props) => {
   const style: CSSProperties = {};
+  let children = props.children;
 
   for (const plugin of PLUGINS.flatMap((group) => group.plugins)) {
     if (plugin instanceof ElementEditorPlugin) {
       const element = plugin.processElement(props, style);
       if (element !== undefined) {
-        return element;
+        children = element;
       }
     }
   }
 
   return (
     // @ts-ignore
-    <p key={props.element.key} {...props.attributes} style={style}>
-      {props.children}
-    </p>
+    <div key={props.element.key} {...props.attributes} style={style}>
+      {children}
+    </div>
   );
 };
 
 const Leaf: React.FC<RenderLeafProps> = (props) => {
   const style: CSSProperties = {};
+  let children = props.children;
 
   for (const plugin of PLUGINS.flatMap((group) => group.plugins)) {
     if (plugin instanceof LeafEditorPlugin) {
       const element = plugin.processLeaf(props, style);
       if (element !== undefined) {
-        return element;
+        children = element;
       }
     }
   }
@@ -145,7 +152,7 @@ const Leaf: React.FC<RenderLeafProps> = (props) => {
   return (
     // @ts-ignore
     <span key={props.leaf.key} {...props.attributes} style={style}>
-      {props.children}
+      {children}
     </span>
   );
 };
@@ -161,6 +168,10 @@ const Editor: React.FC<EditorProps> = ({ provider, writeable }) => {
   const { currentUser } = useModel('currentUser');
 
   const [value, setValue] = useState<Descendant[]>([]);
+
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
 
   const editor = useMemo(() => {
     const sharedType = provider.document.get('content', Y.XmlText) as Y.XmlText;

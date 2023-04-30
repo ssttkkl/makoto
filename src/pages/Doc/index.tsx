@@ -41,6 +41,15 @@ const Doc: React.FC<{
       })().catch(console.error);
     });
 
+    console.log(
+      'a new provider was created. name: ',
+      name,
+      ', params: ',
+      params,
+      ', writeable: ',
+      writeable,
+    );
+
     return p;
   }, [name, params, writeable]);
 

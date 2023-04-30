@@ -78,6 +78,10 @@ export class HeadingPlugin extends ElementEditorPlugin {
     props: RenderElementProps,
     style: CSSProperties,
   ): React.ReactNode {
+    if (props.element.type !== 'paragraph') {
+      return null;
+    }
+
     switch (props.element.heading) {
       case 'h1':
         return (

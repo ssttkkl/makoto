@@ -35,7 +35,7 @@ const IndentToolbarButton: React.FC<{
             { indent: newIndent, flag: true },
             {
               match: (node) => {
-                if (node.flag) {
+                if (node.text !== undefined || node.flag) {
                   return false;
                 } else if (node.indent === undefined) {
                   return matchIndent === 0;
