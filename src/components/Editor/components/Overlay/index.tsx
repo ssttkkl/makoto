@@ -1,13 +1,12 @@
 import { UserNickname } from '@/components/UserAvatar';
 import { setAlpha } from '@ant-design/pro-components';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
-import {
-  CursorOverlayData,
-  useRemoteCursorOverlayPositions,
-} from '@slate-yjs/react';
+import { CursorOverlayData } from '@slate-yjs/react';
 import { CaretPosition } from '@slate-yjs/react/dist/utils/getOverlayPosition';
+import { useModel } from '@umijs/max';
 import React, { PropsWithChildren, useRef } from 'react';
 import { CursorData } from '../../types';
+import { useRemoteCursorOverlayPositions } from './hooks/useRemoteCursorOverlayPositions';
 
 type CaretProps = {
   caretPosition: CaretPosition | null;
@@ -85,8 +84,9 @@ export function RemoteCursorOverlay({
   className,
   children,
 }: RemoteCursorsProps) {
+  const { currentUser } = useModel('currentUser');
   const containerRef = useRef<HTMLDivElement>(null);
-  const [cursors] = useRemoteCursorOverlayPositions<CursorData>({
+  const [cursors] = useRemoteCursorOverlayPositions({
     containerRef,
   });
 
@@ -94,6 +94,7 @@ export function RemoteCursorOverlay({
     <div className={className} ref={containerRef}>
       {children}
       {cursors
+        .filter((cursor) => cursor.data?.uid !== currentUser?.uid)
         .filter((cursor) => cursor.data?.writeable === true)
         .map((cursor) => (
           <RemoteSelection key={cursor.clientId} {...cursor} />

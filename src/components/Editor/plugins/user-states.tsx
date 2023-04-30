@@ -1,6 +1,7 @@
 import { UserAvatar } from '@/components/UserAvatar';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { CursorEditor } from '@slate-yjs/core';
+import { useModel } from '@umijs/max';
 import { Space } from 'antd';
 import { useSlate } from 'slate-react';
 import { CursorData } from '../types';
@@ -17,12 +18,15 @@ const UserState: React.FC<{ cursor: CursorData }> = ({ cursor }) => {
 };
 
 const UserStates: React.FC = () => {
+  const { currentUser } = useModel('currentUser');
   const editor = useSlate() as CursorEditor<CursorData>;
   const states = CursorEditor.cursorStates(editor);
   return (
     <Space direction="horizontal">
       {Object.entries(states).map(([clientId, { data }]) =>
-        data ? <UserState key={clientId} cursor={data} /> : null,
+        data && data.uid !== currentUser?.uid ? (
+          <UserState key={clientId} cursor={data} />
+        ) : null,
       )}
     </Space>
   );
