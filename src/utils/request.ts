@@ -40,12 +40,9 @@ async function on401<T>(action: () => Promise<T>): Promise<Awaited<T>> {
     ) {
       const loc = history.location;
       if (loc.pathname !== '/login') {
-        if (await refreshExclusive()) {
+        if (await refreshExclusive({ redirectToLoginPageOnFailed: true })) {
           console.log('re-sending request...');
           return await action();
-        } else {
-          console.log('no token, redirecting to login page...');
-          history.push('/login?redirect=' + loc.pathname);
         }
       }
     }

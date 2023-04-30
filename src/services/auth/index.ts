@@ -6,6 +6,7 @@ import {
   setAccessToken,
   setRefreshToken,
 } from './token';
+import { history } from '@umijs/max';
 
 export async function login(username: string, password: string): Promise<void> {
   const result = await callLogin({ username, password });
@@ -47,11 +48,21 @@ async function refresh(): Promise<boolean> {
   }
 }
 
-export async function refreshExclusive(): Promise<boolean> {
+export async function refreshExclusive(opts?: {
+  redirectToLoginPageOnFailed?: boolean;
+}): Promise<boolean> {
   const accToken = getAccessToken();
   return await refreshMutex.runExclusive(async () => {
     // 获取到锁后，判断token是否已经被之前的请求刷新
     const curAccToken = getAccessToken();
-    return accToken !== curAccToken || (await refresh());
+    const ok = accToken !== curAccToken || (await refresh());
+
+    if (!ok && opts?.redirectToLoginPageOnFailed === true) {
+      const loc = history.location;
+      console.log('no token, redirecting to login page...');
+      history.push('/login?redirect=' + loc.pathname);
+    }
+
+    return ok;
   });
 }

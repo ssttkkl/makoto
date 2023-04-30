@@ -7,30 +7,42 @@ import Editor from '@/components/Editor';
 import { useModel } from '@umijs/max';
 import { mergePath, splitPath } from '@/utils/path';
 import { Spin } from 'antd';
-import { useAccessToken } from '@/services/auth/token';
+import { getAccessToken } from '@/services/auth/token';
+import { refreshExclusive } from '@/services/auth';
 
 const Doc: React.FC<{
   name: string;
   params: any;
   writeable: boolean;
 }> = ({ name, params, writeable }) => {
-  const token = useAccessToken();
+  const provider = useMemo(() => {
+    const p = new HocuspocusProvider({
+      url: HOCUSPOCUS_ENDPOINT_URL,
+      name: name,
+      parameters: {
+        ...params,
+        path: mergePath(params.path),
+        writeable: writeable,
+      },
+      token: async () => {
+        let acc = getAccessToken();
+        if (acc === null) {
+          await refreshExclusive({ redirectToLoginPageOnFailed: true });
+          acc = getAccessToken();
+        }
+        return acc ?? '';
+      },
+    });
 
-  const provider = useMemo(
-    () =>
-      new HocuspocusProvider({
-        url: HOCUSPOCUS_ENDPOINT_URL,
-        name: name,
-        parameters: {
-          ...params,
-          path: mergePath(params.path),
-          writeable: writeable,
-        },
-        token,
-        connect: token !== null, // prevent connect without token
-      }),
-    [name, params, writeable, token],
-  );
+    p.on('authenticationFailed', () => {
+      (async () => {
+        await refreshExclusive();
+        await p.connect();
+      })().catch(console.error);
+    });
+
+    return p;
+  }, [name, params, writeable]);
 
   return <Editor provider={provider} writeable={writeable} />;
 };
