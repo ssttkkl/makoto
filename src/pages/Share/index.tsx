@@ -1,8 +1,6 @@
 import FileTable from '@/components/FileTable';
-import PathBreadcrumb from '@/components/PathBreadcrumb';
 import { FileInfo, FolderInfo } from '@/services/files/entities';
 import { mergePath, splitPath } from '@/utils/path';
-import { ShareAltOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel, useParams } from '@umijs/max';
 import { useSearchParams } from '@umijs/max';
@@ -11,6 +9,7 @@ import { TableRowSelection } from 'antd/es/table/interface';
 import { useEffect } from 'react';
 import { ShareOperationBar } from './ShareOperationBar';
 import { history } from 'umi';
+import { ShareBreadcrumb } from '@/components/ShareBreadcrumb';
 
 const SharePage: React.FC = () => {
   const model = useModel('Share.model');
@@ -53,17 +52,9 @@ const SharePage: React.FC = () => {
             <Alert message="分享已失效" type="error" />
           ) : null}
 
-          <PathBreadcrumb
-            home={
-              <>
-                <ShareAltOutlined />
-                <span>分享</span>
-              </>
-            }
+          <ShareBreadcrumb
+            shareId={model.params.shareId}
             path={model.params.path}
-            itemLink={(path) =>
-              `/share?shareId=${model.params.shareId}&path=${mergePath(path)}`
-            }
           />
 
           <FileTable

@@ -1,14 +1,17 @@
 import { useSearchParams } from '@umijs/max';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import React from 'react';
+import React, { useState } from 'react';
 import { useEffect, useMemo } from 'react';
 import { HOCUSPOCUS_ENDPOINT_URL } from '../../config';
 import Editor from '@/components/Editor';
 import { useModel } from '@umijs/max';
 import { mergePath, splitPath } from '@/utils/path';
-import { Spin } from 'antd';
+import { Space, Spin } from 'antd';
 import { getAccessToken } from '@/services/auth/token';
 import { refreshExclusive } from '@/services/auth';
+import { Descendant } from 'slate';
+import { SpaceBreadcrumb } from '@/components/SpaceBreadcrumb';
+import { ShareBreadcrumb } from '@/components/ShareBreadcrumb';
 
 const Doc: React.FC<{
   name: string;
@@ -53,7 +56,24 @@ const Doc: React.FC<{
     return p;
   }, [name, params, writeable]);
 
-  return <Editor provider={provider} writeable={writeable} />;
+  const [value, onChange] = useState<Descendant[]>([
+    {
+      type: 'paragraph',
+      children: [{ text: '' }],
+    },
+  ]);
+
+  return (
+    <Editor
+      provider={provider}
+      writeable={writeable}
+      value={value}
+      onChange={(v) => {
+        console.log('doc: ', v);
+        onChange(v);
+      }}
+    />
+  );
 };
 
 const DocPage: React.FC = () => {
@@ -81,15 +101,29 @@ const DocPage: React.FC = () => {
     return <div>{model.error.message}</div>;
   }
 
+  const breadcrumb =
+    model.params.from === 'space' ? (
+      <SpaceBreadcrumb path={model.params.path} />
+    ) : (
+      <ShareBreadcrumb
+        shareId={model.params.shareId ?? 0}
+        path={model.params.path}
+      />
+    );
+
   return (
     <Spin spinning={model.loading}>
-      {model.unrefFile?.fid ? (
-        <Doc
-          name={model.unrefFile.fid.toString()}
-          params={model.params}
-          writeable={model.writeable}
-        />
-      ) : null}
+      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+        {breadcrumb}
+
+        {model.unrefFile?.fid ? (
+          <Doc
+            name={model.unrefFile.fid.toString()}
+            params={model.params}
+            writeable={model.writeable}
+          />
+        ) : null}
+      </Space>
     </Spin>
   );
 };

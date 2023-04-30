@@ -21,8 +21,8 @@ const UserStates: React.FC = () => {
   const states = CursorEditor.cursorStates(editor);
   return (
     <Space direction="horizontal">
-      {Object.values(states).map((x) =>
-        x.data ? <UserState key={x.data.uid} cursor={x.data} /> : null,
+      {Object.entries(states).map(([clientId, { data }]) =>
+        data ? <UserState key={clientId} cursor={data} /> : null,
       )}
     </Space>
   );

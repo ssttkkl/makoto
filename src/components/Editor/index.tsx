@@ -1,7 +1,6 @@
 import React, {
   useCallback,
   CSSProperties,
-  useState,
   useMemo,
   useEffect,
   createContext,
@@ -52,7 +51,6 @@ import { useModel } from '@umijs/max';
 import randomColor from 'randomcolor';
 import { CursorData } from './types';
 import * as Y from 'yjs';
-import { SaveDocxPlugin } from './plugins/save/docx';
 
 function makeCursorData(uid: number, writeable: boolean): CursorData {
   return {
@@ -100,10 +98,6 @@ const PLUGINS: EditorPluginGroup[] = [
       AlignEndPlugin,
       AlignJustifyPlugin,
     ],
-  },
-  {
-    key: 'file',
-    plugins: [new SaveDocxPlugin()],
   },
   {
     key: 'online',
@@ -160,18 +154,22 @@ const Leaf: React.FC<RenderLeafProps> = (props) => {
 export interface EditorProps {
   provider: HocuspocusProvider;
   writeable: boolean;
+  value: Descendant[];
+  onChange: (value: Descendant[]) => void;
 }
 
-export const EditorContext = createContext<EditorProps>({});
+export const EditorContext = createContext<{
+  provider: HocuspocusProvider;
+  writeable: boolean;
+}>({});
 
-const Editor: React.FC<EditorProps> = ({ provider, writeable }) => {
+const Editor: React.FC<EditorProps> = ({
+  provider,
+  writeable,
+  value,
+  onChange,
+}) => {
   const { currentUser } = useModel('currentUser');
-
-  const [value, setValue] = useState<Descendant[]>([]);
-
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
 
   const editor = useMemo(() => {
     const sharedType = provider.document.get('content', Y.XmlText) as Y.XmlText;
@@ -215,17 +213,17 @@ const Editor: React.FC<EditorProps> = ({ provider, writeable }) => {
     position: 'relative',
   }));
 
-  const toolbarClassname = useEmotionCss(() => ({
+  const toolbarClassname = useEmotionCss(({ token }) => ({
     padding: '12px 0',
     position: 'sticky',
     top: 0,
     zIndex: 1,
-    backgroundColor: 'white',
+    backgroundColor: token.colorBgElevated,
   }));
 
   return (
     <EditorContext.Provider value={{ provider, writeable }}>
-      <Slate editor={editor} value={value} onChange={setValue}>
+      <Slate editor={editor} value={value} onChange={onChange}>
         <RemoteCursorOverlay className={overlayClassname}>
           <Toolbar
             plugins={PLUGINS}

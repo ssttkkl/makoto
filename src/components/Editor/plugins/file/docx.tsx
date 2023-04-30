@@ -9,10 +9,6 @@ import {
 } from 'docx';
 import _ from 'lodash';
 import { Descendant, Element } from 'slate';
-import { useSlate } from 'slate-react';
-import ToolbarButton from '../../components/ToolbarButton';
-import { EditorPlugin } from '../base';
-import { ToolbarItem } from '../types';
 
 const HEADING_MAPPING = {
   h1: HeadingLevel.HEADING_1,
@@ -76,37 +72,18 @@ const serialize = (value: Descendant[]) => {
   });
 };
 
-const SaveDocxButton: React.FC = () => {
-  const editor = useSlate();
+export const saveAsDocx = async (value: Descendant[]) => {
+  const doc = serialize(value);
 
-  return (
-    <ToolbarButton
-      onClick={async () => {
-        const doc = serialize(editor.children);
+  const buffer = await Packer.toBuffer(doc);
+  const blob = new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  });
 
-        const buffer = await Packer.toBuffer(doc);
-        const blob = new Blob([buffer], {
-          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        });
-
-        const fileSaver = document.createElement('a');
-        fileSaver.href = URL.createObjectURL(blob);
-        fileSaver.download = 'docx.docx';
-        document.body.appendChild(fileSaver);
-        fileSaver.click();
-        document.body.removeChild(fileSaver);
-      }}
-    >
-      导出
-    </ToolbarButton>
-  );
+  const fileSaver = document.createElement('a');
+  fileSaver.href = URL.createObjectURL(blob);
+  fileSaver.download = 'docx.docx';
+  document.body.appendChild(fileSaver);
+  fileSaver.click();
+  document.body.removeChild(fileSaver);
 };
-
-export class SaveDocxPlugin extends EditorPlugin {
-  key: string = 'save-docx';
-  toolbarItem: ToolbarItem = {
-    title: '导出为DOCX文档',
-    renderReadonly: () => <SaveDocxButton />,
-    renderWriteable: () => <SaveDocxButton />,
-  };
-}
