@@ -1,18 +1,51 @@
-import { YjsEditor } from '@slate-yjs/core';
+import { onStatusParameters, WebSocketStatus } from '@hocuspocus/provider';
 import { Badge } from 'antd';
-import { useSlate } from 'slate-react';
+import Button from 'antd/es/button';
+import { useContext, useEffect, useState } from 'react';
+import { EditorContext } from '..';
 import { EditorPlugin } from './base';
 import { ToolbarItem } from './types';
 
 const OnlineStatus: React.FC = () => {
-  const editor = useSlate() as YjsEditor;
-  const connected = YjsEditor.connected(editor);
+  const { provider } = useContext(EditorContext);
+  const [status, setStatus] = useState(WebSocketStatus.Disconnected);
 
-  if (connected) {
-    return <Badge status="success" text="在线" />;
-  } else {
-    return <Badge status="error" text="离线" />;
-  }
+  const statusListener = ({ status: s }: onStatusParameters) => {
+    setStatus(s);
+  };
+
+  useEffect(() => {
+    provider.on('status', statusListener);
+    return () => {
+      provider.off('status', statusListener);
+    };
+  }, [provider]);
+
+  const badge = () => {
+    switch (status) {
+      case WebSocketStatus.Connected:
+        return <Badge status="success" text="在线" />;
+      case WebSocketStatus.Connecting:
+        return <Badge status="processing" text="连接中" />;
+      case WebSocketStatus.Disconnected:
+        return <Badge status="error" text="离线" />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <Button
+      type="text"
+      onClick={async () => {
+        if (status === WebSocketStatus.Disconnected) {
+          await provider.connect();
+        }
+      }}
+    >
+      {badge()}
+    </Button>
+  );
 };
 
 export class OnlinePlugin extends EditorPlugin {

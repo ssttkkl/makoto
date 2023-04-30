@@ -11,7 +11,6 @@ export class IndentPlugin extends ElementEditorPlugin {
 
   processElement(props: RenderElementProps, style: CSSProperties): void {
     if (props.element.indent) {
-      console.log(props);
       style['paddingLeft'] = props.element.indent * 2 + 'em';
     }
   }

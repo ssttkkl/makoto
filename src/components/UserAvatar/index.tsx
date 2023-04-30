@@ -121,8 +121,6 @@ export const UserAvatar: React.FC<
     avatarClassName = avatarClassName + ' ' + className;
   }
 
-  console.log(className, avatarClassName);
-
   return (
     <Spin spinning={loading}>
       <Tooltip title={data?.nickname ?? ''}>
