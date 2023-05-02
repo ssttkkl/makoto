@@ -1,10 +1,16 @@
 import { defineConfig } from '@umijs/max';
 
 export default defineConfig({
+  alias: {
+    '@': '/src',
+  },
   antd: {
     appConfig: {},
   },
   access: {},
+  define: {
+    DEV_HOCUSPOCUS_ENDPOINT: 'ws://127.0.0.1:12345',
+  },
   model: {},
   initialState: {},
   request: {},

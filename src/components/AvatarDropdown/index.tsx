@@ -4,8 +4,8 @@ import { useLocation, useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
-import HeaderDropdown from '../HeaderDropdown';
-import { UserAvatarWithNickname } from '../UserAvatar';
+import HeaderDropdown from '@/components/HeaderDropdown';
+import { UserAvatarWithNickname } from '@/components/UserAvatar';
 
 const menuItems = [
   {

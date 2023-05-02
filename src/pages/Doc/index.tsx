@@ -2,7 +2,6 @@ import { useSearchParams } from '@umijs/max';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import React, { useState } from 'react';
 import { useEffect, useMemo } from 'react';
-import { HOCUSPOCUS_ENDPOINT_URL } from '../../config';
 import Editor from '@/components/Editor';
 import { useModel } from '@umijs/max';
 import { mergePath, splitPath } from '@/utils/path';
@@ -19,9 +18,13 @@ const Doc: React.FC<{
   writeable: boolean;
 }> = ({ name, params, writeable }) => {
   const provider = useMemo(() => {
+    const url =
+      process.env.NODE_ENV === 'development'
+        ? DEV_HOCUSPOCUS_ENDPOINT
+        : `ws://${location.hostname}:${location.port}/hocuspocus`;
     const p = new HocuspocusProvider({
-      url: HOCUSPOCUS_ENDPOINT_URL,
-      name: name,
+      url,
+      name,
       parameters: {
         ...params,
         path: mergePath(params.path),
@@ -51,6 +54,8 @@ const Doc: React.FC<{
       params,
       ', writeable: ',
       writeable,
+      ', url: ',
+      url,
     );
 
     return p;

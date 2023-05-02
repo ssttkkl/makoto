@@ -1,5 +1,4 @@
 import { request } from '@/utils/request';
-import { RequestConfig } from '@umijs/max';
 import Token from './entities';
 
 export async function callLogin(params: {

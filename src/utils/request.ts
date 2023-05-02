@@ -21,7 +21,7 @@ async function onErrorShowMessage<T>(action: () => Promise<T>): Promise<T> {
   } catch (error: any) {
     // show error message
     if (error.response) {
-      message.error(error.response.data.message ?? '未知错误');
+      message.error(error.response.data.message ?? error.response.status);
     } else {
       message.error('发送请求时出了一点问题');
     }
