@@ -1,8 +1,10 @@
 import { FileInfo, FilePermissionEnum } from '@/services/files/entities';
 import { createShare } from '@/services/share';
 import { mergePath } from '@/utils/path';
+import { absolutePath } from '@/utils/url';
 import { ModalForm, ModalFormProps } from '@ant-design/pro-components';
-import { Form, Input, InputNumber, Modal, Radio } from 'antd';
+import { Link } from '@umijs/max';
+import { App, Form, Input, InputNumber, Radio } from 'antd';
 
 interface CreateShareFormData {
   title: string;
@@ -16,10 +18,10 @@ const CreateShareForm: React.FC<
   ModalFormProps<CreateShareFormData> & {
     path: string[];
     files: FileInfo[];
-    onFinish?: () => Promise<void>;
+    onFinish?: () => Promise<boolean>;
   }
 > = ({ path, files, onFinish: _onFinish, ...modalFormProps }) => {
-  const [form] = Form.useForm<CreateShareFormData>();
+  const { modal } = App.useApp();
 
   const onFinish = async (values: CreateShareFormData) => {
     // 转换为毫秒
@@ -38,24 +40,28 @@ const CreateShareForm: React.FC<
       allowLink: values.allowLink,
     });
 
-    // TODO
-    const shareLink = `http://localhost:8000/share/${share.shareId}`;
+    const url = absolutePath(`/share/${share.shareId}`);
+    console.log(url);
 
-    Modal.success({
+    modal.success({
       title: '分享成功',
-      content: <a href={shareLink}>{shareLink}</a>,
+      content: (
+        <a href={url} target="_blank" rel="noreferrer">
+          {url}
+        </a>
+      ),
     });
 
     if (_onFinish) {
-      await _onFinish();
+      return await _onFinish();
+    } else {
+      return true;
     }
-    return true;
   };
 
   return (
     <ModalForm<CreateShareFormData>
       title="创建分享"
-      form={form}
       autoFocusFirstInput
       modalProps={{ destroyOnClose: true }}
       onFinish={onFinish}

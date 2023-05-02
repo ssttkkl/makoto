@@ -3,12 +3,13 @@ import { unfavShare } from '@/services/share';
 import { Share } from '@/services/share/entities';
 import { StarFilled } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { message } from 'antd';
+import { App } from 'antd';
 
 export const FavSharesOperationBar: React.FC<{
   shares?: Share[];
   mini?: boolean;
 }> = ({ shares: _shares, mini: _mini }) => {
+  const { message } = App.useApp();
   const model = useModel('FavShares.model', (model) => ({
     selectedShares: model.selectedShares,
     setSelectedShares: model.setSelectedShares,

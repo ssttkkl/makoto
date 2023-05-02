@@ -3,7 +3,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { ProFormText, LoginForm } from '@ant-design/pro-components';
 import { useSearchParams } from '@umijs/max';
 import { Link, history } from '@umijs/max';
-import { message } from 'antd';
+import { App } from 'antd';
 import { useCallback } from 'react';
 
 interface RegisterFormRecord {
@@ -13,6 +13,8 @@ interface RegisterFormRecord {
 }
 
 const RegisterPage: React.FC = () => {
+  const { message } = App.useApp();
+
   const [urlParams] = useSearchParams();
   const redirect = urlParams.get('redirect') ?? '/';
 

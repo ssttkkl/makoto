@@ -1,5 +1,5 @@
 import { useModel } from '@umijs/max';
-import { Descriptions, message, Modal } from 'antd';
+import { App, Descriptions } from 'antd';
 import { Operation, OperationBar } from '@/components/OperationBar';
 import { expireShare, favShare, unfavShare } from '@/services/share';
 import {
@@ -14,6 +14,7 @@ import { LinkFileFormButton } from './LinkFileFormButton';
 import { OperationButton } from '@/components/OperationButton';
 
 function useFavOperation(): Operation {
+  const { message } = App.useApp();
   const model = useModel('Share.model', (model) => ({
     share: model.share,
     refresh: model.refresh,
@@ -56,6 +57,8 @@ function useFavOperation(): Operation {
 }
 
 export const ShareOperationBar: React.FC = () => {
+  const { message, modal } = App.useApp();
+
   const { currentUser } = useModel('currentUser');
   const model = useModel('Share.model');
 
@@ -130,7 +133,7 @@ export const ShareOperationBar: React.FC = () => {
       title: '分享信息',
       icon: <InfoCircleOutlined />,
       onClick: async () => {
-        Modal.info({
+        modal.info({
           title: '分享信息',
           content: (
             <Descriptions column={1}>

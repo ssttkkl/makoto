@@ -3,12 +3,14 @@ import { deleteForever, moveOutFromRecycleBin } from '@/services/recycle-bin';
 import { RecycleBinEntity } from '@/services/recycle-bin/entities';
 import { CloseOutlined, UndoOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { message } from 'antd';
+import { App } from 'antd';
 
 export const RecycleBinOperationBar: React.FC<{
   entities?: RecycleBinEntity[];
   mini?: boolean;
 }> = ({ entities: _entities, mini: _mini }) => {
+  const { message } = App.useApp();
+
   const model = useModel('RecycleBin.model', (model) => ({
     entities: model.entities,
     selectedEntities: model.selectedEntities,

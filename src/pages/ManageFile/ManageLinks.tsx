@@ -4,7 +4,7 @@ import { setLinkReferencingToNull } from '@/services/files';
 import { LinkInfo } from '@/services/files/entities';
 import { DisconnectOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
-import { message, Space, Spin } from 'antd';
+import { App, Space, Spin } from 'antd';
 import { TableRowSelection } from 'antd/es/table/interface';
 import { useState } from 'react';
 
@@ -13,6 +13,8 @@ const ManageLinksOperationBar: React.FC<{
   mini?: boolean;
   refresh?: () => Promise<any>;
 }> = ({ links, mini: _mini, refresh }) => {
+  const { message } = App.useApp();
+
   const mini = _mini === true;
 
   const op: OperationGroup[] = [

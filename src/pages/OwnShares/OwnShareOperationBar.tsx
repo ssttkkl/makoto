@@ -2,13 +2,15 @@ import { OperationBar, OperationGroup } from '@/components/OperationBar';
 import { expireShare } from '@/services/share';
 import { Share } from '@/services/share/entities';
 import { CloseOutlined } from '@ant-design/icons';
-import { message } from 'antd';
+import { App } from 'antd';
 
 export const OwnSharesOperationBar: React.FC<{
   shares: Share[];
   mini?: boolean;
   refresh?: () => Promise<any>;
 }> = ({ shares, mini: _mini, refresh }) => {
+  const { message } = App.useApp();
+
   const mini = _mini === true;
 
   const op: OperationGroup[] = [

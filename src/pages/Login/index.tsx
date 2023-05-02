@@ -2,7 +2,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { ProFormText, LoginForm } from '@ant-design/pro-components';
 import { useLocation, useSearchParams } from '@umijs/max';
 import { Link, useModel, history } from '@umijs/max';
-import { Form, message } from 'antd';
+import { App, Form } from 'antd';
 import { useCallback } from 'react';
 
 interface LoginFormRecord {
@@ -12,6 +12,7 @@ interface LoginFormRecord {
 }
 
 const LoginPage: React.FC = () => {
+  const { message } = App.useApp();
   const { currentUser, login } = useModel('currentUser');
 
   const [urlParams] = useSearchParams();
