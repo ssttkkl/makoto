@@ -40,7 +40,7 @@ async function on401<T>(action: () => Promise<T>): Promise<Awaited<T>> {
     ) {
       const loc = history.location;
       if (loc.pathname !== '/login') {
-        if (await refreshExclusive({ redirectToLoginPageOnFailed: true })) {
+        if (await refreshExclusive()) {
           console.log('re-sending request...');
           return await action();
         }
@@ -72,12 +72,18 @@ export const request: typeof originRequest = async (url, opts: any = {}) => {
 
   const { getResponse } = opts;
 
+  const sendRequest = async () => {
+    const resp = await originRequest(url, { ...opts, getResponse: true });
+    console.debug('response: ', resp, 'of request', url, opts);
+    return getResponse ? resp : resp.data;
+  };
+
   return await onErrorShowMessage(async () => {
-    return await on401(async () => {
-      const resp = await originRequest(url, { ...opts, getResponse: true });
-      console.debug('response: ', resp, 'of request', url, opts);
-      return Promise.resolve(getResponse ? resp : resp.data);
-    });
+    if (opts?.requireToken) {
+      return await on401(sendRequest);
+    } else {
+      return await sendRequest();
+    }
   });
 };
 

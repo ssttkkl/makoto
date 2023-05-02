@@ -25,44 +25,44 @@ export async function logout() {
 const refreshMutex = new Mutex();
 
 async function refresh(): Promise<boolean> {
+  let requireLogin = false;
+
   const refToken = getRefreshToken();
   if (refToken) {
     console.log('refreshing token...');
-    let token = null;
-    try {
-      token = await callRefresh({ refreshToken: refToken });
+
+    const token = await callRefresh({ refreshToken: refToken });
+
+    if (!requireLogin) {
       setAccessToken(token.accessToken);
       setRefreshToken(token.refreshToken);
-    } catch (e) {
-      console.error('refresh token failed');
-      console.error(e);
+      console.log('succeed to refresh token');
     }
 
     if (token?.expiresIn) {
       setTimeout(refresh, token.expiresIn * 0.8 * 1000);
-      console.log(`will refresh after ${token.expiresIn * 0.8}s`);
+      console.log(`token will be refreshed after ${token.expiresIn * 0.8}s`);
     }
-    return true;
   } else {
-    return false;
+    requireLogin = true;
   }
+
+  if (requireLogin) {
+    const loc = history.location;
+    console.log('invalid refresh token, redirecting to login page...');
+    history.push('/login?redirect=' + loc.pathname);
+  }
+
+  return !requireLogin;
 }
 
-export async function refreshExclusive(opts?: {
-  redirectToLoginPageOnFailed?: boolean;
-}): Promise<boolean> {
+export async function refreshExclusive(): Promise<boolean> {
+  console.log('acquiring refresh mutex');
   const accToken = getAccessToken();
   return await refreshMutex.runExclusive(async () => {
+    console.log('acquired refresh mutex');
     // 获取到锁后，判断token是否已经被之前的请求刷新
     const curAccToken = getAccessToken();
-    const ok = accToken !== curAccToken || (await refresh());
-
-    if (!ok && opts?.redirectToLoginPageOnFailed === true) {
-      const loc = history.location;
-      console.log('no token, redirecting to login page...');
-      history.push('/login?redirect=' + loc.pathname);
-    }
-
-    return ok;
+    return accToken !== curAccToken || (await refresh());
   });
 }

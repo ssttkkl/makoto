@@ -30,7 +30,7 @@ const Doc: React.FC<{
       token: async () => {
         let acc = getAccessToken();
         if (acc === null) {
-          await refreshExclusive({ redirectToLoginPageOnFailed: true });
+          await refreshExclusive();
           acc = getAccessToken();
         }
         return acc ?? '';
