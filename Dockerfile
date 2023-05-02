@@ -16,3 +16,4 @@ RUN yarn run build
 FROM nginx:latest
 
 COPY --from=build-stage /home/node/app/dist /usr/share/nginx/html
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
