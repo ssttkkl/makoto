@@ -80,15 +80,17 @@ export function useFriendlyDateFormatter() {
         .pipe(distinctUntilChanged()),
     ) ?? getEpochDay(new Date());
 
-  console.log(nowEpochDay);
+  return (date: Date | undefined | null) => {
+    if (!date) {
+      return '-';
+    }
 
-  return (date: Date) => {
     const epochDay = getEpochDay(date);
     if (epochDay === nowEpochDay) {
       return `今天`;
-    } else if (epochDay - nowEpochDay > 0 && epochDay - nowEpochDay <= 7) {
+    } else if (epochDay - nowEpochDay > 0 && epochDay - nowEpochDay <= 3) {
       return `${epochDay - nowEpochDay}天后`;
-    } else if (epochDay - nowEpochDay < 0 && epochDay - nowEpochDay >= -7) {
+    } else if (epochDay - nowEpochDay < 0 && epochDay - nowEpochDay >= -3) {
       return `${epochDay - nowEpochDay}天前`;
     } else {
       return date.toLocaleDateString();
@@ -97,23 +99,13 @@ export function useFriendlyDateFormatter() {
 }
 
 export function useFriendlyDateTimeFormatter() {
-  const nowEpochDay =
-    useObservable(() =>
-      interval(1000)
-        .pipe(map(() => getEpochDay(new Date())))
-        .pipe(distinctUntilChanged()),
-    ) ?? getEpochDay(new Date());
+  const formatDate = useFriendlyDateFormatter();
 
-  return (date: Date) => {
-    const epochDay = getEpochDay(date);
-    if (epochDay === nowEpochDay) {
-      return `今天 ${date.toLocaleTimeString()}`;
-    } else if (epochDay - nowEpochDay > 0 && epochDay - nowEpochDay <= 7) {
-      return `${epochDay - nowEpochDay}天后 ${date.toLocaleTimeString()}`;
-    } else if (epochDay - nowEpochDay < 0 && epochDay - nowEpochDay >= -7) {
-      return `${epochDay - nowEpochDay}天前 ${date.toLocaleTimeString()}`;
-    } else {
-      return date.toLocaleString();
+  return (date: Date | undefined | null) => {
+    if (!date) {
+      return '-';
     }
+
+    return formatDate(date) + ' ' + date.toLocaleTimeString();
   };
 }

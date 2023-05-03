@@ -12,6 +12,8 @@ import {
 import { mapPermission } from '@/utils/permission';
 import { LinkFileFormButton } from './LinkFileFormButton';
 import { OperationButton } from '@/components/OperationButton';
+import { UserAvatarWithNickname } from '@/components/UserAvatar';
+import { useFriendlyDateTimeFormatter } from '@/utils/hooks';
 
 function useFavOperation(): Operation {
   const { message } = App.useApp();
@@ -58,6 +60,7 @@ function useFavOperation(): Operation {
 
 export const ShareOperationBar: React.FC = () => {
   const { message, modal } = App.useApp();
+  const formatDate = useFriendlyDateTimeFormatter();
 
   const { currentUser } = useModel('currentUser');
   const model = useModel('Share.model');
@@ -65,7 +68,7 @@ export const ShareOperationBar: React.FC = () => {
   const files = model.selectedFiles;
 
   const isOwner =
-    currentUser !== undefined && model.share?.owner.uid === currentUser?.uid;
+    currentUser !== undefined && model.share?.ownerUid === currentUser?.uid;
 
   const favOp = useFavOperation();
 
@@ -141,7 +144,7 @@ export const ShareOperationBar: React.FC = () => {
                 {model.share?.title}
               </Descriptions.Item>
               <Descriptions.Item label="创建者">
-                {model.share?.owner.nickname}
+                <UserAvatarWithNickname uid={model.share?.ownerUid} />
               </Descriptions.Item>
               <Descriptions.Item label="权限">
                 {mapPermission(model.share?.permission ?? 0)}
@@ -150,10 +153,10 @@ export const ShareOperationBar: React.FC = () => {
                 {model.share?.allowLink ? '是' : '否'}
               </Descriptions.Item>
               <Descriptions.Item label="创建时间">
-                {model.share?.ctime.toLocaleString()}
+                {formatDate(model.share?.ctime)}
               </Descriptions.Item>
               <Descriptions.Item label="失效时间">
-                {model.share?.etime.toLocaleString()}
+                {formatDate(model.share?.etime)}
               </Descriptions.Item>
               <Descriptions.Item label="已失效">
                 {model.share?.expired ? '是' : '否'}

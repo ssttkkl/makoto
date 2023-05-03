@@ -83,18 +83,15 @@ export const UserNickname: React.FC<{
   className?: string;
   style?: CSSProperties;
 }> = ({ uid, user, className, style }) => {
-  const { data, loading } = useRequest(async () => {
+  const { data } = useRequest(async () => {
     if (uid) {
       return await cache.get(uid);
-    }
-    if (user === undefined) {
-      throw new Error('Please set either uid or user');
     }
     return user;
   });
 
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={!data}>
       <Name name={data?.nickname} className={className} style={style} />
     </Spin>
   );
@@ -107,12 +104,9 @@ export const UserAvatarWithNickname: React.FC<{
   nicknameProps?: { className?: string; style?: CSSProperties };
 }> = ({ uid, user, avatarProps, nicknameProps }) => {
   const currentUser = useObservable(() => rxCurrentUser);
-  const { data, loading } = useRequest(async () => {
+  const { data } = useRequest(async () => {
     if (uid) {
       return await cache.get(uid);
-    }
-    if (user === undefined) {
-      throw new Error('Please set either uid or user');
     }
     return user;
   });
@@ -128,7 +122,7 @@ export const UserAvatarWithNickname: React.FC<{
   }
 
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={!data}>
       <Space direction="horizontal">
         <Avatar
           size="small"
@@ -154,18 +148,15 @@ export const UserAvatar: React.FC<
   } & AvatarProps
 > = ({ uid, user, ...props }) => {
   const currentUser = useObservable(() => rxCurrentUser);
-  const { data, loading } = useRequest(async () => {
+  const { data } = useRequest(async () => {
     if (uid) {
       return await cache.get(uid);
-    }
-    if (user === undefined) {
-      throw new Error('Please set either uid or user');
     }
     return user;
   });
 
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={!data}>
       <Tooltip title={data?.nickname ?? ''}>
         <Avatar
           {...props}

@@ -5,7 +5,7 @@ import { Breadcrumb, Button, Space } from 'antd';
 export interface PathBreadcrumbProps {
   home: React.ReactNode;
   path: string[];
-  itemLink: (path: string[]) => string;
+  itemLink: (path: string[]) => string | null;
 }
 
 const PathBreadcrumb: React.FC<PathBreadcrumbProps> = (props) => {
@@ -18,23 +18,38 @@ const PathBreadcrumb: React.FC<PathBreadcrumbProps> = (props) => {
       upperPath.push(props.path[i - 1]);
     }
     targetPath.push(props.path[i]);
-    items.push(
-      <Breadcrumb.Item key={`${i + 1}-${props.path[i]}`}>
-        <Link to={props.itemLink(targetPath)}>{props.path[i]}</Link>
-      </Breadcrumb.Item>,
-    );
+
+    const link = props.itemLink(targetPath);
+    if (link) {
+      items.push(
+        <Breadcrumb.Item key={`${i + 1}-${props.path[i]}`}>
+          <Link to={link}>{props.path[i]}</Link>
+        </Breadcrumb.Item>,
+      );
+    } else {
+      items.push(
+        <Breadcrumb.Item key={`${i + 1}-${props.path[i]}`}>
+          {props.path[i]}
+        </Breadcrumb.Item>,
+      );
+    }
   }
+
+  const upperLink = props.itemLink(upperPath);
+  const upperBtn = (
+    <Button disabled={items.length === 0}>
+      <ArrowUpOutlined />
+    </Button>
+  );
+
+  const homeLink = props.itemLink([]);
 
   return (
     <Space>
-      <Link to={props.itemLink(upperPath)}>
-        <Button disabled={items.length === 0}>
-          <ArrowUpOutlined />
-        </Button>
-      </Link>
+      {upperLink ? <Link to={upperLink}>{upperBtn}</Link> : upperBtn}
       <Breadcrumb>
         <Breadcrumb.Item key={0}>
-          <Link to={props.itemLink([])}>{props.home}</Link>
+          {homeLink ? <Link to={homeLink}>{props.home}</Link> : props.home}
         </Breadcrumb.Item>
         {items}
       </Breadcrumb>

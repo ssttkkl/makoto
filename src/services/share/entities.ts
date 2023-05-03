@@ -4,14 +4,13 @@ import {
   FilePermissionEnum,
   TransformFileInfoArray,
 } from '../files/entities';
-import { User } from '../users/entities';
 
 export class Share {
   shareId: number;
 
   title: string;
 
-  owner: User;
+  ownerUid: number;
 
   @TransformFileInfoArray()
   files?: FileInfo[];

@@ -26,9 +26,12 @@ export function getFileIcon(file: FileInfo) {
 }
 
 export function sortFiles(files: FileInfo[]) {
+  console.log(files);
   files.sort((a: FileInfo, b: FileInfo) => {
-    if (a.type !== b.type) {
-      return a.type === 'folder' ? -1 : 1;
+    const aType = getFileRealType(a);
+    const bType = getFileRealType(b);
+    if (aType !== bType) {
+      return aType === 'folder' ? -1 : 1;
     } else {
       return a.filename.localeCompare(b.filename);
     }

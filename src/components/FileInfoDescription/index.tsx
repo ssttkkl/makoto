@@ -1,4 +1,5 @@
 import { DocumentInfo, FileInfo, LinkInfo } from '@/services/files/entities';
+import { useFriendlyDateTimeFormatter } from '@/utils/hooks';
 import { mapPermission } from '@/utils/permission';
 import { Descriptions } from 'antd';
 import { UserAvatarWithNickname } from '../UserAvatar';
@@ -8,6 +9,7 @@ export interface FileInfoProps {
 }
 
 const FileInfoDescription: React.FC<FileInfoProps> = ({ file: originFile }) => {
+  const formatDate = useFriendlyDateTimeFormatter();
   const file = originFile instanceof LinkInfo ? originFile.ref : originFile;
 
   if (file) {
@@ -21,16 +23,16 @@ const FileInfoDescription: React.FC<FileInfoProps> = ({ file: originFile }) => {
           {originFile instanceof LinkInfo ? '（链接）' : ''}
         </Descriptions.Item>
         <Descriptions.Item label="创建时间">
-          {file.ctime.toLocaleString()}
+          {formatDate(file.ctime)}
         </Descriptions.Item>
         {file.atime ? (
           <Descriptions.Item label="上次访问时间">
-            {file.atime.toLocaleString()}
+            {formatDate(file.atime)}
           </Descriptions.Item>
         ) : null}
         {file.mtime ? (
           <Descriptions.Item label="上次修改时间">
-            {file.mtime.toLocaleString()}
+            {formatDate(file.mtime)}
           </Descriptions.Item>
         ) : null}
         {originFile instanceof LinkInfo ? (

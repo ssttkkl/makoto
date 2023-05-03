@@ -132,8 +132,6 @@ const ChatButton: React.FC = () => {
     unrefFile: model.unrefFile,
   }));
 
-  const { currentUser } = useModel('currentUser');
-
   const chatRoomName = unrefFile?.fid ? `doc-${unrefFile.fid}` : undefined;
 
   // 用RxJS解决Modal中无法响应Model变动的问题

@@ -1,5 +1,6 @@
 import FileTable from '@/components/FileTable';
 import { RecycleBinEntity } from '@/services/recycle-bin/entities';
+import { useFriendlyDateTimeFormatter } from '@/utils/hooks';
 import { mergePath, splitPath } from '@/utils/path';
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
@@ -11,6 +12,7 @@ import { RecycleBinOperationBar } from './RecycleBinOperationBar';
 
 const RecycleBinPage: React.FC = () => {
   const model = useModel('RecycleBin.model');
+  const formatDate = useFriendlyDateTimeFormatter();
 
   // 在从别的页面切换回来时刷新数据
   useEffect(() => {
@@ -44,7 +46,7 @@ const RecycleBinPage: React.FC = () => {
       title: '删除时间',
       dataIndex: 'ctime',
       key: 'ctime',
-      render: (value: Date) => value.toLocaleString(),
+      render: (value: Date) => formatDate(value),
     },
   ];
 

@@ -23,8 +23,6 @@ const OnlineStatus: React.FC = () => {
 
   const badge = () => {
     switch (status) {
-      case WebSocketStatus.Connected:
-        return null;
       case WebSocketStatus.Connecting:
         return <Badge status="processing" text="连接中" />;
       case WebSocketStatus.Disconnected:
@@ -34,7 +32,7 @@ const OnlineStatus: React.FC = () => {
     }
   };
 
-  return (
+  return status !== WebSocketStatus.Connected ? (
     <Button
       type="text"
       onClick={async () => {
@@ -45,7 +43,7 @@ const OnlineStatus: React.FC = () => {
     >
       {badge()}
     </Button>
-  );
+  ) : null;
 };
 
 export class OnlinePlugin extends EditorPlugin {

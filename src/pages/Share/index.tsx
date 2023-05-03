@@ -1,5 +1,5 @@
 import FileTable from '@/components/FileTable';
-import { FileInfo, FolderInfo } from '@/services/files/entities';
+import { FileInfo } from '@/services/files/entities';
 import { mergePath, splitPath } from '@/utils/path';
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel, useParams, useSearchParams } from '@umijs/max';
@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { ShareOperationBar } from './ShareOperationBar';
 import { history } from 'umi';
 import { ShareBreadcrumb } from '@/components/ShareBreadcrumb';
+import { getFileRealType } from '@/utils/file';
 
 const SharePage: React.FC = () => {
   const model = useModel('Share.model');
@@ -60,14 +61,19 @@ const SharePage: React.FC = () => {
             dataSource={model.files}
             pagination={false}
             recordLink={(record) => {
-              if (record instanceof FolderInfo) {
-                return `/share?shareId=${model.params.shareId}&path=${mergePath(
-                  [...model.params.path, record.filename],
-                )}`;
-              } else {
-                return `/doc?from=share&shareId=${
-                  model.params.shareId
-                }&path=${mergePath([...model.params.path, record.filename])}`;
+              const recordType = getFileRealType(record);
+              switch (recordType) {
+                case 'folder':
+                  return `/share/${model.params.shareId}?path=${mergePath([
+                    ...model.params.path,
+                    record.filename,
+                  ])}`;
+                case 'document':
+                  return `/doc?from=share&shareId=${
+                    model.params.shareId
+                  }&path=${mergePath([...model.params.path, record.filename])}`;
+                default:
+                  return undefined;
               }
             }}
             rowSelection={rowSelection}

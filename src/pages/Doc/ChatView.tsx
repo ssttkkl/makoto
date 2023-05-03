@@ -5,8 +5,7 @@ import { List, Space } from 'antd';
 import React, { forwardRef, RefObject } from 'react';
 import { Observable } from 'rxjs';
 import { useObservable } from 'rxjs-hooks';
-import { User } from '@/services/users/entities';
-import { useFriendlyDateFormatter } from '@/utils/hooks';
+import { useFriendlyDateTimeFormatter } from '@/utils/hooks';
 
 const ChatItem = forwardRef<HTMLDivElement, { chat: Chat }>(({ chat }, ref) => {
   const timeClassName = useEmotionCss(({ token }) => ({
@@ -19,7 +18,7 @@ const ChatItem = forwardRef<HTMLDivElement, { chat: Chat }>(({ chat }, ref) => {
     width: '100%',
   }));
 
-  const formatDate = useFriendlyDateFormatter();
+  const formatDate = useFriendlyDateTimeFormatter();
 
   return (
     <List.Item>
@@ -29,9 +28,7 @@ const ChatItem = forwardRef<HTMLDivElement, { chat: Chat }>(({ chat }, ref) => {
           title={
             <Space>
               <UserNickname uid={chat.uid} />
-              <span className={timeClassName}>
-                {formatDate(chat.ctime)} {chat.ctime.toLocaleTimeString()}
-              </span>
+              <span className={timeClassName}>{formatDate(chat.ctime)}</span>
             </Space>
           }
           description={chat.content}

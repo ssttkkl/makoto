@@ -10,7 +10,6 @@ import { history } from '@umijs/max';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../users/entities';
 import { getMyProfile } from '../users';
-import { useObservable } from 'rxjs-hooks';
 
 export const currentUser = new BehaviorSubject<User | null>(null);
 

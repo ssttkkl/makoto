@@ -4,10 +4,10 @@ import { Table } from 'antd';
 import { ColumnsType, TableProps } from 'antd/es/table';
 import { Share } from '@/services/share/entities';
 import TableMainColumnCell from '../TableMainColumnCell';
-import { User } from '@/services/users/entities';
 import { FilePermissionEnum } from '@/services/files/entities';
 import { mapPermission } from '@/utils/permission';
 import { UserAvatarWithNickname } from '../UserAvatar';
+import { useFriendlyDateTimeFormatter } from '@/utils/hooks';
 
 function shareLink(share: Share): string {
   return `/share/${share.shareId}`;
@@ -28,6 +28,7 @@ export interface ShareTableProps extends TableProps<Share> {
 }
 
 const ShareTable: React.FC<ShareTableProps> = (props) => {
+  const formatDate = useFriendlyDateTimeFormatter();
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number>();
 
   let columns: ColumnsType<Share> = [
@@ -52,9 +53,9 @@ const ShareTable: React.FC<ShareTableProps> = (props) => {
     },
     {
       title: '分享人',
-      dataIndex: 'owner',
+      dataIndex: 'ownerUid',
       key: 'owner',
-      render: (value: User) => <UserAvatarWithNickname user={value} />,
+      render: (value: number) => <UserAvatarWithNickname uid={value} />,
     },
     {
       title: '权限',
@@ -72,7 +73,7 @@ const ShareTable: React.FC<ShareTableProps> = (props) => {
       title: '创建时间',
       dataIndex: 'ctime',
       key: 'ctime',
-      render: (value: Date) => value.toLocaleString(),
+      render: (value: Date) => formatDate(value),
     },
     {
       title: '失效时间',
@@ -82,7 +83,7 @@ const ShareTable: React.FC<ShareTableProps> = (props) => {
         if (record.expired) {
           return '已失效';
         } else {
-          return value.toLocaleString();
+          return formatDate(value);
         }
       },
     },

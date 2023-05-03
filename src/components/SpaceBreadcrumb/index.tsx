@@ -14,7 +14,13 @@ export const SpaceBreadcrumb: React.FC<{
         </>
       }
       path={path}
-      itemLink={(p) => `/space?path=${mergePath(p)}`}
+      itemLink={(p) => {
+        if (p.length !== path.length) {
+          return `/space?path=${mergePath(p)}`;
+        } else {
+          return null;
+        }
+      }}
     />
   );
 };

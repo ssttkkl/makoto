@@ -1,4 +1,4 @@
-import { FileInfo, FolderInfo } from '@/services/files/entities';
+import { FileInfo, FolderInfo, LinkInfo } from '@/services/files/entities';
 import { getSpaceFileInfo } from '@/services/space';
 import { FilePath, mergePath } from '@/utils/path';
 import { useRequest } from '@/utils/request';
@@ -17,23 +17,34 @@ export default () => {
     },
   );
 
-  const { data, loading, error, refresh } = useRequest(
+  const {
+    data: file,
+    loading,
+    error,
+    refresh,
+  } = useRequest(
     async () => {
       if (!initialized) {
         return undefined;
       }
 
       const path = mergePath(params.path);
-      const file = (await getSpaceFileInfo({ path, depth: 1 })) as FolderInfo;
-      if (file.children) {
-        sortFiles(file.children);
-      }
+      const file = await getSpaceFileInfo({ path, depth: 1 });
       return file;
     },
     {
       refreshDeps: [initialized, params.path],
     },
   );
+
+  const unrefFile: FolderInfo | null =
+    file instanceof LinkInfo ? file.ref : file;
+
+  useEffect(() => {
+    if (unrefFile?.children) {
+      sortFiles(unrefFile.children);
+    }
+  }, [unrefFile]);
 
   const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([]);
   useEffect(() => setSelectedFiles([]), [params.path]);
@@ -42,7 +53,8 @@ export default () => {
     initialized,
     params,
     updateParams,
-    data: data as FolderInfo,
+    file: file as FolderInfo,
+    unrefFile,
     loading,
     error,
     refresh,

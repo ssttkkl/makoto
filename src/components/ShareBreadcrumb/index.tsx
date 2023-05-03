@@ -15,7 +15,13 @@ export const ShareBreadcrumb: React.FC<{
         </>
       }
       path={path}
-      itemLink={(p) => `/share/${shareId}?path=${mergePath(p)}`}
+      itemLink={(p) => {
+        if (p.length !== path.length) {
+          return `/share/${shareId}?path=${mergePath(p)}`;
+        } else {
+          return null;
+        }
+      }}
     />
   );
 };

@@ -3,10 +3,11 @@ import { useModel, useSearchParams } from '@umijs/max';
 import { Space, Spin } from 'antd';
 import { useEffect } from 'react';
 import { mergePath, splitPath } from '@/utils/path';
-import { FileInfo, FolderInfo, LinkInfo } from '@/services/files/entities';
+import { FileInfo } from '@/services/files/entities';
 import { TableRowSelection } from 'antd/es/table/interface';
 import SpaceOperationBar from './SpaceOperationBar';
 import { SpaceBreadcrumb } from '@/components/SpaceBreadcrumb';
+import { getFileRealType } from '@/utils/file';
 
 const SpacePage: React.FC = () => {
   const model = useModel('Space.model');
@@ -42,23 +43,23 @@ const SpacePage: React.FC = () => {
         <SpaceOperationBar />
 
         <FileTable
-          dataSource={model.data?.children}
+          dataSource={model.unrefFile?.children}
           pagination={false}
           recordLink={(record) => {
-            if (record instanceof LinkInfo && record.ref === null) {
-              return undefined;
-            }
-
-            if (record instanceof FolderInfo) {
-              return `/space?path=${mergePath([
-                ...model.params.path,
-                record.filename,
-              ])}`;
-            } else {
-              return `/doc?path=${mergePath([
-                ...model.params.path,
-                record.filename,
-              ])}`;
+            const recordType = getFileRealType(record);
+            switch (recordType) {
+              case 'folder':
+                return `/space?path=${mergePath([
+                  ...model.params.path,
+                  record.filename,
+                ])}`;
+              case 'document':
+                return `/doc?path=${mergePath([
+                  ...model.params.path,
+                  record.filename,
+                ])}`;
+              default:
+                return undefined;
             }
           }}
           rowSelection={rowSelection}

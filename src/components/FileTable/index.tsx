@@ -7,6 +7,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css';
 import TableMainColumnCell from '../TableMainColumnCell';
 import { getFileIcon, getFileRealType } from '@/utils/file';
 import { UserAvatarWithNickname } from '../UserAvatar';
+import { useFriendlyDateTimeFormatter } from '@/utils/hooks';
 
 type FileTableColumns =
   | 'filename'
@@ -40,6 +41,7 @@ type FileTableType<T extends object = any> = React.FC<FileTableProps<T>>;
 function FileTable<T extends object = any>(
   props: FileTableProps<T>,
 ): ReactNode {
+  const formatDate = useFriendlyDateTimeFormatter();
   const filenameClassname = useEmotionCss(() => ({
     paddingInlineStart: '8px',
   }));
@@ -100,19 +102,19 @@ function FileTable<T extends object = any>(
       title: '创建时间',
       dataIndex: [...dataSourcePath, 'ctime'],
       key: 'ctime',
-      render: (value: Date) => value?.toLocaleString() ?? '-',
+      render: (value: Date | undefined) => formatDate(value),
     },
     {
       title: '上次修改时间',
       dataIndex: [...dataSourcePath, 'mtime'],
       key: 'mtime',
-      render: (value: Date) => value?.toLocaleString() ?? '-',
+      render: (value: Date | undefined) => formatDate(value),
     },
     {
       title: '上次访问时间',
       dataIndex: [...dataSourcePath, 'atime'],
       key: 'atime',
-      render: (value: Date) => value?.toLocaleString() ?? '-',
+      render: (value: Date | undefined) => formatDate(value),
     },
   ];
 
