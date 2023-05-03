@@ -9,8 +9,8 @@ import { message } from 'antd';
 
 // 异常
 export class NoRefreshTokenException extends Error {
-  constructor() {
-    super('No access token!');
+  constructor(...args: any[]) {
+    super('No refresh token!', ...args);
   }
 }
 
@@ -56,7 +56,7 @@ export const request: typeof originRequest = async (url, opts: any = {}) => {
   if (opts?.requireToken !== false) {
     if (getRefreshToken() === null) {
       return await on401(() => {
-        throw new NoRefreshTokenException();
+        throw new NoRefreshTokenException(url, opts);
       });
     } else if (getAccessToken() === null) {
       await refreshExclusive();

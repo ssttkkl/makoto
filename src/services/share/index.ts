@@ -11,6 +11,7 @@ export async function getShareInfo(params: {
     await request('/api/v1/share', {
       method: 'GET',
       params,
+      requireToken: false,
     }),
   );
 }
@@ -24,6 +25,7 @@ export async function getShareFileInfo(params: {
     await request('/api/v1/share/files', {
       method: 'GET',
       params,
+      requireToken: false,
     }),
   );
 }

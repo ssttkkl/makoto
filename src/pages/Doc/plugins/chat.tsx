@@ -16,12 +16,19 @@ import {
   useRef,
   useState,
 } from 'react';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  map,
+  Observable,
+  Subject,
+} from 'rxjs';
 import ChatView from '../ChatView';
 import { createChatEventSource, getChat, postChat } from '@/services/chat';
 import '../../../general.css';
 import { useObservable } from 'rxjs-hooks';
 import { plainToInstance } from 'class-transformer';
+import { currentUser } from '@/services/auth';
 
 const ChatModalContent: React.FC<{
   chat: Observable<Chat[]>;
@@ -75,6 +82,8 @@ const ChatModalContent: React.FC<{
 const ChatModalFooter: React.FC<{
   room: string;
 }> = ({ room }) => {
+  const isLoggedIn =
+    useObservable(() => currentUser.pipe(map((x) => Boolean(x?.uid)))) ?? false;
   const formClassName = useEmotionCss(({ token }) => ({
     marginTop: token.margin,
     display: 'flex',
@@ -115,7 +124,8 @@ const ChatModalFooter: React.FC<{
             disabled={
               !form.isFieldsTouched(true) ||
               !!form.getFieldsError().filter(({ errors }) => errors.length)
-                .length
+                .length ||
+              !isLoggedIn
             }
           >
             发送

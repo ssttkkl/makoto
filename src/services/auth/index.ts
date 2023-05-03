@@ -11,15 +11,20 @@ import { BehaviorSubject } from 'rxjs';
 import { User } from '../users/entities';
 import { getMyProfile } from '../users';
 
+export const loadingCurrentUser = new BehaviorSubject<boolean>(false);
 export const currentUser = new BehaviorSubject<User | null>(null);
 
 export async function refreshCurrentUser(): Promise<void> {
-  if (getAccessToken()) {
+  if (getRefreshToken()) {
+    loadingCurrentUser.next(true);
     currentUser.next(await getMyProfile());
+    loadingCurrentUser.next(false);
   } else {
     currentUser.next(null);
   }
 }
+
+setTimeout(() => refreshCurrentUser().catch((e) => console.error(e)));
 
 export async function login(username: string, password: string): Promise<void> {
   const result = await callLogin({ username, password });
@@ -40,7 +45,7 @@ export async function logout(opts?: { redirectToLoginPage?: boolean }) {
   await refreshCurrentUser();
 
   if (opts?.redirectToLoginPage === true) {
-    history.push('/login', { username });
+    history.push(`/login`, { username });
   }
 }
 

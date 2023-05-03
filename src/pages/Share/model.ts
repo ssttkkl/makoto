@@ -10,6 +10,7 @@ import { mergePath } from '@/utils/path';
 import { useRequest } from '@/utils/request';
 import { sortFiles } from '@/utils/file';
 import { useState } from 'react';
+import { useModel } from '@umijs/max';
 
 export interface SharePageSearchParams {
   shareId: number;
@@ -24,6 +25,8 @@ export default () => {
     },
   );
 
+  const { isLoggedIn } = useModel('currentUser');
+
   const share = useRequest(
     async () => {
       if (!initialized) {
@@ -31,11 +34,14 @@ export default () => {
       }
 
       const result = await getShareInfo({ shareId: params.shareId });
-      await putShareAccessRecord({ shareId: params.shareId });
+
+      if (isLoggedIn) {
+        await putShareAccessRecord({ shareId: params.shareId });
+      }
       return result;
     },
     {
-      refreshDeps: [initialized, params.shareId],
+      refreshDeps: [initialized, params.shareId, isLoggedIn],
     },
   );
 

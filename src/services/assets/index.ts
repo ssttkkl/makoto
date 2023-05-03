@@ -10,6 +10,7 @@ export async function getAssetMeta(params: {
     await request(`/api/v1/assets/meta`, {
       method: 'GET',
       params,
+      requireToken: false,
     }),
   );
 }
@@ -21,5 +22,6 @@ export async function getAsset(params: {
     method: 'GET',
     params,
     responseType: 'arraybuffer',
+    requireToken: false,
   });
 }

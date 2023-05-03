@@ -32,6 +32,7 @@ export async function getProfile(params: { uid: number }): Promise<User> {
     await request('/api/v1/users', {
       method: 'GET',
       params,
+      requireToken: false,
     }),
   );
 }

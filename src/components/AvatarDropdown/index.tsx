@@ -1,12 +1,13 @@
-import { LogoutOutlined } from '@ant-design/icons';
+import { LoginOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { useModel } from '@umijs/max';
-import { Spin } from 'antd';
+import { useLocation, useModel } from '@umijs/max';
+import { App, Spin } from 'antd';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
 import HeaderDropdown from '@/components/HeaderDropdown';
 import { UserAvatarWithNickname } from '@/components/UserAvatar';
 import { logout } from '@/services/auth';
+import { Link } from '@umijs/max';
 
 const menuItems = [
   {
@@ -17,7 +18,9 @@ const menuItems = [
 ];
 
 const AvatarDropdown: React.FC = () => {
-  const { currentUser } = useModel('currentUser');
+  const { message } = App.useApp();
+  const { currentUser, isLoggedIn, loading } = useModel('currentUser');
+  const loc = useLocation();
 
   const actionClassName = useEmotionCss(({ token }) => {
     return {
@@ -36,18 +39,23 @@ const AvatarDropdown: React.FC = () => {
     };
   });
 
+  const paddingLeftClassName = useEmotionCss(({ token }) => ({
+    paddingInlineStart: token.paddingXS,
+  }));
+
   const onMenuClick = useCallback(
     (event: MenuInfo) => {
       const { key } = event;
       if (key === 'logout') {
-        logout();
+        logout({ redirectToLoginPage: true });
+        message.success('退出登录成功');
         return;
       }
     },
     [logout],
   );
 
-  if (!currentUser) {
+  if (loading) {
     return (
       <span className={actionClassName}>
         <Spin
@@ -59,7 +67,7 @@ const AvatarDropdown: React.FC = () => {
         />
       </span>
     );
-  } else {
+  } else if (currentUser) {
     return (
       <HeaderDropdown
         menu={{
@@ -72,6 +80,13 @@ const AvatarDropdown: React.FC = () => {
           <UserAvatarWithNickname user={currentUser} />
         </span>
       </HeaderDropdown>
+    );
+  } else {
+    return (
+      <Link to={`/login?redirect=` + loc.pathname} className={actionClassName}>
+        <UserOutlined />
+        <span className={paddingLeftClassName}>登录</span>
+      </Link>
     );
   }
 };

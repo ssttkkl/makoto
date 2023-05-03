@@ -20,6 +20,7 @@ export async function getChat(params: {
         limit: params?.limit,
         reversed: params?.reversed?.toString(),
       },
+      requireToken: false,
     })) as [],
   );
 }

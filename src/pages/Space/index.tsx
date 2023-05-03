@@ -54,7 +54,7 @@ const SpacePage: React.FC = () => {
                   record.filename,
                 ])}`;
               case 'document':
-                return `/doc?path=${mergePath([
+                return `/doc?from=space&path=${mergePath([
                   ...model.params.path,
                   record.filename,
                 ])}`;

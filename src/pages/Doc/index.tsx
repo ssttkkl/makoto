@@ -12,33 +12,37 @@ import { EditorPluginGroup } from '@/components/Editor/plugins/types';
 import ChatPlugin from '@/pages/Doc/plugins/chat';
 import { OnlinePlugin } from '@/pages/Doc/plugins/online';
 import { UserStatesPlugin } from '@/pages/Doc/plugins/user-states';
+import { DocFrom } from './types';
 
 const Doc: React.FC<{
   name: string;
-  params: any;
+  docFrom: DocFrom;
   writeable: boolean;
-}> = ({ name, params, writeable }) => {
+}> = ({ name, docFrom, writeable }) => {
+  const url =
+    process.env.NODE_ENV === 'development'
+      ? DEV_HOCUSPOCUS_ENDPOINT
+      : `ws://${location.hostname}:${location.port}/hocuspocus`;
+
   const provider = useMemo(() => {
-    const url =
-      process.env.NODE_ENV === 'development'
-        ? DEV_HOCUSPOCUS_ENDPOINT
-        : `ws://${location.hostname}:${location.port}/hocuspocus`;
+    const params: Record<string, string> = {
+      writeable: writeable.toString(),
+    };
+
+    if (docFrom.from === 'share') {
+      params.from = 'share';
+      params.shareId = docFrom.shareId.toString();
+      params.path = mergePath(docFrom.path);
+    } else {
+      params.from = 'space';
+      params.path = mergePath(docFrom.path);
+    }
+
     const p = new HocuspocusProvider({
       url,
       name,
-      parameters: {
-        ...params,
-        path: mergePath(params.path),
-        writeable: writeable,
-      },
-      token: async () => {
-        let acc = getAccessToken();
-        if (acc === null) {
-          await refreshExclusive();
-          acc = getAccessToken();
-        }
-        return acc ?? '';
-      },
+      parameters: params,
+      token: () => getAccessToken() ?? '',
     });
 
     p.on('authenticationFailed', () => {
@@ -60,7 +64,7 @@ const Doc: React.FC<{
     );
 
     return p;
-  }, [name, params, writeable]);
+  }, [url, name, docFrom, writeable]);
 
   const extraPlugins: EditorPluginGroup[] = useMemo(
     () => [
@@ -99,11 +103,19 @@ const DocPage: React.FC = () => {
     const rawFrom = searchParams.get('from');
     const rawPath = searchParams.get('path');
     const rawShareId = searchParams.get('shareId');
-    model.updateParams({
-      from: rawFrom === 'share' ? 'share' : 'space',
-      path: splitPath(rawPath ?? ''),
-      shareId: rawShareId !== null ? Number.parseInt(rawShareId) : undefined,
-    });
+
+    if (rawFrom === 'share') {
+      model.updateParams({
+        from: 'share',
+        path: splitPath(rawPath ?? ''),
+        shareId: Number.parseInt(rawShareId ?? '0'),
+      });
+    } else if (rawFrom === 'space') {
+      model.updateParams({
+        from: 'space',
+        path: splitPath(rawPath ?? ''),
+      });
+    }
   }, [searchParams]);
 
   if (model.error) {
@@ -128,7 +140,7 @@ const DocPage: React.FC = () => {
         {model.unrefFile?.fid ? (
           <Doc
             name={model.unrefFile.fid.toString()}
-            params={model.params}
+            docFrom={model.params}
             writeable={model.writeable}
           />
         ) : null}

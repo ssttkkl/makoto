@@ -18,7 +18,7 @@ interface LoginFormRecord {
 
 const LoginPage: React.FC = () => {
   const { message } = App.useApp();
-  const { currentUser, login } = useModel('currentUser');
+  const { isLoggedIn, login } = useModel('currentUser');
 
   const [urlParams] = useSearchParams();
   const redirect = urlParams.get('redirect') ?? '/';
@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
     [redirect],
   );
 
-  if (currentUser) {
+  if (isLoggedIn) {
     history.push(redirect);
   }
 

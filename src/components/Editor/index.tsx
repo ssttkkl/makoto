@@ -252,19 +252,20 @@ const Editor: React.FC<EditorProps> = ({
           onChange(v);
         }}
       >
-        <RemoteCursorOverlay className="position-relative">
-          <Toolbar
-            plugins={plugins}
-            writeable={writeable}
-            className={toolbarClassname}
-          />
-          <Editable
-            renderElement={renderElement}
-            renderLeaf={renderLeaf}
-            autoFocus
-            readOnly={writeable !== true}
-          />
-        </RemoteCursorOverlay>
+        {/* <RemoteCursorOverlay className="position-relative">
+          
+        </RemoteCursorOverlay> */}
+        <Toolbar
+          plugins={plugins}
+          writeable={writeable}
+          className={toolbarClassname}
+        />
+        <Editable
+          renderElement={renderElement}
+          renderLeaf={renderLeaf}
+          autoFocus
+          readOnly={writeable !== true}
+        />
       </Slate>
     </EditorContext.Provider>
   );

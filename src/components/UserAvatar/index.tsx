@@ -128,7 +128,7 @@ export const UserAvatarWithNickname: React.FC<{
           size="small"
           {...avatarProps}
           user={data}
-          isSelf={currentUser?.uid === data?.uid}
+          isSelf={currentUser?.uid === data?.uid && Boolean(currentUser?.uid)}
         />
 
         <Name
@@ -161,7 +161,7 @@ export const UserAvatar: React.FC<
         <Avatar
           {...props}
           user={data}
-          isSelf={currentUser?.uid === data?.uid}
+          isSelf={currentUser?.uid === data?.uid && Boolean(currentUser?.uid)}
         />
       </Tooltip>
     </Spin>

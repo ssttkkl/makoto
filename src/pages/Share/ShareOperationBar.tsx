@@ -62,13 +62,12 @@ export const ShareOperationBar: React.FC = () => {
   const { message, modal } = App.useApp();
   const formatDate = useFriendlyDateTimeFormatter();
 
-  const { currentUser } = useModel('currentUser');
+  const { currentUser, isLoggedIn } = useModel('currentUser');
   const model = useModel('Share.model');
 
   const files = model.selectedFiles;
 
-  const isOwner =
-    currentUser !== undefined && model.share?.ownerUid === currentUser?.uid;
+  const isOwner = model.share?.ownerUid === currentUser?.uid && isLoggedIn;
 
   const favOp = useFavOperation();
 
@@ -122,11 +121,14 @@ export const ShareOperationBar: React.FC = () => {
     },
   };
 
-  const basic = [favOp];
-  if (!isOwner && model.share?.allowLink === true) {
+  const basic = [];
+  if (isLoggedIn) {
+    basic.push(favOp);
+  }
+  if (isLoggedIn && !isOwner && model.share?.allowLink === true) {
     basic.push(linkOp);
   }
-  if (isOwner && model.share?.expired === false) {
+  if (isLoggedIn && isOwner && model.share?.expired === false) {
     basic.push(expireOp);
   }
 
