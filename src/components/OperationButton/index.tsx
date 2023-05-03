@@ -1,4 +1,4 @@
-import { ButtonProps, Tooltip, Button } from 'antd';
+import { Button, ButtonProps, Tooltip } from 'antd';
 
 export interface OperationButtonProps extends Omit<ButtonProps, 'children'> {
   mini?: boolean;

@@ -1,7 +1,12 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { ProFormText, LoginForm } from '@ant-design/pro-components';
-import { useLocation, useSearchParams } from '@umijs/max';
-import { Link, useModel, history } from '@umijs/max';
+import { LoginForm, ProFormText } from '@ant-design/pro-components';
+import {
+  history,
+  Link,
+  useLocation,
+  useModel,
+  useSearchParams,
+} from '@umijs/max';
 import { App, Form } from 'antd';
 import { useCallback } from 'react';
 

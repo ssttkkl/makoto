@@ -3,7 +3,6 @@ import { createShare } from '@/services/share';
 import { mergePath } from '@/utils/path';
 import { absolutePath } from '@/utils/url';
 import { ModalForm, ModalFormProps } from '@ant-design/pro-components';
-import { Link } from '@umijs/max';
 import { App, Form, Input, InputNumber, Radio } from 'antd';
 
 interface CreateShareFormData {

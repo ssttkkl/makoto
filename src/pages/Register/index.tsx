@@ -1,8 +1,7 @@
 import { register } from '@/services/users';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { ProFormText, LoginForm } from '@ant-design/pro-components';
-import { useSearchParams } from '@umijs/max';
-import { Link, history } from '@umijs/max';
+import { LoginForm, ProFormText } from '@ant-design/pro-components';
+import { history, Link, useSearchParams } from '@umijs/max';
 import { App } from 'antd';
 import { useCallback } from 'react';
 

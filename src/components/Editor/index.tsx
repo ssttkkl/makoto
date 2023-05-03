@@ -1,9 +1,10 @@
 import React, {
-  useCallback,
-  CSSProperties,
-  useMemo,
-  useEffect,
   createContext,
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import { createEditor, Descendant } from 'slate';
 import {
@@ -25,11 +26,11 @@ import SubscriptPlugin from './plugins/format/subscript';
 import ClearFormatPlugin from './plugins/format/clear-format';
 import { FontSizePlugin } from './plugins/format/fontsize';
 import {
-  AlignStartPlugin,
   AlignCenterPlugin,
   AlignEndPlugin,
   AlignJustifyPlugin,
   AlignPlugin,
+  AlignStartPlugin,
 } from './plugins/align';
 import { ForegroundPlugin } from './plugins/color/foreground';
 import {
@@ -42,8 +43,6 @@ import RedoPlugin from './plugins/history/redo';
 import { BackgroundPlugin } from './plugins/color/background';
 import { RemoteCursorOverlay } from './components/Overlay';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { OnlinePlugin } from './plugins/online';
-import { UserStatesPlugin } from './plugins/user-states';
 import { HeadingPlugin } from './plugins/heading';
 import { withCursors, withYHistory, withYjs, YjsEditor } from '@slate-yjs/core';
 import { HocuspocusProvider } from '@hocuspocus/provider';
@@ -52,7 +51,6 @@ import randomColor from 'randomcolor';
 import { CursorData } from './types';
 import * as Y from 'yjs';
 import ImagePlugin from './plugins/image';
-import { withNewLineAtEnd } from './withNormalize';
 
 function makeCursorData(uid: number, writeable: boolean): CursorData {
   return {
@@ -104,14 +102,6 @@ const PLUGINS: EditorPluginGroup[] = [
   {
     key: 'insert',
     plugins: [new ImagePlugin()],
-  },
-  {
-    key: 'online',
-    plugins: [new OnlinePlugin()],
-  },
-  {
-    key: 'user-states',
-    plugins: [new UserStatesPlugin()],
   },
 ];
 
@@ -170,8 +160,7 @@ const Leaf: React.FC<RenderLeafProps> = (props) => {
 export interface EditorProps {
   provider: HocuspocusProvider;
   writeable: boolean;
-  value: Descendant[];
-  onChange: (value: Descendant[]) => void;
+  extraPlugins?: EditorPluginGroup[];
 }
 
 export const EditorContext = createContext<{
@@ -182,36 +171,48 @@ export const EditorContext = createContext<{
 const Editor: React.FC<EditorProps> = ({
   provider,
   writeable,
-  value,
-  onChange,
+  extraPlugins,
 }) => {
   const { currentUser } = useModel('currentUser');
+
+  const [value, onChange] = useState<Descendant[]>([
+    {
+      type: 'paragraph',
+      children: [{ text: '' }],
+    },
+  ]);
+
+  const plugins = useMemo(() => {
+    return (extraPlugins?.length ?? 0) > 0
+      ? [...PLUGINS, ...extraPlugins!]
+      : PLUGINS;
+  }, [extraPlugins]);
 
   const editor = useMemo(() => {
     const sharedType = provider.document.get('content', Y.XmlText) as Y.XmlText;
 
-    let e = withNewLineAtEnd(
-      withReact(
-        withYHistory(
-          withCursors(
-            withYjs(createEditor(), sharedType, { autoConnect: false }),
-            provider.awareness,
-            {
-              data: currentUser
-                ? makeCursorData(currentUser.uid, writeable)
-                : undefined,
-            },
-          ),
+    let e = withReact(
+      withYHistory(
+        withCursors(
+          withYjs(createEditor(), sharedType, { autoConnect: false }),
+          provider.awareness,
+          {
+            data: currentUser
+              ? makeCursorData(currentUser.uid, writeable)
+              : undefined,
+          },
         ),
       ),
     );
 
-    PLUGINS.flatMap((x) => x.plugins).forEach((plugin) => {
-      e = plugin.withEditor(e);
-    });
+    plugins
+      .flatMap((x) => x.plugins)
+      .forEach((plugin) => {
+        e = plugin.withEditor(e);
+      });
 
     return e;
-  }, [PLUGINS, currentUser, provider.awareness, provider.document]);
+  }, [plugins, currentUser, provider.awareness, provider.document]);
 
   useEffect(() => {
     YjsEditor.connect(editor);
@@ -227,10 +228,6 @@ const Editor: React.FC<EditorProps> = ({
     [],
   );
 
-  const overlayClassname = useEmotionCss(() => ({
-    position: 'relative',
-  }));
-
   const toolbarClassname = useEmotionCss(({ token }) => ({
     padding: '12px 0',
     position: 'sticky',
@@ -241,10 +238,17 @@ const Editor: React.FC<EditorProps> = ({
 
   return (
     <EditorContext.Provider value={{ provider, writeable }}>
-      <Slate editor={editor} value={value} onChange={onChange}>
-        <RemoteCursorOverlay className={overlayClassname}>
+      <Slate
+        editor={editor}
+        value={value}
+        onChange={(v) => {
+          console.log('doc: ', v);
+          onChange(v);
+        }}
+      >
+        <RemoteCursorOverlay className="position-relative">
           <Toolbar
-            plugins={PLUGINS}
+            plugins={plugins}
             writeable={writeable}
             className={toolbarClassname}
           />

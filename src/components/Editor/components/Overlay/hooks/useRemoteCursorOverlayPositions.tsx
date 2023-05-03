@@ -12,7 +12,7 @@ import {
 import { BaseRange, NodeMatch, Text } from 'slate';
 import { useModel } from '@umijs/max';
 import { CursorData } from '../../../types';
-import { useRemoteCursorStates, getCursorRange } from '@slate-yjs/react';
+import { getCursorRange, useRemoteCursorStates } from '@slate-yjs/react';
 
 import { useRemoteCursorEditor } from './useRemoteCursorEditor';
 import { useOnResize, useRequestRerender } from './utils';

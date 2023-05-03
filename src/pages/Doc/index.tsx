@@ -1,16 +1,17 @@
-import { useSearchParams } from '@umijs/max';
+import { useModel, useSearchParams } from '@umijs/max';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import React, { useState } from 'react';
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Editor from '@/components/Editor';
-import { useModel } from '@umijs/max';
 import { mergePath, splitPath } from '@/utils/path';
 import { Space, Spin } from 'antd';
 import { getAccessToken } from '@/services/auth/token';
 import { refreshExclusive } from '@/services/auth';
-import { Descendant } from 'slate';
 import { SpaceBreadcrumb } from '@/components/SpaceBreadcrumb';
 import { ShareBreadcrumb } from '@/components/ShareBreadcrumb';
+import { EditorPluginGroup } from '@/components/Editor/plugins/types';
+import ChatPlugin from '@/pages/Doc/plugins/chat';
+import { OnlinePlugin } from '@/pages/Doc/plugins/online';
+import { UserStatesPlugin } from '@/pages/Doc/plugins/user-states';
 
 const Doc: React.FC<{
   name: string;
@@ -61,22 +62,25 @@ const Doc: React.FC<{
     return p;
   }, [name, params, writeable]);
 
-  const [value, onChange] = useState<Descendant[]>([
-    {
-      type: 'paragraph',
-      children: [{ text: '' }],
-    },
-  ]);
+  const extraPlugins: EditorPluginGroup[] = useMemo(
+    () => [
+      {
+        key: 'chat',
+        plugins: [new ChatPlugin()],
+      },
+      {
+        key: 'online',
+        plugins: [new OnlinePlugin(), new UserStatesPlugin()],
+      },
+    ],
+    [],
+  );
 
   return (
     <Editor
       provider={provider}
       writeable={writeable}
-      value={value}
-      onChange={(v) => {
-        console.log('doc: ', v);
-        onChange(v);
-      }}
+      extraPlugins={extraPlugins}
     />
   );
 };

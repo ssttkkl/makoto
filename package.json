@@ -48,6 +48,8 @@
     "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.1",
+    "rxjs-hooks": "^0.8.0-alpha.0",
     "slate": "^0.82.1",
     "slate-react": "^0.83.0",
     "yjs": "^13.5.29"

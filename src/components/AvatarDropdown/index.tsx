@@ -1,6 +1,6 @@
 import { LogoutOutlined } from '@ant-design/icons';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { useLocation, useModel } from '@umijs/max';
+import { useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
@@ -17,15 +17,6 @@ const menuItems = [
 
 const AvatarDropdown: React.FC = () => {
   const { currentUser, loading, logout } = useModel('currentUser');
-
-  const loc = useLocation();
-
-  /**
-   * 退出登录，并且将当前的 url 保存
-   */
-  const loginOut = useCallback(async () => {
-    await logout();
-  }, [loc]);
 
   const actionClassName = useEmotionCss(({ token }) => {
     return {
@@ -48,11 +39,11 @@ const AvatarDropdown: React.FC = () => {
     (event: MenuInfo) => {
       const { key } = event;
       if (key === 'logout') {
-        loginOut();
+        logout();
         return;
       }
     },
-    [loginOut],
+    [logout],
   );
 
   if (loading) {

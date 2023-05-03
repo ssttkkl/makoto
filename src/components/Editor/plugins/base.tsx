@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { RenderLeafProps, RenderElementProps, ReactEditor } from 'slate-react';
+import { ReactEditor, RenderElementProps, RenderLeafProps } from 'slate-react';
 import { ToolbarItem } from './types';
 
 export abstract class EditorPlugin {

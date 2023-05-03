@@ -1,6 +1,6 @@
 import { FileInfo } from '@/services/files/entities';
 import { PageContainer } from '@ant-design/pro-components';
-import { useSearchParams } from '@umijs/max';
+import { useModel, useSearchParams } from '@umijs/max';
 import { Spin, Tabs, TabsProps } from 'antd';
 import { history } from 'umi';
 import { getFileIcon } from '@/utils/file';
@@ -8,7 +8,6 @@ import { FileOutlined } from '@ant-design/icons';
 import ManageLinks from './ManageLinks';
 import ManageShares from './ManageShares';
 import FileInfoDescription from '@/components/FileInfoDescription';
-import { useModel } from '@umijs/max';
 import { useEffect } from 'react';
 
 const ManageFilePage: React.FC = () => {

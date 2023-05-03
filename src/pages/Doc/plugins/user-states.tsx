@@ -4,9 +4,9 @@ import { CursorEditor } from '@slate-yjs/core';
 import { useModel } from '@umijs/max';
 import { Space } from 'antd';
 import { useSlate } from 'slate-react';
-import { CursorData } from '../types';
-import { EditorPlugin } from './base';
-import { ToolbarItem } from './types';
+import { CursorData } from '../../../components/Editor/types';
+import { EditorPlugin } from '../../../components/Editor/plugins/base';
+import { ToolbarItem } from '../../../components/Editor/plugins/types';
 
 const UserState: React.FC<{ cursor: CursorData }> = ({ cursor }) => {
   const className = useEmotionCss(() => ({
@@ -20,14 +20,16 @@ const UserState: React.FC<{ cursor: CursorData }> = ({ cursor }) => {
 const UserStates: React.FC = () => {
   const { currentUser } = useModel('currentUser');
   const editor = useSlate() as CursorEditor<CursorData>;
-  const states = CursorEditor.cursorStates(editor);
+
+  const states = Object.entries(CursorEditor.cursorStates(editor)).filter(
+    ([_, { data }]) => data && data.uid !== currentUser?.uid,
+  );
+
   return (
     <Space direction="horizontal">
-      {Object.entries(states).map(([clientId, { data }]) =>
-        data && data.uid !== currentUser?.uid ? (
-          <UserState key={clientId} cursor={data} />
-        ) : null,
-      )}
+      {states.map(([clientId, { data }]) => (
+        <UserState key={clientId} cursor={data} />
+      ))}
     </Space>
   );
 };
