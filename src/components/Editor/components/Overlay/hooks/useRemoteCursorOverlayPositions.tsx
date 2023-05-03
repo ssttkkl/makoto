@@ -10,7 +10,6 @@ import {
   useState,
 } from 'react';
 import { BaseRange, NodeMatch, Text } from 'slate';
-import { useModel } from '@umijs/max';
 import { CursorData } from '../../../types';
 import { getCursorRange, useRemoteCursorStates } from '@slate-yjs/react';
 
@@ -62,11 +61,10 @@ export function useRemoteCursorOverlayPositions<
   let cursorStates = useRemoteCursorStates<CursorData>();
   const requestRerender = useRequestRerender();
 
-  // 过滤掉自己（否则渲染时会出bug，不懂为啥）
-  const { currentUser } = useModel('currentUser');
+  // 不显示只读用户
   cursorStates = Object.fromEntries(
     Object.entries(cursorStates).filter(([key, state]) => {
-      return state.data?.uid !== currentUser?.uid;
+      return Boolean(state.data?.writeable);
     }),
   );
 
@@ -98,35 +96,41 @@ export function useRemoteCursorOverlayPositions<
     const xOffset = containerRect?.x ?? 0;
     const yOffset = containerRect?.y ?? 0;
 
-    let overlayPositionsChanged =
-      Object.keys(overlayPositions).length !== Object.keys(cursorStates).length;
+    try {
+      let overlayPositionsChanged =
+        Object.keys(overlayPositions).length !==
+        Object.keys(cursorStates).length;
 
-    const updated = Object.fromEntries(
-      Object.entries(cursorStates).map(([key, state]) => {
-        const range = state.relativeSelection && getCursorRange(editor, state);
+      const updated = Object.fromEntries(
+        Object.entries(cursorStates).map(([key, state]) => {
+          const range =
+            state.relativeSelection && getCursorRange(editor, state);
 
-        if (!range) {
-          return [key, FROZEN_EMPTY_ARRAY];
-        }
+          if (!range) {
+            return [key, FROZEN_EMPTY_ARRAY];
+          }
 
-        const cached = overlayPositionCache.current.get(range);
-        if (cached) {
-          return [key, cached];
-        }
+          const cached = overlayPositionCache.current.get(range);
+          if (cached) {
+            return [key, cached];
+          }
 
-        const overlayPosition = getOverlayPosition(editor, range, {
-          xOffset,
-          yOffset,
-          shouldGenerateOverlay,
-        });
-        overlayPositionsChanged = true;
-        overlayPositionCache.current.set(range, overlayPosition);
-        return [key, overlayPosition];
-      }),
-    );
+          const overlayPosition = getOverlayPosition(editor, range, {
+            xOffset,
+            yOffset,
+            shouldGenerateOverlay,
+          });
+          overlayPositionsChanged = true;
+          overlayPositionCache.current.set(range, overlayPosition);
+          return [key, overlayPosition];
+        }),
+      );
 
-    if (overlayPositionsChanged) {
-      setOverlayPositions(updated);
+      if (overlayPositionsChanged) {
+        setOverlayPositions(updated);
+      }
+    } catch (e) {
+      console.error(e);
     }
   });
 

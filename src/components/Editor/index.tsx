@@ -199,7 +199,7 @@ const Editor: React.FC<EditorProps> = ({
           {
             data: currentUser?.uid
               ? makeCursorData(currentUser.uid, writeable)
-              : undefined,
+              : makeCursorData(0, false),
           },
         ),
       ),
@@ -252,20 +252,19 @@ const Editor: React.FC<EditorProps> = ({
           onChange(v);
         }}
       >
-        {/* <RemoteCursorOverlay className="position-relative">
-          
-        </RemoteCursorOverlay> */}
-        <Toolbar
-          plugins={plugins}
-          writeable={writeable}
-          className={toolbarClassname}
-        />
-        <Editable
-          renderElement={renderElement}
-          renderLeaf={renderLeaf}
-          autoFocus
-          readOnly={writeable !== true}
-        />
+        <RemoteCursorOverlay className="position-relative">
+          <Toolbar
+            plugins={plugins}
+            writeable={writeable}
+            className={toolbarClassname}
+          />
+          <Editable
+            renderElement={renderElement}
+            renderLeaf={renderLeaf}
+            autoFocus
+            readOnly={writeable !== true}
+          />
+        </RemoteCursorOverlay>
       </Slate>
     </EditorContext.Provider>
   );

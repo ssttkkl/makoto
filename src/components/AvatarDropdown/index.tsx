@@ -1,43 +1,35 @@
-import { LoginOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { useLocation, useModel } from '@umijs/max';
-import { App, Spin } from 'antd';
+import { App, MenuProps, Spin } from 'antd';
 import type { MenuInfo } from 'rc-menu/lib/interface';
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import HeaderDropdown from '@/components/HeaderDropdown';
-import { UserAvatarWithNickname } from '@/components/UserAvatar';
+import { UserAvatar, UserAvatarWithNickname } from '@/components/UserAvatar';
 import { logout } from '@/services/auth';
 import { Link } from '@umijs/max';
-
-const menuItems = [
-  {
-    key: 'logout',
-    icon: <LogoutOutlined />,
-    label: '退出登录',
-  },
-];
+import { RouteContext } from '@ant-design/pro-components';
+import Tooltip from 'antd/es/tooltip';
 
 const AvatarDropdown: React.FC = () => {
   const { message } = App.useApp();
-  const { currentUser, isLoggedIn, loading } = useModel('currentUser');
+  const { currentUser, loading } = useModel('currentUser');
   const loc = useLocation();
+  const { collapsed, isMobile } = useContext(RouteContext);
 
-  const actionClassName = useEmotionCss(({ token }) => {
-    return {
-      display: 'flex',
-      width: '120px',
-      height: '48px',
-      marginLeft: 'auto',
-      overflow: 'hidden',
-      alignItems: 'center',
-      padding: '0 8px',
-      cursor: 'pointer',
-      borderRadius: token.borderRadius,
-      '&:hover': {
-        backgroundColor: token.colorBgTextHover,
-      },
-    };
-  });
+  const mini = !isMobile && collapsed;
+
+  const actionClassName = useEmotionCss(({ token }) => ({
+    display: 'flex',
+    width: '120px',
+    height: '48px',
+    marginLeft: 'auto',
+    overflow: 'hidden',
+    alignItems: 'center',
+    padding: [0, token.paddingXS],
+    cursor: 'pointer',
+    borderRadius: token.borderRadius,
+  }));
 
   const paddingLeftClassName = useEmotionCss(({ token }) => ({
     paddingInlineStart: token.paddingXS,
@@ -54,6 +46,19 @@ const AvatarDropdown: React.FC = () => {
     },
     [logout],
   );
+
+  const menuItems: MenuProps['items'] = [
+    {
+      key: 'currentUser',
+      icon: <UserOutlined />,
+      label: currentUser?.nickname,
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: '退出登录',
+    },
+  ];
 
   if (loading) {
     return (
@@ -77,15 +82,27 @@ const AvatarDropdown: React.FC = () => {
         }}
       >
         <span className={actionClassName}>
-          <UserAvatarWithNickname user={currentUser} />
+          {mini ? (
+            <UserAvatar user={currentUser} size="small" tooltip={false} />
+          ) : (
+            <UserAvatarWithNickname user={currentUser} />
+          )}
         </span>
       </HeaderDropdown>
     );
   } else {
     return (
       <Link to={`/login?redirect=` + loc.pathname} className={actionClassName}>
-        <UserOutlined />
-        <span className={paddingLeftClassName}>登录</span>
+        {mini ? (
+          <Tooltip title="登录">
+            <UserOutlined />
+          </Tooltip>
+        ) : (
+          <>
+            <UserOutlined />
+            <span className={paddingLeftClassName}>登录</span>
+          </>
+        )}
       </Link>
     );
   }

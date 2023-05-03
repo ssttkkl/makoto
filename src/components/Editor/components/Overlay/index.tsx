@@ -84,7 +84,6 @@ export function RemoteCursorOverlay({
   className,
   children,
 }: RemoteCursorsProps) {
-  const { currentUser } = useModel('currentUser');
   const containerRef = useRef<HTMLDivElement>(null);
   const [cursors] = useRemoteCursorOverlayPositions({
     containerRef,
@@ -93,12 +92,9 @@ export function RemoteCursorOverlay({
   return (
     <div className={className} ref={containerRef}>
       {children}
-      {cursors
-        .filter((cursor) => cursor.data?.uid !== currentUser?.uid)
-        .filter((cursor) => cursor.data?.writeable === true)
-        .map((cursor) => (
-          <RemoteSelection key={cursor.clientId} {...cursor} />
-        ))}
+      {cursors.map((cursor) => (
+        <RemoteSelection key={cursor.clientId} {...cursor} />
+      ))}
     </div>
   );
 }

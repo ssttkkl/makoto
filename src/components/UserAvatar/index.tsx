@@ -145,8 +145,9 @@ export const UserAvatar: React.FC<
   {
     uid?: number;
     user?: User;
+    tooltip?: boolean;
   } & AvatarProps
-> = ({ uid, user, ...props }) => {
+> = ({ uid, user, tooltip, ...props }) => {
   const currentUser = useObservable(() => rxCurrentUser);
   const { data } = useRequest(async () => {
     if (uid) {
@@ -155,15 +156,21 @@ export const UserAvatar: React.FC<
     return user;
   });
 
+  const avatar = (
+    <Avatar
+      {...props}
+      user={data}
+      isSelf={currentUser?.uid === data?.uid && Boolean(currentUser?.uid)}
+    />
+  );
+
   return (
     <Spin spinning={!data}>
-      <Tooltip title={data?.nickname ?? ''}>
-        <Avatar
-          {...props}
-          user={data}
-          isSelf={currentUser?.uid === data?.uid && Boolean(currentUser?.uid)}
-        />
-      </Tooltip>
+      {tooltip === false ? (
+        avatar
+      ) : (
+        <Tooltip title={data?.nickname ?? ''}>{avatar}</Tooltip>
+      )}
     </Spin>
   );
 };
