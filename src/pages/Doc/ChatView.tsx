@@ -8,46 +8,43 @@ import { useObservable } from 'rxjs-hooks';
 import { User } from '@/services/users/entities';
 import { useFriendlyDateFormatter } from '@/utils/hooks';
 
-const ChatItem = forwardRef<HTMLDivElement, { chat: Chat; isSelf: boolean }>(
-  ({ chat, isSelf }, ref) => {
-    const timeClassName = useEmotionCss(({ token }) => ({
-      color: token.colorTextLabel,
-      fontSize: token.fontSizeSM,
-      fontWeight: 'normal',
-    }));
+const ChatItem = forwardRef<HTMLDivElement, { chat: Chat }>(({ chat }, ref) => {
+  const timeClassName = useEmotionCss(({ token }) => ({
+    color: token.colorTextLabel,
+    fontSize: token.fontSizeSM,
+    fontWeight: 'normal',
+  }));
 
-    const wrapClassName = useEmotionCss(() => ({
-      width: '100%',
-    }));
+  const wrapClassName = useEmotionCss(() => ({
+    width: '100%',
+  }));
 
-    const formatDate = useFriendlyDateFormatter();
+  const formatDate = useFriendlyDateFormatter();
 
-    return (
-      <List.Item>
-        <div ref={ref} className={wrapClassName}>
-          <List.Item.Meta
-            avatar={<UserAvatar uid={chat.uid} isSelf={isSelf} />}
-            title={
-              <Space>
-                <UserNickname uid={chat.uid} />
-                <span className={timeClassName}>
-                  {formatDate(chat.ctime)} {chat.ctime.toLocaleTimeString()}
-                </span>
-              </Space>
-            }
-            description={chat.content}
-          />
-        </div>
-      </List.Item>
-    );
-  },
-);
+  return (
+    <List.Item>
+      <div ref={ref} className={wrapClassName}>
+        <List.Item.Meta
+          avatar={<UserAvatar uid={chat.uid} />}
+          title={
+            <Space>
+              <UserNickname uid={chat.uid} />
+              <span className={timeClassName}>
+                {formatDate(chat.ctime)} {chat.ctime.toLocaleTimeString()}
+              </span>
+            </Space>
+          }
+          description={chat.content}
+        />
+      </div>
+    </List.Item>
+  );
+});
 
 const ChatView: React.FC<{
   rxChat: Observable<Chat[]>;
-  currentUser?: User;
   bottomRef?: RefObject<HTMLDivElement>;
-}> = ({ rxChat, currentUser, bottomRef }) => {
+}> = ({ rxChat, bottomRef }) => {
   const chat_ = useObservable(() => rxChat);
   const chat = chat_ ?? [];
 
@@ -56,15 +53,9 @@ const ChatView: React.FC<{
       dataSource={chat}
       renderItem={(c, index) => {
         if (index === chat.length - 1) {
-          return (
-            <ChatItem
-              chat={c}
-              isSelf={currentUser?.uid === c.uid}
-              ref={bottomRef}
-            />
-          );
+          return <ChatItem chat={c} ref={bottomRef} />;
         } else {
-          return <ChatItem chat={c} isSelf={currentUser?.uid === c.uid} />;
+          return <ChatItem chat={c} />;
         }
       }}
       key="id"

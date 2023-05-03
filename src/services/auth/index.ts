@@ -7,18 +7,42 @@ import {
   setRefreshToken,
 } from './token';
 import { history } from '@umijs/max';
+import { BehaviorSubject } from 'rxjs';
+import { User } from '../users/entities';
+import { getMyProfile } from '../users';
+import { useObservable } from 'rxjs-hooks';
+
+export const currentUser = new BehaviorSubject<User | null>(null);
+
+export async function refreshCurrentUser(): Promise<void> {
+  if (getAccessToken()) {
+    currentUser.next(await getMyProfile());
+  } else {
+    currentUser.next(null);
+  }
+}
 
 export async function login(username: string, password: string): Promise<void> {
   const result = await callLogin({ username, password });
   setAccessToken(result.accessToken);
   setRefreshToken(result.refreshToken);
   console.log('logged in');
+
+  await refreshCurrentUser();
 }
 
-export async function logout() {
+export async function logout(opts?: { redirectToLoginPage?: boolean }) {
+  const username = currentUser.getValue()?.username;
+
   console.log('logged out');
   setAccessToken(null);
   setRefreshToken(null);
+
+  await refreshCurrentUser();
+
+  if (opts?.redirectToLoginPage === true) {
+    history.push('/login', { username });
+  }
 }
 
 // handle 401 or no token
@@ -32,12 +56,11 @@ async function refresh(): Promise<boolean> {
     console.log('refreshing token...');
 
     const token = await callRefresh({ refreshToken: refToken });
+    setAccessToken(token.accessToken);
+    setRefreshToken(token.refreshToken);
+    console.log('succeed to refresh token');
 
-    if (!requireLogin) {
-      setAccessToken(token.accessToken);
-      setRefreshToken(token.refreshToken);
-      console.log('succeed to refresh token');
-    }
+    await refreshCurrentUser();
 
     if (token?.expiresIn) {
       setTimeout(refresh, token.expiresIn * 0.8 * 1000);

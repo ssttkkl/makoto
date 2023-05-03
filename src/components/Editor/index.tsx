@@ -197,7 +197,7 @@ const Editor: React.FC<EditorProps> = ({
           withYjs(createEditor(), sharedType, { autoConnect: false }),
           provider.awareness,
           {
-            data: currentUser
+            data: currentUser?.uid
               ? makeCursorData(currentUser.uid, writeable)
               : undefined,
           },
@@ -212,7 +212,13 @@ const Editor: React.FC<EditorProps> = ({
       });
 
     return e;
-  }, [plugins, currentUser, provider.awareness, provider.document]);
+  }, [
+    plugins,
+    currentUser?.uid,
+    writeable,
+    provider.awareness,
+    provider.document,
+  ]);
 
   useEffect(() => {
     YjsEditor.connect(editor);

@@ -22,12 +22,10 @@ import { createChatEventSource, getChat, postChat } from '@/services/chat';
 import '../../../general.css';
 import { useObservable } from 'rxjs-hooks';
 import { plainToInstance } from 'class-transformer';
-import { User } from '@/services/users/entities';
 
 const ChatModalContent: React.FC<{
   chat: Observable<Chat[]>;
-  currentUser?: User;
-}> = ({ chat: rxChat, currentUser }) => {
+}> = ({ chat: rxChat }) => {
   const [height] = useWindowSize();
   const className = useEmotionCss(() => ({
     height: height * 0.7,
@@ -69,7 +67,7 @@ const ChatModalContent: React.FC<{
 
   return (
     <div className={className} ref={wrapper}>
-      <ChatView rxChat={rxChat} bottomRef={bottom} currentUser={currentUser} />
+      <ChatView rxChat={rxChat} bottomRef={bottom} />
     </div>
   );
 };
@@ -203,7 +201,7 @@ const ChatButton: React.FC = () => {
     modal.info({
       title: '实时沟通',
       centered: true,
-      content: <ChatModalContent chat={chat} currentUser={currentUser} />,
+      content: <ChatModalContent chat={chat} />,
       footer: chatRoomName ? <ChatModalFooter room={chatRoomName} /> : null,
       closable: true,
       okButtonProps: {

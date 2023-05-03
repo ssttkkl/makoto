@@ -6,6 +6,8 @@ import { Avatar as AntdAvatar, AvatarProps, Space, Spin } from 'antd';
 import Tooltip from 'antd/es/tooltip';
 import { Mutex } from 'async-mutex';
 import { CSSProperties } from 'react';
+import { useObservable } from 'rxjs-hooks';
+import { currentUser as rxCurrentUser } from '../../services/auth';
 
 class UserCache {
   private readonly cache = new Map<number, User>();
@@ -101,10 +103,10 @@ export const UserNickname: React.FC<{
 export const UserAvatarWithNickname: React.FC<{
   uid?: number;
   user?: User;
-  isSelf?: boolean;
   avatarProps?: AvatarProps;
   nicknameProps?: { className?: string; style?: CSSProperties };
-}> = ({ uid, user, isSelf, avatarProps, nicknameProps }) => {
+}> = ({ uid, user, avatarProps, nicknameProps }) => {
+  const currentUser = useObservable(() => rxCurrentUser);
   const { data, loading } = useRequest(async () => {
     if (uid) {
       return await cache.get(uid);
@@ -128,7 +130,12 @@ export const UserAvatarWithNickname: React.FC<{
   return (
     <Spin spinning={loading}>
       <Space direction="horizontal">
-        <Avatar size="small" {...avatarProps} user={data} isSelf={isSelf} />
+        <Avatar
+          size="small"
+          {...avatarProps}
+          user={data}
+          isSelf={currentUser?.uid === data?.uid}
+        />
 
         <Name
           name={data?.nickname}
@@ -144,9 +151,9 @@ export const UserAvatar: React.FC<
   {
     uid?: number;
     user?: User;
-    isSelf?: boolean;
   } & AvatarProps
-> = ({ uid, user, isSelf, ...props }) => {
+> = ({ uid, user, ...props }) => {
+  const currentUser = useObservable(() => rxCurrentUser);
   const { data, loading } = useRequest(async () => {
     if (uid) {
       return await cache.get(uid);
@@ -160,7 +167,11 @@ export const UserAvatar: React.FC<
   return (
     <Spin spinning={loading}>
       <Tooltip title={data?.nickname ?? ''}>
-        <Avatar {...props} user={data} isSelf={isSelf} />
+        <Avatar
+          {...props}
+          user={data}
+          isSelf={currentUser?.uid === data?.uid}
+        />
       </Tooltip>
     </Spin>
   );

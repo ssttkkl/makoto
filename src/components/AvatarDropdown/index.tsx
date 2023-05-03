@@ -6,6 +6,7 @@ import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
 import HeaderDropdown from '@/components/HeaderDropdown';
 import { UserAvatarWithNickname } from '@/components/UserAvatar';
+import { logout } from '@/services/auth';
 
 const menuItems = [
   {
@@ -16,7 +17,7 @@ const menuItems = [
 ];
 
 const AvatarDropdown: React.FC = () => {
-  const { currentUser, loading, logout } = useModel('currentUser');
+  const { currentUser } = useModel('currentUser');
 
   const actionClassName = useEmotionCss(({ token }) => {
     return {
@@ -46,7 +47,7 @@ const AvatarDropdown: React.FC = () => {
     [logout],
   );
 
-  if (loading) {
+  if (!currentUser) {
     return (
       <span className={actionClassName}>
         <Spin
