@@ -35,16 +35,13 @@ const ChatModalContent: React.FC<{
   const bottom = useRef<HTMLDivElement>(null);
 
   const isBottomIntersecting = useIsIntersecting(bottom, wrapper);
-  console.log(isBottomIntersecting);
+  console.log(`isBottomIntersecting: ${isBottomIntersecting}`);
 
-  const scrollToBottom = () => {
-    if (bottom.current) {
-      bottom.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-      });
+  const scrollToBottom = useCallback(() => {
+    if (wrapper.current) {
+      wrapper.current.scrollTop = wrapper.current.scrollHeight;
     }
-  };
+  }, [wrapper.current]);
 
   const chat = useObservable(() => rxChat);
   const [loadingChat, setLoadingChat] = useState(true);
@@ -55,14 +52,14 @@ const ChatModalContent: React.FC<{
       setLoadingChat(false);
       scrollToBottom();
     }
-  }, [chat, loadingChat]);
+  }, [chat, loadingChat, scrollToBottom]);
 
   // 如果处于最底端，有新消息时滚动到新消息
   useEffect(() => {
     if (isBottomIntersecting) {
       scrollToBottom();
     }
-  }, [chat, isBottomIntersecting]);
+  }, [chat, isBottomIntersecting, scrollToBottom]);
 
   return (
     <div className={className} ref={wrapper}>

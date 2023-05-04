@@ -1,6 +1,6 @@
 import { useModel, useSearchParams } from '@umijs/max';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import Editor from '@/components/Editor';
 import { mergePath, splitPath } from '@/utils/path';
 import { Divider, Space, Spin } from 'antd';
@@ -26,7 +26,9 @@ const Doc: React.FC<{
       ? DEV_HOCUSPOCUS_ENDPOINT
       : `ws://${location.hostname}:${location.port}/hocuspocus`;
 
-  const provider = useMemo(() => {
+  const [provider, setProvider] = useState<HocuspocusProvider>();
+
+  useEffect(() => {
     const params: Record<string, string> = {
       writeable: writeable.toString(),
     };
@@ -55,17 +57,17 @@ const Doc: React.FC<{
     });
 
     console.log(
-      'a new provider was created. name: ',
-      name,
-      ', params: ',
+      'a new provider was created. name: ' + name + ', params: ',
       params,
-      ', writeable: ',
-      writeable,
-      ', url: ',
-      url,
+      ', url: ' + url,
     );
 
-    return p;
+    setProvider(p);
+
+    return () => {
+      p.destroy();
+      console.log('provider was destroyed');
+    };
   }, [url, name, docFrom, writeable]);
 
   const breadcrumb =
@@ -101,7 +103,9 @@ const Doc: React.FC<{
     </>
   );
 
-  return <Editor provider={provider} writeable={writeable} header={header} />;
+  return provider ? (
+    <Editor provider={provider} writeable={writeable} header={header} />
+  ) : null;
 };
 
 const DocPage: React.FC = () => {
