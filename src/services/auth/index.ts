@@ -10,6 +10,7 @@ import { history } from '@umijs/max';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../users/entities';
 import { getMyProfile } from '../users';
+import Token from './entities';
 
 export const loadingCurrentUser = new BehaviorSubject<boolean>(false);
 export const currentUser = new BehaviorSubject<User | null>(null);
@@ -26,6 +27,21 @@ export async function refreshCurrentUser(): Promise<void> {
 
 setTimeout(() => refreshCurrentUser().catch((e) => console.error(e)));
 
+export function redirectToLoginPage(opts?: {
+  redirect?: string | boolean;
+  username?: string;
+}) {
+  let url = 'login';
+  if (opts?.redirect) {
+    if (opts.redirect === true) {
+      url += '?redirect=' + location.pathname;
+    } else {
+      url += '?redirect=' + opts.redirect;
+    }
+  }
+  history.push(url, { username: opts?.username });
+}
+
 export async function login(username: string, password: string): Promise<void> {
   const result = await callLogin({ username, password });
   setAccessToken(result.accessToken);
@@ -35,17 +51,17 @@ export async function login(username: string, password: string): Promise<void> {
   await refreshCurrentUser();
 }
 
-export async function logout(opts?: { redirectToLoginPage?: boolean }) {
+export function logout(opts?: { redirectToLoginPage?: boolean }) {
   const username = currentUser.getValue()?.username;
 
   console.log('logged out');
   setAccessToken(null);
   setRefreshToken(null);
 
-  await refreshCurrentUser();
+  currentUser.next(null);
 
   if (opts?.redirectToLoginPage === true) {
-    history.push(`/login`, { username });
+    redirectToLoginPage({ username, redirect: true });
   }
 }
 
@@ -59,25 +75,33 @@ async function refresh(): Promise<boolean> {
   if (refToken) {
     console.log('refreshing token...');
 
-    const token = await callRefresh({ refreshToken: refToken });
-    setAccessToken(token.accessToken);
-    setRefreshToken(token.refreshToken);
-    console.log('succeed to refresh token');
+    let token: Token | null = null;
+    try {
+      token = await callRefresh({ refreshToken: refToken });
+    } catch (e) {
+      logout();
+      requireLogin = true;
+    }
 
-    await refreshCurrentUser();
+    if (token) {
+      setAccessToken(token.accessToken);
+      setRefreshToken(token.refreshToken);
+      console.log('succeed to refresh token');
 
-    if (token?.expiresIn) {
-      setTimeout(refresh, token.expiresIn * 0.8 * 1000);
-      console.log(`token will be refreshed after ${token.expiresIn * 0.8}s`);
+      await refreshCurrentUser();
+
+      if (token.expiresIn) {
+        setTimeout(refresh, token.expiresIn * 0.8 * 1000);
+        console.log(`token will be refreshed after ${token.expiresIn * 0.8}s`);
+      }
     }
   } else {
     requireLogin = true;
   }
 
   if (requireLogin) {
-    const loc = history.location;
     console.log('invalid refresh token, redirecting to login page...');
-    history.push('/login?redirect=' + loc.pathname);
+    redirectToLoginPage({ redirect: true });
   }
 
   return !requireLogin;

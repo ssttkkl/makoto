@@ -18,7 +18,7 @@ export const ChangePassword: React.FC = () => {
   }: ChangePasswordFormData) => {
     await updatePassword({ oldPassword, newPassword });
     message.success('修改成功，请重新登录');
-    await logout({ redirectToLoginPage: true });
+    logout({ redirectToLoginPage: true });
   };
 
   return (
