@@ -1,4 +1,5 @@
 import { getAccessToken } from '@/services/auth/token';
+import { absolutePath } from '@/utils/url';
 import { PictureOutlined } from '@ant-design/icons';
 import { Upload, UploadFile } from 'antd';
 import { UploadProps } from 'antd/es/upload/interface';
@@ -81,7 +82,9 @@ export default class ImagePlugin extends ElementEditorPlugin {
         // />
         <span contentEditable={false} {...props.attributes}>
           <img
-            src={'/api/v1/assets?assetId=' + props.element.assetId}
+            src={absolutePath(
+              '/api/v1/assets?assetId=' + props.element.assetId,
+            )} // 转换为绝对路径，用于复制到其他地方
             style={{ maxWidth: '90%', height: 'auto' }}
           />
           {props.children}
