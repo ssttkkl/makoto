@@ -1,7 +1,7 @@
 import React from 'react';
 import { Editor } from 'slate';
 import { useSlate } from 'slate-react';
-import { determinSelectedLeaf } from '../../utils';
+import { determineSelectedLeaf } from '../../utils';
 import { Button, Popover, Space } from 'antd';
 import ToolbarButton from '../../components/ToolbarButton';
 import { CirclePicker } from 'react-color';
@@ -15,7 +15,7 @@ export const ColorPickerButton: React.FC<{
 }> = ({ format, title, renderIcon, colors, defaultColor }) => {
   const editor = useSlate();
 
-  const current = determinSelectedLeaf(editor, format, defaultColor);
+  const current = determineSelectedLeaf(editor, format) ?? defaultColor;
 
   const picker = (
     <CirclePicker

@@ -1,5 +1,4 @@
 import { CSSProperties } from 'react';
-import { Editor } from 'slate';
 import { ReactEditor, RenderElementProps, RenderLeafProps } from 'slate-react';
 import { ToolbarItem } from './types';
 
@@ -9,7 +8,7 @@ export abstract class EditorPlugin {
 
   onKeyDown(
     event: React.KeyboardEvent<HTMLDivElement>,
-    editor: Editor,
+    editor: ReactEditor,
     writeable: boolean,
   ): boolean {
     return false;

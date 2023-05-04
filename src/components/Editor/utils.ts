@@ -4,44 +4,40 @@ import { Descendant, Editor, Element, Text } from 'slate';
 export function determineLeaf<T>(
   fragment: Descendant[],
   format: string,
-  defaultFormat: T,
-): T | null {
+): T | null | undefined {
   let current: T | null | undefined = undefined;
   for (const x of fragment) {
     if (Text.isText(x)) {
-      const value = x[format] ?? defaultFormat;
+      const value = x[format];
       if (current === undefined) {
         current = value;
-      } else if (current !== value) {
+      }
+      if (value !== undefined && current !== value) {
         return null;
       }
     } else {
-      const value = determineLeaf(x.children, format, current ?? defaultFormat);
+      const value: T | null | undefined = determineLeaf(x.children, format);
       if (current === undefined) {
         current = value;
-      } else if (current !== value) {
+      }
+      if (value !== undefined && current !== value) {
         return null;
       }
     }
   }
 
-  if (current === undefined) {
-    current = defaultFormat;
-  }
-
   return current;
 }
 
-export function determinSelectedLeaf<T>(
+export function determineSelectedLeaf<T>(
   editor: Editor,
   format: string,
-  defaultFormat: T,
-): T | null {
-  let current: T | null = defaultFormat;
+): T | null | undefined {
+  let current: T | null | undefined = undefined;
   const selection = editor.selection;
   if (selection !== null) {
     const fragment = Editor.fragment(editor, selection);
-    current = determineLeaf(fragment, format, defaultFormat);
+    current = determineLeaf(fragment, format);
   }
   return current;
 }
@@ -50,52 +46,48 @@ export function determinSelectedLeaf<T>(
 export function determineElement<T>(
   fragment: Descendant[],
   format: string,
-  defaultFormat: T,
   opts?: { shallow?: boolean },
-): T | null {
+): T | null | undefined {
   let current: T | null | undefined = undefined;
   for (const x of fragment) {
     if (Element.isElement(x)) {
-      const value = x[format] ?? defaultFormat;
+      const value = x[format];
       if (current === undefined) {
         current = value;
-      } else if (current !== value) {
+      }
+      if (value !== undefined && current !== value) {
         return null;
       }
 
-      if (opts?.shallow === false) {
-        const value = determineElement(
+      if (opts?.shallow !== true) {
+        const value2: T | null | undefined = determineElement(
           x.children,
           format,
-          current ?? defaultFormat,
+          opts,
         );
         if (current === undefined) {
-          current = value;
-        } else if (current !== value) {
+          current = value2;
+        }
+        if (value2 !== undefined && current !== value2) {
           return null;
         }
       }
     }
   }
 
-  if (current === undefined) {
-    current = defaultFormat;
-  }
-
   return current;
 }
 
-export function determinSelectedElement<T>(
+export function determineSelectedElement<T>(
   editor: Editor,
   format: string,
-  defaultFormat: T,
   opts?: { shallow?: boolean },
-): T | null {
-  let current: T | null = defaultFormat;
+): T | null | undefined {
+  let current: T | null | undefined = undefined;
   const selection = editor.selection;
   if (selection !== null) {
     const fragment = Editor.fragment(editor, selection);
-    current = determineElement(fragment, format, defaultFormat, opts);
+    current = determineElement(fragment, format, opts);
   }
   return current;
 }

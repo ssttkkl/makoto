@@ -1,7 +1,7 @@
 import { UnderlineOutlined } from '@ant-design/icons';
 import isHotkey from 'is-hotkey';
 import { CSSProperties } from 'react';
-import { Editor } from 'slate';
+import { ReactEditor } from 'slate-react';
 import { RenderLeafProps } from 'slate-react';
 import { ToggleToolbarEditorPlugin } from './toggle';
 
@@ -15,7 +15,7 @@ export default class UnderlinePlugin extends ToggleToolbarEditorPlugin {
 
   override onKeyDown(
     event: React.KeyboardEvent<HTMLDivElement>,
-    editor: Editor,
+    editor: ReactEditor,
     writeable: boolean,
   ): boolean {
     if (isHotkey('ctrl+u')(event) && writeable) {

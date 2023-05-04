@@ -1,8 +1,8 @@
 import { Select } from 'antd';
 import { CSSProperties } from 'react';
-import { Editor, Transforms } from 'slate';
+import { Transforms } from 'slate';
 import { RenderElementProps, useSlate } from 'slate-react';
-import { determinSelectedElement } from '../utils';
+import { determineSelectedElement } from '../utils';
 import { ElementEditorPlugin } from './base';
 import { ToolbarItem } from './types';
 
@@ -42,9 +42,13 @@ const HEADING_VALUES = HEADING_OPTIONS.map((x) => x.value);
 const HeadingSelect = () => {
   const editor = useSlate();
 
-  const current = determinSelectedElement(editor, 'type', null, {
+  let current = determineSelectedElement(editor, 'type', {
     shallow: true,
   });
+
+  if (HEADING_VALUES.findIndex((x) => x === current) === -1) {
+    current = null;
+  }
 
   return (
     <Select

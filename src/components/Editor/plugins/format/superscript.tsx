@@ -1,6 +1,6 @@
 import isHotkey from 'is-hotkey';
 import { CSSProperties } from 'react';
-import { Editor } from 'slate';
+import { ReactEditor } from 'slate-react';
 import { RenderLeafProps } from 'slate-react';
 import { EditorIcon } from '../../components/EditorIcon';
 import { ToggleToolbarEditorPlugin } from './toggle';
@@ -16,7 +16,7 @@ export default class SuperscriptPlugin extends ToggleToolbarEditorPlugin {
 
   override onKeyDown(
     event: React.KeyboardEvent<HTMLDivElement>,
-    editor: Editor,
+    editor: ReactEditor,
     writeable: boolean,
   ): boolean {
     if (isHotkey('ctrl+shift+=')(event) && writeable) {

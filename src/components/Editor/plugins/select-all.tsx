@@ -1,5 +1,6 @@
 import isHotkey from 'is-hotkey';
-import { Editor, Transforms } from 'slate';
+import { Transforms } from 'slate';
+import { ReactEditor } from 'slate-react';
 import { EditorPlugin } from './base';
 
 export class SelectAllPlugin extends EditorPlugin {
@@ -7,7 +8,7 @@ export class SelectAllPlugin extends EditorPlugin {
 
   override onKeyDown(
     event: React.KeyboardEvent<HTMLDivElement>,
-    editor: Editor,
+    editor: ReactEditor,
   ): boolean {
     if (isHotkey('ctrl+a')(event)) {
       Transforms.setSelection(editor, {

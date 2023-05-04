@@ -4,7 +4,7 @@ import { Editor } from 'slate';
 import { RenderLeafProps, useSlate } from 'slate-react';
 import { LeafEditorPlugin } from '../base';
 import { ToolbarItem } from '../types';
-import { determinSelectedLeaf } from '../../utils';
+import { determineSelectedLeaf } from '../../utils';
 
 const FONT_SIZES = [
   12, 14, 16, 18, 20, 24, 28, 30, 32, 36, 40, 48, 56, 64, 72, 96, 120, 144,
@@ -18,7 +18,10 @@ const DEFAULT_FONT_SIZE = 14;
 const FontSizeSelect = () => {
   const editor = useSlate();
 
-  const current = determinSelectedLeaf(editor, 'fontSize', DEFAULT_FONT_SIZE);
+  let current = determineSelectedLeaf(editor, 'fontSize');
+  if (current === undefined) {
+    current = DEFAULT_FONT_SIZE;
+  }
 
   return (
     <Select

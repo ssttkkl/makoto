@@ -51,6 +51,11 @@ import randomColor from 'randomcolor';
 import { CursorData } from './types';
 import * as Y from 'yjs';
 import ImagePlugin from './plugins/image';
+import {
+  InsertOrderedListPlugin,
+  InsertUnorderedListPlugin,
+  ListPlugin,
+} from './plugins/list';
 
 function makeCursorData(uid: number, writeable: boolean): CursorData {
   return {
@@ -101,7 +106,12 @@ const PLUGINS: EditorPluginGroup[] = [
   },
   {
     key: 'insert',
-    plugins: [new ImagePlugin()],
+    plugins: [
+      new ImagePlugin(),
+      new ListPlugin(),
+      new InsertUnorderedListPlugin(),
+      new InsertOrderedListPlugin(),
+    ],
   },
 ];
 

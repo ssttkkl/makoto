@@ -1,8 +1,7 @@
 import { RedoOutlined } from '@ant-design/icons';
 import { YHistoryEditor } from '@slate-yjs/core';
 import isHotkey from 'is-hotkey';
-import { Editor } from 'slate';
-import { useSlate } from 'slate-react';
+import { ReactEditor, useSlate } from 'slate-react';
 import ToolbarButton from '../../components/ToolbarButton';
 import { EditorPlugin } from '../base';
 import { ToolbarItem } from '../types';
@@ -31,7 +30,7 @@ export default class RedoPlugin extends EditorPlugin {
 
   override onKeyDown(
     event: React.KeyboardEvent<HTMLDivElement>,
-    editor: Editor,
+    editor: ReactEditor,
     writeable: boolean,
   ): boolean {
     if (

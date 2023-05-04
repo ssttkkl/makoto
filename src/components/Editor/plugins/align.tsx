@@ -3,7 +3,7 @@ import { Editor, Transforms } from 'slate';
 import { RenderElementProps, useSlate } from 'slate-react';
 import { EditorIcon } from '../components/EditorIcon';
 import ToolbarButton from '../components/ToolbarButton';
-import { determineElement } from '../utils';
+import { determineSelectedElement } from '../utils';
 import { EditorPlugin, ElementEditorPlugin } from './base';
 import { ToolbarItem } from './types';
 
@@ -17,13 +17,7 @@ const AlignToolbarButton: React.FC<{
 }> = ({ align, icon }) => {
   const editor = useSlate();
 
-  // 判断选中区域是否都是同一对齐，并赋值给current
-  let current: Align | null = DEFAULT_ALIGN;
-  const selection = editor.selection;
-  if (selection !== null) {
-    const fragment = Editor.fragment(editor, selection);
-    current = determineElement(fragment, 'align', DEFAULT_ALIGN);
-  }
+  const current = determineSelectedElement(editor, 'align') ?? DEFAULT_ALIGN;
 
   return (
     <ToolbarButton
