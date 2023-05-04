@@ -25,13 +25,18 @@ const FileInfoDescription: React.FC<FileInfoProps> = ({ file: originFile }) => {
         <Descriptions.Item label="创建时间">
           {formatDate(file.ctime)}
         </Descriptions.Item>
+        {file.lastModifyUserUid ? (
+          <Descriptions.Item label="最近修改者">
+            <UserAvatarWithNickname uid={file.lastModifyUserUid} />
+          </Descriptions.Item>
+        ) : null}
         {file.atime ? (
-          <Descriptions.Item label="上次访问时间">
+          <Descriptions.Item label="最近访问时间">
             {formatDate(file.atime)}
           </Descriptions.Item>
         ) : null}
         {file.mtime ? (
-          <Descriptions.Item label="上次修改时间">
+          <Descriptions.Item label="最近修改时间">
             {formatDate(file.mtime)}
           </Descriptions.Item>
         ) : null}

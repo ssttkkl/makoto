@@ -66,6 +66,8 @@ export class DocumentInfo extends FileInfo {
 
   @Type(() => Date)
   mtime: Date;
+
+  lastModifyUserUid: number;
 }
 
 export class FolderInfo extends FileInfo {

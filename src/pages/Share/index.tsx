@@ -85,6 +85,13 @@ const SharePage: React.FC = () => {
               }
             }}
             rowSelection={rowSelection}
+            selectColumns={[
+              'filename',
+              'type',
+              'owner',
+              'lastModifyUser',
+              'mtime',
+            ]}
           />
         </Space>
       </PageContainer>

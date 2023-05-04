@@ -75,7 +75,13 @@ const SpacePage: React.FC = () => {
             }
           }}
           rowSelection={rowSelection}
-          selectColumns={['filename', 'type', 'mtime']}
+          selectColumns={[
+            'filename',
+            'type',
+            'owner',
+            'lastModifyUser',
+            'mtime',
+          ]}
           collapseOperations={true}
           renderOperations={(record) => (
             <SpaceOperationBar mini files={[record]} />
