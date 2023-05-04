@@ -29,6 +29,14 @@ const SharePage: React.FC = () => {
     model.updateParams({ shareId, path, initialized: true });
   }, [searchParams]);
 
+  useEffect(() => {
+    let title = model.share?.title ?? '';
+    title += ' - 查看分享';
+    title += ' - ' + PROJECT_NAME;
+
+    document.title = title;
+  }, [model.share?.title]);
+
   if (model.error) {
     return <div>{model.error.message}</div>;
   }

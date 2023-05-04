@@ -31,6 +31,18 @@ const SpacePage: React.FC = () => {
     },
   };
 
+  useEffect(() => {
+    let title = '';
+    if (model.params.path.length > 0) {
+      title += mergePath(model.params.path);
+      title += ' - ';
+    }
+    title += '我的空间';
+    title += ' - ' + PROJECT_NAME;
+
+    document.title = title;
+  }, [model.params.path]);
+
   if (model.error) {
     return <div>{model.error.message}</div>;
   }

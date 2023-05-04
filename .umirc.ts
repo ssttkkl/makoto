@@ -1,5 +1,7 @@
 import { defineConfig } from '@umijs/max';
 
+const PROJECT_NAME = 'makoto';
+
 export default defineConfig({
   alias: {
     '@': '/src',
@@ -10,6 +12,7 @@ export default defineConfig({
   access: {},
   define: {
     DEV_HOCUSPOCUS_ENDPOINT: 'ws://127.0.0.1:12345',
+    PROJECT_NAME,
   },
   model: {},
   initialState: {},
@@ -23,7 +26,7 @@ export default defineConfig({
     },
   },
   layout: {
-    title: 'makoto',
+    title: PROJECT_NAME,
   },
   routes: [
     {

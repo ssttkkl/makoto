@@ -1,6 +1,6 @@
 import { useModel, useSearchParams } from '@umijs/max';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import React, { useEffect, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import Editor from '@/components/Editor';
 import { mergePath, splitPath } from '@/utils/path';
 import { Space, Spin } from 'antd';
@@ -117,6 +117,19 @@ const DocPage: React.FC = () => {
       });
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    let title = model.file?.filename ?? '';
+    if (model.writeable) {
+      title += ' - 编辑文档';
+    } else {
+      title += ' - 查看文档';
+    }
+
+    title += ' - ' + PROJECT_NAME;
+
+    document.title = title;
+  }, [model.file?.filename, model.writeable]);
 
   if (model.error) {
     return <div>{model.error.message}</div>;
