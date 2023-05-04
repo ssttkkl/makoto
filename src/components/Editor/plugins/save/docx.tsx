@@ -1,3 +1,4 @@
+import { getAsset } from '@/services/assets';
 import { omitNil } from '@/utils/obj-map';
 import {
   Document,
@@ -8,7 +9,9 @@ import {
   AlignmentType,
   ShadingType,
   LevelFormat,
+  ImageRun,
 } from 'docx';
+import imageSize from '@coderosh/image-size';
 import { Descendant, Element, Text } from 'slate';
 import { HEADING_VALUES } from '../heading';
 import { ListType } from '../list/slate-lists';
@@ -51,7 +54,30 @@ const serializeText = (value: Text): [any, TextRun] => {
   return [{ ...plain, type: 'TextRun' }, new TextRun(plain)];
 };
 
-const serializeParagraphOrHeading = (value: Element): [any, Paragraph] => {
+const serializeImage = async (value: Element): Promise<[any, ImageRun]> => {
+  const { assetId } = value;
+  const data = await getAsset({ assetId });
+
+  // 100px == 2.65cm
+  // 页宽21cm，页间距2.54cm，故页可用宽度为15.92cm === 600px
+
+  let { height, width } = await imageSize(data);
+  if (width > 600) {
+    const ratio = 600 / width;
+    height *= ratio;
+    width *= ratio;
+  }
+
+  const plain = omitNil({
+    transformation: { width, height },
+  });
+
+  return [{ ...plain, type: 'ImageRun' }, new ImageRun({ data, ...plain })];
+};
+
+const serializeParagraphOrHeading = async (
+  value: Element,
+): Promise<[any, Paragraph]> => {
   const plainChildren = [];
   const children = [];
 
@@ -60,11 +86,8 @@ const serializeParagraphOrHeading = (value: Element): [any, Paragraph] => {
       const [plain, serialized] = serializeText(x);
       plainChildren.push(plain);
       children.push(serialized);
-    } else if (
-      x.type === 'paragraph' ||
-      HEADING_VALUES.findIndex((y) => x.type === y) !== -1
-    ) {
-      const [plain, serialized] = serializeParagraphOrHeading(x);
+    } else if (x.type === 'image') {
+      const [plain, serialized] = await serializeImage(x);
       plainChildren.push(plain);
       children.push(serialized);
     }
@@ -83,17 +106,21 @@ const serializeParagraphOrHeading = (value: Element): [any, Paragraph] => {
   ];
 };
 
-const serializeListItemText = (
+const serializeListItemText = async (
   value: Element,
   listType: ListType,
   level: number,
-): [any, Paragraph] => {
+): Promise<[any, Paragraph]> => {
   const plainChildren = [];
   const children = [];
 
   for (const x of value.children) {
     if (Text.isText(x)) {
       const [plain, serialized] = serializeText(x);
+      plainChildren.push(plain);
+      children.push(serialized);
+    } else if (x.type === 'image') {
+      const [plain, serialized] = await serializeImage(x);
       plainChildren.push(plain);
       children.push(serialized);
     }
@@ -124,11 +151,11 @@ const serializeListItemText = (
   ];
 };
 
-const serializeList = (
+const serializeList = async (
   value: Element,
   listType: ListType,
   baseLevel: number = 0,
-): [any[], Paragraph[]] => {
+): Promise<[any[], Paragraph[]]> => {
   const plain = [];
   const serialized = [];
 
@@ -136,7 +163,7 @@ const serializeList = (
     if (Element.isElement(x) && x.type === 'list-item') {
       for (const y of x.children) {
         if (y.type === 'unordered-list') {
-          const [plain2, serialized2] = serializeList(
+          const [plain2, serialized2] = await serializeList(
             y,
             ListType.UNORDERED,
             baseLevel + 1,
@@ -144,7 +171,7 @@ const serializeList = (
           plain.push(...plain2);
           serialized.push(...serialized2);
         } else if (y.type === 'ordered-list') {
-          const [plain2, serialized2] = serializeList(
+          const [plain2, serialized2] = await serializeList(
             y,
             ListType.ORDERED,
             baseLevel + 1,
@@ -152,7 +179,7 @@ const serializeList = (
           plain.push(...plain2);
           serialized.push(...serialized2);
         } else if (y.type === 'list-item-text') {
-          const [plain2, serialized2] = serializeListItemText(
+          const [plain2, serialized2] = await serializeListItemText(
             y,
             listType,
             baseLevel,
@@ -166,21 +193,21 @@ const serializeList = (
   return [plain, serialized];
 };
 
-const serializeRoot = (value: Descendant[]) => {
+const serializeRoot = async (value: Descendant[]) => {
   const plainChildren = [];
   const children = [];
 
   for (const x of value) {
     if (HEADING_VALUES.findIndex((y) => x.type === y) !== -1) {
-      const [plain, serialized] = serializeParagraphOrHeading(x);
+      const [plain, serialized] = await serializeParagraphOrHeading(x);
       plainChildren.push(plain);
       children.push(serialized);
     } else if (x.type === 'unordered-list') {
-      const [plain, serialized] = serializeList(x, ListType.UNORDERED);
+      const [plain, serialized] = await serializeList(x, ListType.UNORDERED);
       plainChildren.push(...plain);
       children.push(...serialized);
     } else if (x.type === 'ordered-list') {
-      const [plain, serialized] = serializeList(x, ListType.ORDERED);
+      const [plain, serialized] = await serializeList(x, ListType.ORDERED);
       plainChildren.push(...plain);
       children.push(...serialized);
     }
@@ -191,8 +218,8 @@ const serializeRoot = (value: Descendant[]) => {
   return [plainChildren, children];
 };
 
-const serialize = (value: Descendant[]) => {
-  const [, serializedRoot] = serializeRoot(value);
+const serialize = async (value: Descendant[]) => {
+  const [, serializedRoot] = await serializeRoot(value);
   return new Document({
     numbering: {
       config: [
@@ -241,7 +268,7 @@ const serialize = (value: Descendant[]) => {
 };
 
 export const saveAsDocx = async (filename: string, value: Descendant[]) => {
-  const doc = serialize(value);
+  const doc = await serialize(value);
 
   const buffer = await Packer.toBuffer(doc);
   const blob = new Blob([buffer], {

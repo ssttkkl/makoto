@@ -32,6 +32,7 @@
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-components": "^2.0.1",
     "@ant-design/use-emotion-css": "^1.0.4",
+    "@coderosh/image-size": "^2.0.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@hocuspocus/provider": "^1.0.1",
     "@slate-yjs/core": "^0.3.1",
