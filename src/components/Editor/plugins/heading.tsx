@@ -1,7 +1,14 @@
 import { Select } from 'antd';
-import { CSSProperties } from 'react';
-import { Transforms } from 'slate';
-import { RenderElementProps, useSlate } from 'slate-react';
+import isHotkey from 'is-hotkey';
+import { CSSProperties, KeyboardEvent } from 'react';
+import {
+  Transforms,
+  Range,
+  Selection as SlateSeletion,
+  Editor,
+  Point,
+} from 'slate';
+import { ReactEditor, RenderElementProps, useSlate } from 'slate-react';
 import { determineSelectedElement } from '../utils';
 import { ElementEditorPlugin } from './base';
 import { ToolbarItem } from './types';
@@ -124,5 +131,40 @@ export class HeadingPlugin extends ElementEditorPlugin {
       default:
         return null;
     }
+  }
+
+  override onKeyDown(
+    event: KeyboardEvent<HTMLDivElement>,
+    editor: ReactEditor,
+    writeable: boolean,
+  ): boolean {
+    // 当处于标题的行尾按下回车时，插入一行正文
+    if (isHotkey('enter', event) && writeable) {
+      if (editor.selection && !Range.isExpanded(editor.selection)) {
+        const current = determineSelectedElement(editor, 'type', {
+          shallow: true,
+        });
+        if (
+          current !== 'paragraph' &&
+          HEADING_VALUES.findIndex((x) => x === current) !== -1
+        ) {
+          const point = Editor.end(
+            editor,
+            editor.selection.anchor.path.slice(0, -1),
+          );
+          const atLastChar = Point.compare(point, editor.selection.focus);
+          if (atLastChar === 0) {
+            const node = editor.getFragment()[0];
+            Transforms.insertNodes(editor, {
+              ...node,
+              type: 'paragraph',
+              children: [{ text: '' }],
+            });
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 }

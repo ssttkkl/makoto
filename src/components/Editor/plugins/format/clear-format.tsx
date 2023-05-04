@@ -3,6 +3,8 @@ import { useSlate } from 'slate-react';
 import { EditorIcon } from '../../components/EditorIcon';
 import ToolbarButton from '../../components/ToolbarButton';
 import { EditorPlugin } from '../base';
+import { HEADING_VALUES } from '../heading';
+import { unwrapList } from '../list/slate-lists/transformations';
 import { ToolbarItem } from '../types';
 
 const FORMAT_MARKS = [
@@ -20,13 +22,30 @@ const FORMAT_MARKS = [
   'letterSpacing',
 ];
 
-const FORMAT_NODE_PROPS = ['heading', 'indent', 'align'];
+const FORMAT_NODE_PROPS = ['indent', 'align'];
 
 function clearMark(editor: BaseEditor) {
   let selection = editor.selection;
   if (selection) {
+    // 叶子节点适用的格式
     FORMAT_MARKS.forEach((x) => editor.removeMark(x));
+
+    // 元素节点适用的格式
     Transforms.unsetNodes(editor, FORMAT_NODE_PROPS);
+
+    // heading
+    Transforms.setNodes(
+      editor,
+      { type: 'paragraph' },
+      {
+        match: (node) =>
+          HEADING_VALUES.findIndex((x) => x === node.type) !== -1,
+      },
+    );
+
+    // 列表
+    unwrapList(editor);
+
     editor.onChange();
   }
 }
