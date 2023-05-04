@@ -32,6 +32,45 @@ const ALIGN_MAPPING = {
   justify: AlignmentType.BOTH,
 };
 
+const NUMBERING_CONFIG = {
+  reference: 'my-crazy-numbering',
+  levels: [
+    {
+      level: 0,
+      format: LevelFormat.DECIMAL,
+      text: '%1',
+      alignment: AlignmentType.START,
+      style: {
+        paragraph: {
+          indent: { left: 720, hanging: 260 },
+        },
+      },
+    },
+    {
+      level: 1,
+      format: LevelFormat.LOWER_LETTER,
+      text: '%2)',
+      alignment: AlignmentType.START,
+      style: {
+        paragraph: {
+          indent: { left: 1440, hanging: 980 },
+        },
+      },
+    },
+    {
+      level: 2,
+      format: LevelFormat.LOWER_ROMAN,
+      text: '%3.',
+      alignment: AlignmentType.START,
+      style: {
+        paragraph: {
+          indent: { left: 2160, hanging: 1700 },
+        },
+      },
+    },
+  ],
+};
+
 const serializeText = (value: Text): [any, TextRun] => {
   const plain = omitNil({
     text: value.text,
@@ -110,6 +149,7 @@ const serializeListItemText = async (
   value: Element,
   listType: ListType,
   level: number,
+  numberingRefreence: string,
 ): Promise<[any, Paragraph]> => {
   const plainChildren = [];
   const children = [];
@@ -130,7 +170,7 @@ const serializeListItemText = async (
     numbering:
       listType === ListType.ORDERED
         ? {
-            reference: 'my-crazy-numbering',
+            reference: numberingRefreence,
             level: level,
           }
         : undefined,
@@ -154,7 +194,8 @@ const serializeListItemText = async (
 const serializeList = async (
   value: Element,
   listType: ListType,
-  baseLevel: number = 0,
+  baseLevel: number,
+  numberingRefreence: string,
 ): Promise<[any[], Paragraph[]]> => {
   const plain = [];
   const serialized = [];
@@ -167,6 +208,7 @@ const serializeList = async (
             y,
             ListType.UNORDERED,
             baseLevel + 1,
+            numberingRefreence,
           );
           plain.push(...plain2);
           serialized.push(...serialized2);
@@ -175,6 +217,7 @@ const serializeList = async (
             y,
             ListType.ORDERED,
             baseLevel + 1,
+            numberingRefreence,
           );
           plain.push(...plain2);
           serialized.push(...serialized2);
@@ -183,6 +226,7 @@ const serializeList = async (
             y,
             listType,
             baseLevel,
+            numberingRefreence,
           );
           plain.push(plain2);
           serialized.push(serialized2);
@@ -193,7 +237,12 @@ const serializeList = async (
   return [plain, serialized];
 };
 
-const serializeRoot = async (value: Descendant[]) => {
+const serializeRoot = async (
+  value: Descendant[],
+  opts: {
+    numberingConfig: Array<typeof NUMBERING_CONFIG>;
+  },
+) => {
   const plainChildren = [];
   const children = [];
 
@@ -203,11 +252,27 @@ const serializeRoot = async (value: Descendant[]) => {
       plainChildren.push(plain);
       children.push(serialized);
     } else if (x.type === 'unordered-list') {
-      const [plain, serialized] = await serializeList(x, ListType.UNORDERED);
+      const [plain, serialized] = await serializeList(
+        x,
+        ListType.UNORDERED,
+        0,
+        '',
+      );
       plainChildren.push(...plain);
       children.push(...serialized);
     } else if (x.type === 'ordered-list') {
-      const [plain, serialized] = await serializeList(x, ListType.ORDERED);
+      const reference = 'numbering-' + opts.numberingConfig.length;
+      opts.numberingConfig.push({
+        ...NUMBERING_CONFIG,
+        reference,
+      });
+
+      const [plain, serialized] = await serializeList(
+        x,
+        ListType.ORDERED,
+        0,
+        reference,
+      );
       plainChildren.push(...plain);
       children.push(...serialized);
     }
@@ -219,49 +284,13 @@ const serializeRoot = async (value: Descendant[]) => {
 };
 
 const serialize = async (value: Descendant[]) => {
-  const [, serializedRoot] = await serializeRoot(value);
+  const numberingConfig: Array<typeof NUMBERING_CONFIG> = [];
+  const [, serializedRoot] = await serializeRoot(value, {
+    numberingConfig,
+  });
   return new Document({
     numbering: {
-      config: [
-        {
-          reference: 'my-crazy-numbering',
-          levels: [
-            {
-              level: 0,
-              format: LevelFormat.DECIMAL,
-              text: '%1',
-              alignment: AlignmentType.START,
-              style: {
-                paragraph: {
-                  indent: { left: 720, hanging: 260 },
-                },
-              },
-            },
-            {
-              level: 1,
-              format: LevelFormat.LOWER_LETTER,
-              text: '%2)',
-              alignment: AlignmentType.START,
-              style: {
-                paragraph: {
-                  indent: { left: 1440, hanging: 980 },
-                },
-              },
-            },
-            {
-              level: 2,
-              format: LevelFormat.LOWER_ROMAN,
-              text: '%3.',
-              alignment: AlignmentType.START,
-              style: {
-                paragraph: {
-                  indent: { left: 2160, hanging: 1700 },
-                },
-              },
-            },
-          ],
-        },
-      ],
+      config: numberingConfig,
     },
     sections: [{ children: serializedRoot }],
   });
