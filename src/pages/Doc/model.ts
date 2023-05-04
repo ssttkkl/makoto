@@ -23,7 +23,7 @@ export default () => {
     path: [],
   });
 
-  const { currentUser, isLoggedIn } = useModel('currentUser');
+  const { isLoggedIn } = useModel('currentUser');
 
   const share = useRequest(
     async () => {

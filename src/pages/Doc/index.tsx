@@ -1,6 +1,6 @@
 import { useModel, useSearchParams } from '@umijs/max';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Editor from '@/components/Editor';
 import { mergePath, splitPath } from '@/utils/path';
 import { Space, Spin } from 'antd';

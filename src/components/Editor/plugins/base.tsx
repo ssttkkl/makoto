@@ -1,10 +1,19 @@
 import { CSSProperties } from 'react';
+import { Editor } from 'slate';
 import { ReactEditor, RenderElementProps, RenderLeafProps } from 'slate-react';
 import { ToolbarItem } from './types';
 
 export abstract class EditorPlugin {
   abstract key: string;
   toolbarItem?: ToolbarItem;
+
+  onKeyDown(
+    event: React.KeyboardEvent<HTMLDivElement>,
+    editor: Editor,
+    writeable: boolean,
+  ): boolean {
+    return false;
+  }
 
   withEditor(editor: ReactEditor): ReactEditor {
     return editor;

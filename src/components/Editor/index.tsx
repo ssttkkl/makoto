@@ -263,6 +263,23 @@ const Editor: React.FC<EditorProps> = ({
             renderLeaf={renderLeaf}
             autoFocus
             readOnly={writeable !== true}
+            onKeyDown={(event) => {
+              let handled = false;
+
+              for (const plugin of plugins.flatMap((x) => x.plugins)) {
+                if (plugin.onKeyDown(event, editor, writeable)) {
+                  console.log(
+                    'hotkey ' + event.key + ' was handled by ' + plugin.key,
+                  );
+                  handled = true;
+                  break;
+                }
+              }
+
+              if (handled) {
+                event.preventDefault();
+              }
+            }}
           />
         </RemoteCursorOverlay>
       </Slate>

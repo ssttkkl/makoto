@@ -75,4 +75,12 @@ export abstract class ToggleToolbarEditorPlugin extends LeafEditorPlugin {
   renderBtnChildren(): React.ReactElement | undefined {
     return undefined;
   }
+
+  isMarkActive(editor: Editor) {
+    return isMarkActive(editor, this.key);
+  }
+
+  toggleMark(editor: Editor) {
+    toggleMark(editor, this.key, this.incompatibleFormat);
+  }
 }

@@ -16,13 +16,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import {
-  BehaviorSubject,
-  distinctUntilChanged,
-  map,
-  Observable,
-  Subject,
-} from 'rxjs';
+import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
 import ChatView from '../ChatView';
 import { createChatEventSource, getChat, postChat } from '@/services/chat';
 import '../../../general.css';

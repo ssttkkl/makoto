@@ -3,7 +3,6 @@ import { setAlpha } from '@ant-design/pro-components';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { CursorOverlayData } from '@slate-yjs/react';
 import { CaretPosition } from '@slate-yjs/react/dist/utils/getOverlayPosition';
-import { useModel } from '@umijs/max';
 import React, { PropsWithChildren, useRef } from 'react';
 import { CursorData } from '../../types';
 import { useRemoteCursorOverlayPositions } from './hooks/useRemoteCursorOverlayPositions';
