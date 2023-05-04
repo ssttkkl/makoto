@@ -240,7 +240,7 @@ const serialize = (value: Descendant[]) => {
   });
 };
 
-export const saveAsDocx = async (value: Descendant[]) => {
+export const saveAsDocx = async (filename: string, value: Descendant[]) => {
   const doc = serialize(value);
 
   const buffer = await Packer.toBuffer(doc);
@@ -250,7 +250,7 @@ export const saveAsDocx = async (value: Descendant[]) => {
 
   const fileSaver = document.createElement('a');
   fileSaver.href = URL.createObjectURL(blob);
-  fileSaver.download = 'docx.docx';
+  fileSaver.download = filename;
   document.body.appendChild(fileSaver);
   fileSaver.click();
   document.body.removeChild(fileSaver);

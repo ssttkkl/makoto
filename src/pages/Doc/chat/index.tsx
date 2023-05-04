@@ -1,5 +1,3 @@
-import { EditorPlugin } from '@/components/Editor/plugins/base';
-import { ToolbarItem } from '@/components/Editor/plugins/types';
 import { UserAvatarWithNickname } from '@/components/UserAvatar';
 import { Chat } from '@/services/chat/entities';
 import { useIsIntersecting, useWindowSize } from '@/utils/hooks';
@@ -17,12 +15,12 @@ import {
   useState,
 } from 'react';
 import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
-import ChatView from '../ChatView';
+import ChatView from './ChatView';
 import { createChatEventSource, getChat, postChat } from '@/services/chat';
-import '../../../general.css';
 import { useObservable } from 'rxjs-hooks';
 import { plainToInstance } from 'class-transformer';
 import { currentUser } from '@/services/auth';
+import '../../../general.css';
 
 const ChatModalContent: React.FC<{
   chat: Observable<Chat[]>;
@@ -130,7 +128,7 @@ const ChatModalFooter: React.FC<{
   );
 };
 
-const ChatButton: React.FC = () => {
+export const ChatButton: React.FC = () => {
   const { modal, notification } = App.useApp();
   const { unrefFile } = useModel('Doc.model', (model) => ({
     unrefFile: model.unrefFile,
@@ -232,18 +230,9 @@ const ChatButton: React.FC = () => {
 
   return (
     <Badge count={unread}>
-      <Button type="text" icon={<MessageOutlined />} onClick={openChatModal}>
+      <Button icon={<MessageOutlined />} onClick={openChatModal}>
         实时沟通
       </Button>
     </Badge>
   );
 };
-
-export default class ChatPlugin extends EditorPlugin {
-  key = 'chat';
-  toolbarItem: ToolbarItem = {
-    title: '实时沟通',
-    renderReadonly: () => <ChatButton />,
-    renderWriteable: () => <ChatButton />,
-  };
-}

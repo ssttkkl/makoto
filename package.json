@@ -54,6 +54,7 @@
     "rxjs-hooks": "^0.8.0-alpha.0",
     "slate": "^0.82.1",
     "slate-react": "^0.83.0",
+    "uuid": "^9.0.0",
     "yjs": "^13.5.29"
   },
   "devDependencies": {

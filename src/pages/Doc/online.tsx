@@ -2,11 +2,9 @@ import { onStatusParameters, WebSocketStatus } from '@hocuspocus/provider';
 import { Badge } from 'antd';
 import Button from 'antd/es/button';
 import { useContext, useEffect, useState } from 'react';
-import { EditorContext } from '../../../components/Editor';
-import { EditorPlugin } from '../../../components/Editor/plugins/base';
-import { ToolbarItem } from '../../../components/Editor/plugins/types';
+import { EditorContext } from '../../components/Editor';
 
-const OnlineStatus: React.FC = () => {
+export const OnlineStatus: React.FC = () => {
   const { provider } = useContext(EditorContext);
   const [status, setStatus] = useState(WebSocketStatus.Disconnected);
 
@@ -45,12 +43,3 @@ const OnlineStatus: React.FC = () => {
     </Button>
   ) : null;
 };
-
-export class OnlinePlugin extends EditorPlugin {
-  key = 'online';
-  toolbarItem: ToolbarItem = {
-    title: '在线状态',
-    renderReadonly: () => <OnlineStatus />,
-    renderWriteable: () => <OnlineStatus />,
-  };
-}

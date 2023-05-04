@@ -3,16 +3,18 @@ import { HocuspocusProvider } from '@hocuspocus/provider';
 import React, { useEffect, useMemo } from 'react';
 import Editor from '@/components/Editor';
 import { mergePath, splitPath } from '@/utils/path';
-import { Space, Spin } from 'antd';
+import { Divider, Space, Spin } from 'antd';
 import { getAccessToken } from '@/services/auth/token';
 import { refreshExclusive } from '@/services/auth';
 import { SpaceBreadcrumb } from '@/components/SpaceBreadcrumb';
 import { ShareBreadcrumb } from '@/components/ShareBreadcrumb';
-import { EditorPluginGroup } from '@/components/Editor/plugins/types';
-import ChatPlugin from '@/pages/Doc/plugins/chat';
-import { OnlinePlugin } from '@/pages/Doc/plugins/online';
-import { UserStatesPlugin } from '@/pages/Doc/plugins/user-states';
+import { ChatButton } from '@/pages/Doc/chat';
+import { OnlineStatus } from '@/pages/Doc/online';
+import { UserStates } from '@/pages/Doc/user-states';
 import { DocFrom } from './types';
+import { useEmotionCss } from '@ant-design/use-emotion-css';
+import '../../general.css';
+import { DocMenu } from './menu';
 
 const Doc: React.FC<{
   name: string;
@@ -66,27 +68,40 @@ const Doc: React.FC<{
     return p;
   }, [url, name, docFrom, writeable]);
 
-  const extraPlugins: EditorPluginGroup[] = useMemo(
-    () => [
-      {
-        key: 'chat',
-        plugins: [new ChatPlugin()],
-      },
-      {
-        key: 'online',
-        plugins: [new OnlinePlugin(), new UserStatesPlugin()],
-      },
-    ],
-    [],
+  const breadcrumb =
+    docFrom.from === 'space' ? (
+      <SpaceBreadcrumb path={docFrom.path} />
+    ) : (
+      <ShareBreadcrumb shareId={docFrom.shareId ?? 0} path={docFrom.path} />
+    );
+
+  const headerClassName = useEmotionCss(({ token }) => ({
+    display: 'flex',
+    marginBlockEnd: token.margin,
+  }));
+
+  const operationsClassName = useEmotionCss(() => ({
+    flex: 1,
+    justifyContent: 'flex-end',
+  }));
+
+  const header = (
+    <>
+      <div className={headerClassName}>
+        {breadcrumb}
+        <Space className={operationsClassName}>
+          <OnlineStatus />
+          <UserStates />
+          <Divider />
+          <ChatButton />
+          <Divider />
+          <DocMenu />
+        </Space>
+      </div>
+    </>
   );
 
-  return (
-    <Editor
-      provider={provider}
-      writeable={writeable}
-      extraPlugins={extraPlugins}
-    />
-  );
+  return <Editor provider={provider} writeable={writeable} header={header} />;
 };
 
 const DocPage: React.FC = () => {
@@ -135,29 +150,15 @@ const DocPage: React.FC = () => {
     return <div>{model.error.message}</div>;
   }
 
-  const breadcrumb =
-    model.params.from === 'space' ? (
-      <SpaceBreadcrumb path={model.params.path} />
-    ) : (
-      <ShareBreadcrumb
-        shareId={model.params.shareId ?? 0}
-        path={model.params.path}
-      />
-    );
-
   return (
     <Spin spinning={model.loading}>
-      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-        {breadcrumb}
-
-        {model.unrefFile?.fid ? (
-          <Doc
-            name={model.unrefFile.fid.toString()}
-            docFrom={model.params}
-            writeable={model.writeable}
-          />
-        ) : null}
-      </Space>
+      {model.unrefFile?.fid ? (
+        <Doc
+          name={model.unrefFile.fid.toString()}
+          docFrom={model.params}
+          writeable={model.writeable}
+        />
+      ) : null}
     </Spin>
   );
 };
