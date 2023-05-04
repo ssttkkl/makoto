@@ -96,23 +96,23 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
   
-  deploy:
+  # deploy:
   
-    runs-on: ubuntu-latest
-    needs: [build]
+  #   runs-on: ubuntu-latest
+  #   needs: [build]
     
-    steps:
-      - name: deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USERNAME }}
-          password: ${{ secrets.REMOTE_PASSWORD }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            cd /root/makoto
-            docker-compose up -d
+  #   steps:
+  #     - name: deploy
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.REMOTE_HOST }}
+  #         username: ${{ secrets.REMOTE_USERNAME }}
+  #         password: ${{ secrets.REMOTE_PASSWORD }}
+  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #         port: 22
+  #         script: |
+  #           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+  #           cd /root/makoto
+  #           docker-compose up -d
     
     
