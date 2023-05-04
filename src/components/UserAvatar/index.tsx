@@ -72,7 +72,7 @@ const Avatar: React.FC<
 
   return (
     <AntdAvatar size="small" {...props} className={avatarClassName}>
-      {user?.nickname ? user?.nickname[0] : ''}
+      {user?.nickname ? user?.nickname[0].toUpperCase() : ''}
     </AntdAvatar>
   );
 };
