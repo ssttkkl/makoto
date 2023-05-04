@@ -2,53 +2,49 @@ import { Select } from 'antd';
 import { CSSProperties } from 'react';
 import { Editor, Transforms } from 'slate';
 import { RenderElementProps, useSlate } from 'slate-react';
-import { determineElement } from '../utils';
+import { determinSelectedElement } from '../utils';
 import { ElementEditorPlugin } from './base';
 import { ToolbarItem } from './types';
 
 const HEADING_OPTIONS = [
   {
-    value: 'h1',
+    value: 'heading-one',
     label: '一级标题',
   },
   {
-    value: 'h2',
+    value: 'heading-two',
     label: '二级标题',
   },
   {
-    value: 'h3',
+    value: 'heading-three',
     label: '三级标题',
   },
   {
-    value: 'h4',
+    value: 'heading-four',
     label: '四级标题',
   },
   {
-    value: 'h5',
+    value: 'heading-five',
     label: '五级标题',
   },
   {
-    value: 'h6',
+    value: 'heading-six',
     label: '六级标题',
   },
   {
-    value: 'p',
+    value: 'paragraph',
     label: '正文',
   },
 ];
 
-const DEFAULT_HEADING = 'p';
+const HEADING_VALUES = HEADING_OPTIONS.map((x) => x.value);
 
 const HeadingSelect = () => {
   const editor = useSlate();
 
-  // 判断选中区域是否都是同一字号，并赋值给current
-  let current: string | null = DEFAULT_HEADING;
-  const selection = editor.selection;
-  if (selection !== null) {
-    const fragment = Editor.fragment(editor, selection);
-    current = determineElement(fragment, 'heading', DEFAULT_HEADING);
-  }
+  const current = determinSelectedElement(editor, 'type', null, {
+    shallow: true,
+  });
 
   return (
     <Select
@@ -57,11 +53,14 @@ const HeadingSelect = () => {
       value={current}
       options={HEADING_OPTIONS}
       onChange={(v) => {
-        if (v === 'p') {
-          Transforms.unsetNodes(editor, 'heading');
-        } else {
-          Transforms.setNodes(editor, { heading: v });
-        }
+        Transforms.setNodes(
+          editor,
+          { type: v },
+          {
+            match: (node) =>
+              HEADING_VALUES.findIndex((x) => x === node.type) >= 0,
+          },
+        );
       }}
     />
   );
@@ -75,53 +74,51 @@ export class HeadingPlugin extends ElementEditorPlugin {
   };
 
   render(props: RenderElementProps, style: CSSProperties): React.ReactNode {
-    if (props.element.type !== 'paragraph') {
-      return null;
-    }
-
-    switch (props.element.heading) {
-      case 'h1':
+    switch (props.element.type) {
+      case 'heading-one':
         return (
           <h1 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h1>
         );
-      case 'h2':
+      case 'heading-two':
         return (
           <h2 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h2>
         );
-      case 'h3':
+      case 'heading-three':
         return (
           <h3 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h3>
         );
-      case 'h4':
+      case 'heading-four':
         return (
           <h4 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h4>
         );
-      case 'h5':
+      case 'heading-five':
         return (
           <h5 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h5>
         );
-      case 'h6':
+      case 'heading-six':
         return (
           <h6 key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </h6>
         );
-      default:
+      case 'paragraph':
         return (
           <p key={props.element.key} style={style} {...props.attributes}>
             {props.children}
           </p>
         );
+      default:
+        return null;
     }
   }
 }
