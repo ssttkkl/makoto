@@ -91,7 +91,7 @@ export function useFriendlyDateFormatter() {
     } else if (epochDay - nowEpochDay > 0 && epochDay - nowEpochDay <= 3) {
       return `${epochDay - nowEpochDay}天后`;
     } else if (epochDay - nowEpochDay < 0 && epochDay - nowEpochDay >= -3) {
-      return `${epochDay - nowEpochDay}天前`;
+      return `${nowEpochDay - epochDay}天前`;
     } else {
       return date.toLocaleDateString();
     }
