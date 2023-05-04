@@ -56,6 +56,7 @@ import {
   InsertUnorderedListPlugin,
   ListPlugin,
 } from './plugins/list';
+import { SavePlugin } from './plugins/save';
 
 function makeCursorData(uid: number, writeable: boolean): CursorData {
   return {
@@ -70,6 +71,10 @@ function makeCursorData(uid: number, writeable: boolean): CursorData {
 }
 
 const PLUGINS: EditorPluginGroup[] = [
+  {
+    key: 'save',
+    plugins: [new SavePlugin()],
+  },
   {
     key: 'clear',
     plugins: [new UndoPlugin(), new RedoPlugin(), new ClearFormatPlugin()],

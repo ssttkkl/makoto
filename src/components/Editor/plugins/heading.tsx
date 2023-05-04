@@ -37,7 +37,7 @@ const HEADING_OPTIONS = [
   },
 ];
 
-const HEADING_VALUES = HEADING_OPTIONS.map((x) => x.value);
+export const HEADING_VALUES = HEADING_OPTIONS.map((x) => x.value);
 
 const HeadingSelect = () => {
   const editor = useSlate();
@@ -81,43 +81,43 @@ export class HeadingPlugin extends ElementEditorPlugin {
     switch (props.element.type) {
       case 'heading-one':
         return (
-          <h1 key={props.element.key} style={style} {...props.attributes}>
+          <h1 style={style} {...props.attributes}>
             {props.children}
           </h1>
         );
       case 'heading-two':
         return (
-          <h2 key={props.element.key} style={style} {...props.attributes}>
+          <h2 style={style} {...props.attributes}>
             {props.children}
           </h2>
         );
       case 'heading-three':
         return (
-          <h3 key={props.element.key} style={style} {...props.attributes}>
+          <h3 style={style} {...props.attributes}>
             {props.children}
           </h3>
         );
       case 'heading-four':
         return (
-          <h4 key={props.element.key} style={style} {...props.attributes}>
+          <h4 style={style} {...props.attributes}>
             {props.children}
           </h4>
         );
       case 'heading-five':
         return (
-          <h5 key={props.element.key} style={style} {...props.attributes}>
+          <h5 style={style} {...props.attributes}>
             {props.children}
           </h5>
         );
       case 'heading-six':
         return (
-          <h6 key={props.element.key} style={style} {...props.attributes}>
+          <h6 style={style} {...props.attributes}>
             {props.children}
           </h6>
         );
       case 'paragraph':
         return (
-          <p key={props.element.key} style={style} {...props.attributes}>
+          <p style={style} {...props.attributes}>
             {props.children}
           </p>
         );

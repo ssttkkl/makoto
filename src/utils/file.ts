@@ -26,7 +26,6 @@ export function getFileIcon(file: FileInfo) {
 }
 
 export function sortFiles(files: FileInfo[]) {
-  console.log(files);
   files.sort((a: FileInfo, b: FileInfo) => {
     const aType = getFileRealType(a);
     const bType = getFileRealType(b);

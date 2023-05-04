@@ -134,21 +134,27 @@ export function useRemoteCursorOverlayPositions<
     }
   });
 
-  const overlayData = useMemo<CursorOverlayData<CursorData>[]>(
-    () =>
-      Object.entries(cursorStates).map(([clientId, state]) => {
-        const range = state.relativeSelection && getCursorRange(editor, state);
-        const overlayPosition = overlayPositions[clientId];
+  const overlayData = useMemo<CursorOverlayData<CursorData>[]>(() => {
+    return Object.entries(cursorStates)
+      .map(([clientId, state]) => {
+        try {
+          const range =
+            state.relativeSelection && getCursorRange(editor, state);
+          const overlayPosition = overlayPositions[clientId];
 
-        return {
-          ...state,
-          range,
-          caretPosition: overlayPosition?.caretPosition ?? null,
-          selectionRects: overlayPosition?.selectionRects ?? FROZEN_EMPTY_ARRAY,
-        };
-      }),
-    [cursorStates, editor, overlayPositions],
-  );
+          return {
+            ...state,
+            range,
+            caretPosition: overlayPosition?.caretPosition ?? null,
+            selectionRects:
+              overlayPosition?.selectionRects ?? FROZEN_EMPTY_ARRAY,
+          };
+        } catch (e) {
+          return null;
+        }
+      })
+      .filter((x) => x !== null);
+  }, [cursorStates, editor, overlayPositions]);
 
   const refresh = useCallback(() => {
     overlayPositionCache.current = new WeakMap();

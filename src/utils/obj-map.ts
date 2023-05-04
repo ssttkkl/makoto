@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 export function objToMap<K = any, V = any>(
   obj: any,
   opts: {
@@ -24,4 +26,15 @@ export function mapToObj<K, V>(
     obj[opts.keyMapper(key)] = opts.valueMapper(value);
   });
   return obj;
+}
+
+export function omitNil(value: any) {
+  _.each(value, (v, k) => {
+    if (_.isNil(v)) {
+      _.unset(value, k);
+    } else if (_.isObject(v)) {
+      omitNil(v);
+    }
+  });
+  return value;
 }
