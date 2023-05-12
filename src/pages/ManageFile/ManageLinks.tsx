@@ -68,6 +68,7 @@ const ManageLinks: React.FC = () => {
         <FileTable
           dataSource={linksReq.data as LinkInfo[] | undefined}
           selectColumns={['owner', 'ctime']}
+          originFile={true}
           pagination={false}
           rowSelection={rowSelection}
           renderOperations={(link) => (

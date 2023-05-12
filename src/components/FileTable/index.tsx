@@ -2,19 +2,12 @@ import React, { ReactNode, useState } from 'react';
 import { Table } from 'antd';
 
 import { ColumnsType, TableProps } from 'antd/es/table';
-import {
-  DocumentInfo,
-  FileInfo,
-  FileType,
-  FolderInfo,
-  LinkInfo,
-} from '@/services/files/entities';
+import { FileInfo, FileType, LinkInfo } from '@/services/files/entities';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import TableMainColumnCell from '../TableMainColumnCell';
 import { getFileIcon, getFileRealType } from '@/utils/file';
 import { UserAvatarWithNickname } from '../UserAvatar';
 import { useFriendlyDateTimeFormatter } from '@/utils/hooks';
-import { instanceToPlain, plainToInstance } from 'class-transformer';
 
 type FileTableColumns =
   | 'filename'
@@ -32,6 +25,7 @@ export interface FileTableProps<T extends object = any> extends TableProps<T> {
   recordLink?: (record: FileInfo) => string | undefined;
   renderOperations?: (record: T) => ReactNode;
   collapseOperations?: boolean;
+  originFile?: boolean;
 }
 
 function getData<T, U>(record: T, path: string[]): U {
@@ -43,51 +37,6 @@ function getData<T, U>(record: T, path: string[]): U {
   // @ts-ignore
   return x;
 }
-
-// function mapFileInfo(file: FileInfo): FileInfo {
-//   if (file instanceof LinkInfo) {
-//     if (file.ref) {
-//       const plain = instanceToPlain(file.ref)
-//       if (file.ref instanceof DocumentInfo) {
-//         return plainToInstance(
-//           DocumentInfo,
-//           {
-//             ...plain,
-//             fid: file.fid,
-//             filename: file.filename,
-//             parentFid: file.parentFid
-//           }
-//         )
-//       } else {
-//         return plainToInstance(
-//           FolderInfo,
-//           {
-//             ...plain,
-//             fid: file.fid,
-//             filename: file.filename,
-//             parentFid: file.parentFid
-//           }
-//         )
-//       }
-//     } else {
-//       return plainToInstance(
-//         DocumentInfo,
-//         {
-//           fid: file.fid,
-//           filename: file.filename,
-//           parentFid: file.parentFid,
-//           ownerUid: 0,
-//           ctime: new Date(0),
-//           atime: new Date(0),
-//           mtime: new Date(0),
-//           lastModifyUserUid: 0
-//         }
-//       )
-//     }
-//   } else {
-//     return file
-//   }
-// }
 
 type FileTableType<T extends object = any> = React.FC<FileTableProps<T>>;
 
@@ -151,7 +100,7 @@ function FileTable<T extends object = any>(
       key: 'owner',
       render: (value: number, record: T) => {
         const data: FileInfo = getData(record, dataSourcePath);
-        if (data instanceof LinkInfo) {
+        if (props.originFile !== true && data instanceof LinkInfo) {
           if (data.ref?.ownerUid) {
             return <UserAvatarWithNickname uid={data.ref?.ownerUid} />;
           } else {
@@ -186,7 +135,10 @@ function FileTable<T extends object = any>(
       key: 'ctime',
       render: (_: Date | undefined, record: T) => {
         const data = getData(record, dataSourcePath);
-        const value = data instanceof LinkInfo ? data.ref?.ctime : data.ctime;
+        const value =
+          props.originFile !== true && data instanceof LinkInfo
+            ? data.ref?.ctime
+            : data.ctime;
         return formatDate(value);
       },
     },
