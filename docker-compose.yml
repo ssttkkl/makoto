@@ -56,6 +56,6 @@ services:
       - TZ=Asia/Shanghai
       - POSTGRES_PASSWORD_FILE=/run/secrets/db_passwd
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql/data
     secrets:
       - db_passwd

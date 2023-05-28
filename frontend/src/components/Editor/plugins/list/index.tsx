@@ -1,4 +1,4 @@
-import { UnorderedListOutlined } from '@ant-design/icons';
+import { UnorderedListOutlined, OrderedListOutlined } from '@ant-design/icons';
 import {
   withLists,
   ListType,
@@ -205,7 +205,7 @@ const InsertOrderedList: React.FC = () => {
         }
       }}
     >
-      <UnorderedListOutlined />
+      <OrderedListOutlined />
     </ToolbarButton>
   );
 };

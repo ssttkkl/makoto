@@ -1,7 +1,7 @@
 import { getAccessToken } from '@/services/auth/token';
 import { absolutePath } from '@/utils/url';
 import { PictureOutlined } from '@ant-design/icons';
-import { Upload, UploadFile } from 'antd';
+import { App, Upload, UploadFile } from 'antd';
 import { UploadProps } from 'antd/es/upload/interface';
 import { CSSProperties, useState } from 'react';
 import { Transforms } from 'slate';
@@ -14,6 +14,16 @@ const InsertImageButton: React.FC = () => {
   const editor = useSlate();
   const accToken = getAccessToken();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const { notification } = App.useApp()
+
+  const beforeUpload: UploadProps['beforeUpload'] = (file) => {
+    if (file.size > 10 * 1024 * 1024) {
+      notification.error({ message: "上传失败", description: "上传的图片文件必须小于10MB" });
+      return false;
+    }
+    return true;
+  }
 
   const handleChange: UploadProps['onChange'] = (info) => {
     const done = info.fileList.filter((x) => x.status === 'done');
@@ -35,6 +45,7 @@ const InsertImageButton: React.FC = () => {
 
   return (
     <Upload
+      accept="image/*"
       fileList={fileList}
       onChange={handleChange}
       action="/api/v1/assets"
@@ -44,6 +55,7 @@ const InsertImageButton: React.FC = () => {
       itemRender={() => {
         return null;
       }}
+      beforeUpload={beforeUpload}
     >
       <ToolbarButton>
         <PictureOutlined />
