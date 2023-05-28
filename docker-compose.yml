@@ -1,0 +1,61 @@
+version: '3'
+
+volumes:
+    db_data:
+    assets:
+
+secrets:
+   db_passwd:
+     file: db_passwd.txt
+   jwt_secret:
+     file: jwt_secret.txt
+   refresh_token_secret:
+     file: refresh_token_secret.txt
+
+services:
+  web:
+    build: ./frontend
+    container_name: makoto-web
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "8080:80"
+
+  backend:
+    build: ./backend
+    container_name: makoto-backend
+    environment:
+      - TZ=Asia/Shanghai
+      - DATABASE_HOST=makoto-db
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD_FILE=/run/secrets/db_passwd
+      - DATABASE_NAME=makoto
+      - JWT_SECRET_FILE=/run/secrets/jwt_secret
+      - JWT_EXPIRES_IN=7200
+      - REFRESH_TOKEN_SECRET_FILE=/run/secrets/refresh_token_secret
+    volumes:
+      - assets:/opt/makoto/assets
+    secrets:
+      - db_passwd
+      - jwt_secret
+      - refresh_token_secret
+
+  hocuspocus:
+    build: ./hocuspocus
+    container_name: makoto-hocuspocus
+    environment:
+      - TZ=Asia/Shanghai
+      - BACKEND_HOST=makoto-backend
+      - BACKEND_PORT=3001
+
+  db:
+    build: ./db
+    container_name: makoto-db
+    environment:
+      - TZ=Asia/Shanghai
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_passwd
+    volumes:
+      - db_data:/var/lib/mysql
+    secrets:
+      - db_passwd
